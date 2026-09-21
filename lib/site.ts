@@ -13,11 +13,12 @@ export const SITE = {
 } as const;
 
 export const NAV_ITEMS: NavItem[] = [
+  { href: "/", label: "Newswire" },
+  { href: "/the-map", label: "GTA VI" },
   { href: "/leonida-wire", label: "Leonida Wire" },
-  { href: "/mission-intel", label: "Mission Intel" },
-  { href: "/the-map", label: "The Map" },
-  { href: "/garage-mods", label: "Garage & Mods" },
-  { href: "/reviews", label: "Reviews" },
+  { href: "/mission-intel", label: "Guides" },
+  { href: "/garage-mods", label: "Vehicles" },
+  { href: "/reviews", label: "Media" },
 ];
 
 export const SOCIAL_LINKS: SocialLink[] = [
@@ -36,20 +37,32 @@ export const SOCIAL_LINKS: SocialLink[] = [
 
 export const FOOTER_SITEMAP: NavItem[] = [
   { href: "/", label: "Homepage" },
-  ...NAV_ITEMS,
+  { href: "/leonida-wire", label: "Leonida Wire" },
+  { href: "/mission-intel", label: "Mission Intel" },
+  { href: "/the-map", label: "The Map" },
+  { href: "/garage-mods", label: "Garage & Mods" },
+  { href: "/reviews", label: "Reviews" },
   { href: "/editorial-guidelines", label: "Editorial Guidelines" },
   { href: "/rss.xml", label: "RSS Feed" },
 ];
 
 export const CATEGORY_FILTERS: Array<{ slug: CategorySlug; label: string }> = [
   { slug: "all", label: "All" },
-  { slug: "leaks-news", label: "Leaks & News" },
-  { slug: "map-lore", label: "Map & Lore" },
-  { slug: "vehicles-guns", label: "Vehicles & Guns" },
+  { slug: "leaks-news", label: "Leaks" },
+  { slug: "map-lore", label: "Maps" },
   { slug: "guides", label: "Guides" },
+  { slug: "vehicles-guns", label: "Vehicles" },
+  { slug: "hardware", label: "Hardware" },
 ];
 
-export const CATEGORY_TO_SLUG: Record<Category, Exclude<CategorySlug, "all">> =
+export const CATEGORY_SHORT: Record<Category, string> = {
+  "Leaks & News": "Leaks",
+  "Map & Lore": "Maps",
+  "Vehicles & Guns": "Vehicles",
+  Guides: "Guides",
+};
+
+export const CATEGORY_TO_SLUG: Record<Category, Exclude<CategorySlug, "all" | "hardware">> =
   {
     "Leaks & News": "leaks-news",
     "Map & Lore": "map-lore",
@@ -58,7 +71,7 @@ export const CATEGORY_TO_SLUG: Record<Category, Exclude<CategorySlug, "all">> =
   };
 
 export const SLUG_TO_CATEGORY: Record<
-  Exclude<CategorySlug, "all">,
+  Exclude<CategorySlug, "all" | "hardware">,
   Category
 > = {
   "leaks-news": "Leaks & News",
@@ -66,3 +79,19 @@ export const SLUG_TO_CATEGORY: Record<
   "vehicles-guns": "Vehicles & Guns",
   guides: "Guides",
 };
+
+export const HARDWARE_TAGS = ["pc", "hardware", "ammo", "guns"] as const;
+
+export function isNavActive(pathname: string, href: string): boolean {
+  if (href === "/") {
+    return pathname === "/" || pathname.startsWith("/posts/");
+  }
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
+export function articleCta(tags: string[], slug: string): string {
+  if (tags.includes("trailer") || slug.includes("trailer")) {
+    return "Watch Trailer";
+  }
+  return "Read Article";
+}

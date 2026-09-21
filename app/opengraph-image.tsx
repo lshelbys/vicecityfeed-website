@@ -16,27 +16,43 @@ export default function OpenGraphImage() {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          background: "#121216",
-          color: "#F4F4F6",
+          background: "#0B0B0B",
+          color: "#FFFFFF",
           padding: 64,
         }}
       >
         <div
           style={{
-            height: 6,
-            background: "linear-gradient(90deg,#FF007F,#00F0FF,#FF007F)",
+            width: 48,
+            height: 48,
+            background: "#FCAF17",
+            color: "#000",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: 18,
+            fontWeight: 800,
+            borderRadius: 8,
           }}
-        />
+        >
+          VI
+        </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          <div style={{ fontSize: 28, color: "#00F0FF", letterSpacing: 8 }}>
-            VICECITYFEED.COM
-          </div>
-          <div style={{ fontSize: 84, lineHeight: 0.9, fontWeight: 700 }}>
+          <div
+            style={{
+              fontSize: 72,
+              lineHeight: 0.95,
+              fontWeight: 800,
+              letterSpacing: -2,
+            }}
+          >
             VICE CITY FEED
           </div>
-          <div style={{ fontSize: 32, color: "#9a9aa8" }}>{SITE.tagline}</div>
+          <div style={{ fontSize: 28, color: "#8E8E93" }}>{SITE.tagline}</div>
         </div>
-        <div style={{ fontSize: 24, color: "#FF007F" }}>Leonida intel. No filler.</div>
+        <div style={{ fontSize: 22, color: "#FCAF17", fontWeight: 700 }}>
+          Newswire
+        </div>
       </div>
     ),
     size,

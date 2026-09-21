@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { ArticleCard } from "@/components/ArticleCard";
 import { CategoryFilter } from "@/components/CategoryFilter";
 import { filterArticlesByCategory } from "@/lib/filters";
-import type { ArticleMeta, CategorySlug } from "@/lib/types";
+import type { CategorySlug, FeedArticle } from "@/lib/types";
 
 const VALID: CategorySlug[] = [
   "all",
@@ -13,10 +13,11 @@ const VALID: CategorySlug[] = [
   "map-lore",
   "vehicles-guns",
   "guides",
+  "hardware",
 ];
 
 type WireFeedProps = {
-  articles: ArticleMeta[];
+  articles: FeedArticle[];
   initialCategory?: CategorySlug;
   syncWithUrl?: boolean;
 };
@@ -48,11 +49,15 @@ function WireFeedInner({
     <div className="space-y-6">
       <CategoryFilter active={category} onSelect={setCategory} />
       {filtered.length === 0 ? (
-        <p className="text-sm text-muted">No intel in this lane — yet.</p>
+        <p className="text-sm text-muted">No stories in this lane yet.</p>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filtered.map((article) => (
-            <ArticleCard key={article.slug} article={article} />
+            <ArticleCard
+              key={article.slug}
+              article={article}
+              readingTimeMinutes={article.readingTimeMinutes}
+            />
           ))}
         </div>
       )}
@@ -62,11 +67,7 @@ function WireFeedInner({
 
 export function WireFeed(props: WireFeedProps) {
   return (
-    <Suspense
-      fallback={
-        <p className="text-sm text-muted">Loading the wire…</p>
-      }
-    >
+    <Suspense fallback={<p className="text-sm text-muted">Loading Newswire…</p>}>
       <WireFeedInner {...props} />
     </Suspense>
   );

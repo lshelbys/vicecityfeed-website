@@ -6,6 +6,7 @@ import type {
   ArticleMeta,
   BreakingItem,
   CategorySlug,
+  FeedArticle,
   SectionSlug,
 } from "./types";
 import { readingTimeFromMarkdown } from "./format";
@@ -25,6 +26,15 @@ export function getArticleMeta(): ArticleMeta[] {
 export function getArticleContent(slug: string): string {
   const file = path.join(POSTS_DIR, `${slug}.md`);
   return fs.readFileSync(file, "utf8");
+}
+
+export function getFeedArticles(): FeedArticle[] {
+  return getArticleMeta().map((meta) => {
+    const { readingTimeMinutes } = readingTimeFromMarkdown(
+      getArticleContent(meta.slug),
+    );
+    return { ...meta, readingTimeMinutes };
+  });
 }
 
 export function getArticle(slug: string): Article | undefined {

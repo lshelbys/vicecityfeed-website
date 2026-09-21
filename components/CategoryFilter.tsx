@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { pillClass } from "@/components/pills";
 import { CATEGORY_FILTERS } from "@/lib/site";
 import type { CategorySlug } from "@/lib/types";
 
@@ -16,16 +17,11 @@ export function CategoryFilter({
   return (
     <div
       role="tablist"
-      aria-label="Filter Leonida Wire by category"
-      className="flex flex-wrap gap-2"
+      aria-label="Filter Newswire by category"
+      className="no-scrollbar flex gap-2 overflow-x-auto"
     >
       {CATEGORY_FILTERS.map((filter) => {
         const isActive = filter.slug === active;
-        const className = `rounded-sm border px-3 py-1.5 text-[11px] uppercase tracking-[0.16em] transition ${
-          isActive
-            ? "border-cyan bg-cyan/10 text-cyan"
-            : "border-line text-muted hover:border-magenta hover:text-paper"
-        }`;
 
         if (onSelect) {
           return (
@@ -34,7 +30,7 @@ export function CategoryFilter({
               type="button"
               role="tab"
               aria-selected={isActive}
-              className={className}
+              className={pillClass(isActive)}
               onClick={() => onSelect(filter.slug)}
             >
               {filter.label}
@@ -53,7 +49,7 @@ export function CategoryFilter({
             href={href}
             role="tab"
             aria-selected={isActive}
-            className={className}
+            className={pillClass(isActive)}
           >
             {filter.label}
           </Link>

@@ -1,11 +1,18 @@
-import { SLUG_TO_CATEGORY } from "./site";
+import { HARDWARE_TAGS, SLUG_TO_CATEGORY } from "./site";
 import type { ArticleMeta, Category, CategorySlug } from "./types";
 
-export function filterArticlesByCategory(
-  articles: ArticleMeta[],
+export function filterArticlesByCategory<T extends ArticleMeta>(
+  articles: T[],
   slug: CategorySlug,
-): ArticleMeta[] {
+): T[] {
   if (slug === "all") return articles;
+  if (slug === "hardware") {
+    return articles.filter((article) =>
+      article.tags.some((tag) =>
+        HARDWARE_TAGS.includes(tag as (typeof HARDWARE_TAGS)[number]),
+      ),
+    );
+  }
   const category: Category = SLUG_TO_CATEGORY[slug];
   return articles.filter((article) => article.category === category);
 }

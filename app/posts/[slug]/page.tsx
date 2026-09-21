@@ -11,8 +11,8 @@ import {
   getRelatedArticles,
 } from "@/lib/articles";
 import { extractHeadings } from "@/lib/content";
-import { formatDate } from "@/lib/format";
-import { CATEGORY_TO_SLUG, SITE } from "@/lib/site";
+import { formatDate, formatReadTime } from "@/lib/format";
+import { CATEGORY_SHORT, CATEGORY_TO_SLUG, SITE } from "@/lib/site";
 import Link from "next/link";
 
 type PostPageProps = {
@@ -91,12 +91,13 @@ export default async function PostPage({ params }: PostPageProps) {
       />
       <article>
         <header className="mx-auto max-w-3xl">
-          <p className="text-[11px] uppercase tracking-[0.22em] text-cyan">
-            <Link href={`/leonida-wire?cat=${CATEGORY_TO_SLUG[article.category]}`}>
-              {article.category}
-            </Link>
-          </p>
-          <h1 className="font-display mt-3 text-4xl leading-[0.92] text-paper md:text-6xl">
+          <Link
+            href={`/leonida-wire?cat=${CATEGORY_TO_SLUG[article.category]}`}
+            className="rounded-full bg-raised px-3 py-1 text-[11px] font-semibold tracking-wide text-white uppercase hover:bg-white hover:text-black"
+          >
+            {CATEGORY_SHORT[article.category]}
+          </Link>
+          <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-paper md:text-6xl">
             {article.title}
           </h1>
           <p className="mt-4 text-base text-muted md:text-lg">{article.excerpt}</p>
@@ -105,7 +106,7 @@ export default async function PostPage({ params }: PostPageProps) {
               <User className="size-4" aria-hidden />
               <span>
                 {article.author.name}
-                <span className="text-paper/40"> · {article.author.role}</span>
+                <span className="text-muted-2"> · {article.author.role}</span>
               </span>
             </span>
             <time dateTime={article.publishedAt}>
@@ -113,15 +114,15 @@ export default async function PostPage({ params }: PostPageProps) {
             </time>
             <span className="inline-flex items-center gap-1.5">
               <Clock className="size-4" aria-hidden />
-              {article.readingTimeMinutes} min read
+              {formatReadTime(article.readingTimeMinutes)}
             </span>
           </div>
         </header>
-        <div className="mx-auto mt-8 max-w-4xl overflow-hidden rounded-sm border border-line">
+        <div className="group relative mx-auto mt-8 max-w-4xl overflow-hidden rounded-2xl">
           <CoverArt
             accent={article.coverAccent}
             title={article.title}
-            className="h-56 md:h-80"
+            className="aspect-video h-auto origin-center transition-transform duration-300 group-hover:scale-105"
           />
         </div>
         <div className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_14rem] xl:grid-cols-[minmax(0,1fr)_16rem]">
@@ -133,11 +134,11 @@ export default async function PostPage({ params }: PostPageProps) {
         <section aria-labelledby="related-heading" className="mt-16">
           <h2
             id="related-heading"
-            className="font-display mb-6 text-3xl text-paper"
+            className="mb-6 text-2xl font-extrabold tracking-tight text-paper"
           >
-            Related intel
+            Related
           </h2>
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-3">
             {related.map((item) => (
               <ArticleCard key={item.slug} article={item} />
             ))}

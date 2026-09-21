@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { Mail } from "lucide-react";
+import { ctaPillClass } from "@/components/pills";
 
 export function NewsletterCTA() {
   const [email, setEmail] = useState("");
@@ -21,26 +21,19 @@ export function NewsletterCTA() {
   }
 
   return (
-    <section
-      aria-labelledby="newsletter-heading"
-      className="border border-line bg-night-elevated p-6 md:p-8"
-    >
-      <p className="text-[11px] uppercase tracking-[0.22em] text-magenta">
-        Signal
-      </p>
+    <section aria-labelledby="newsletter-heading" className="w-full max-w-md">
       <h2
         id="newsletter-heading"
-        className="font-display mt-1 text-3xl text-paper md:text-4xl"
+        className="text-sm font-extrabold tracking-tight text-paper"
       >
-        Subscribe for Vice City Intel
+        Newsletter
       </h2>
-      <p className="mt-2 max-w-xl text-sm text-muted">
-        Breaking map notes, mission timers, and garage drops. No list-buying.
-        Unsubscribe whenever the heat dies down.
+      <p className="mt-1 text-sm text-muted">
+        Map notes, mission timers, and garage drops. Unsubscribe anytime.
       </p>
       <form
         onSubmit={onSubmit}
-        className="mt-5 flex flex-col gap-3 sm:flex-row"
+        className="mt-4 flex items-center rounded-full bg-raised p-1"
       >
         <label className="sr-only" htmlFor="newsletter-email">
           Email address
@@ -51,26 +44,25 @@ export function NewsletterCTA() {
           required
           value={email}
           onChange={(event) => setEmail(event.target.value)}
-          placeholder="you@vicecity.afterdark"
-          className="h-11 flex-1 rounded-sm border border-line bg-night px-3 text-sm text-paper outline-none placeholder:text-muted focus:border-cyan"
+          placeholder="Email address"
+          className="h-10 min-w-0 flex-1 rounded-full bg-transparent px-4 text-sm text-paper outline-none placeholder:text-muted"
         />
         <button
           type="submit"
           disabled={status === "loading"}
-          className="inline-flex h-11 items-center justify-center gap-2 rounded-sm bg-cyan px-5 font-display text-lg tracking-[0.12em] text-night hover:bg-magenta hover:text-paper disabled:opacity-60"
+          className={ctaPillClass("gold", "h-10 px-4 disabled:opacity-60")}
         >
-          <Mail className="size-4" aria-hidden />
           {status === "loading" ? "Sending" : "Subscribe"}
         </button>
       </form>
       {status === "done" ? (
-        <p className="mt-3 text-sm text-cyan" role="status">
-          You&apos;re on the wire. Check your inbox for Vice City intel.
+        <p className="mt-3 text-sm text-gold" role="status">
+          You&apos;re on the wire.
         </p>
       ) : null}
       {status === "error" ? (
-        <p className="mt-3 text-sm text-magenta" role="alert">
-          Couldn&apos;t reach the desk. Try again in a minute.
+        <p className="mt-3 text-sm text-muted" role="alert">
+          Enter a valid email and try again.
         </p>
       ) : null}
     </section>

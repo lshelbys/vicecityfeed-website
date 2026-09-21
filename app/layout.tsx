@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import { Bebas_Neue, IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
+import type { ReactNode } from "react";
+import { Inter } from "next/font/google";
 
 export const dynamic = "force-static";
 import { Footer } from "@/components/Footer";
@@ -8,24 +9,9 @@ import { getArticleMeta } from "@/lib/articles";
 import { SITE } from "@/lib/site";
 import "./globals.css";
 
-const display = Bebas_Neue({
-  weight: "400",
-  subsets: ["latin"],
-  variable: "--font-display",
-  display: "swap",
-});
-
-const body = IBM_Plex_Sans({
-  weight: ["400", "500", "600", "700"],
+const body = Inter({
   subsets: ["latin"],
   variable: "--font-body",
-  display: "swap",
-});
-
-const mono = IBM_Plex_Mono({
-  weight: ["400", "500"],
-  subsets: ["latin"],
-  variable: "--font-mono",
   display: "swap",
 });
 
@@ -75,24 +61,23 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#121216",
+  themeColor: "#0B0B0B",
   width: "device-width",
   initialScale: 1,
   colorScheme: "dark",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({
+  children,
+}: Readonly<{ children: ReactNode }>) {
   const articles = getArticleMeta();
 
   return (
-    <html
-      lang="en"
-      className={`${display.variable} ${body.variable} ${mono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">
+    <html lang="en" className={`${body.variable} h-full antialiased`}>
+      <body className={`${body.className} min-h-full flex flex-col bg-ink text-paper`}>
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:bg-cyan focus:px-3 focus:py-2 focus:text-night"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-white focus:px-3 focus:py-2 focus:text-black"
         >
           Skip to content
         </a>

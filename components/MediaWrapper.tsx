@@ -8,14 +8,12 @@ type MediaWrapperProps = {
 
 export function MediaWrapper({
   caption,
-  accent = "cyan",
+  accent = "sunset",
 }: MediaWrapperProps) {
   return (
-    <figure className="my-8 overflow-hidden rounded-sm border border-line bg-night-card">
-      <CoverArt accent={accent} title={caption} className="h-56 md:h-72" />
-      <figcaption className="border-t border-line px-4 py-3 font-mono text-xs tracking-[0.04em] text-muted">
-        {caption}
-      </figcaption>
+    <figure className="my-8 overflow-hidden rounded-2xl bg-surface">
+      <CoverArt accent={accent} title={caption} className="aspect-video h-auto" />
+      <figcaption className="px-4 py-3 text-xs text-muted">{caption}</figcaption>
     </figure>
   );
 }

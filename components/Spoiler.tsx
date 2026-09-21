@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { EyeOff } from "lucide-react";
+import { pillClass } from "@/components/pills";
 
 type SpoilerProps = {
   children: React.ReactNode;
@@ -11,8 +12,8 @@ export function Spoiler({ children }: SpoilerProps) {
   const [open, setOpen] = useState(false);
 
   return (
-    <aside className="my-6 border border-magenta/40 bg-magenta/8 p-4">
-      <p className="mb-2 inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-magenta">
+    <aside className="my-6 rounded-2xl border border-white/10 bg-surface p-4">
+      <p className="mb-2 inline-flex items-center gap-2 text-[11px] font-semibold tracking-[0.16em] text-muted uppercase">
         <EyeOff className="size-4" aria-hidden />
         Spoiler
       </p>
@@ -22,7 +23,7 @@ export function Spoiler({ children }: SpoilerProps) {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="mt-1 block text-sm text-muted underline decoration-magenta/50 underline-offset-4 hover:text-paper"
+          className={pillClass(false, "mt-1")}
         >
           Reveal spoiler
         </button>

@@ -36,12 +36,12 @@ export function TableOfContents({ headings }: TableOfContentsProps) {
   return (
     <nav
       aria-label="Table of contents"
-      className="sticky top-24 hidden lg:block"
+      className="sticky top-32 hidden lg:block"
     >
-      <p className="text-[11px] uppercase tracking-[0.22em] text-magenta">
+      <p className="text-[11px] font-semibold tracking-[0.18em] text-muted uppercase">
         On this page
       </p>
-      <ol className="mt-3 space-y-2 border-l border-line">
+      <ol className="mt-3 space-y-2 border-l border-white/10">
         {headings.map((heading) => (
           <li key={heading.id}>
             <a
@@ -50,7 +50,7 @@ export function TableOfContents({ headings }: TableOfContentsProps) {
                 heading.level === 3 ? "pl-6" : "pl-4"
               } ${
                 active === heading.id
-                  ? "border-cyan text-cyan"
+                  ? "border-gold text-paper"
                   : "border-transparent text-muted hover:text-paper"
               }`}
             >

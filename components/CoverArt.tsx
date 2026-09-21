@@ -1,12 +1,42 @@
 import type { CoverAccent } from "@/lib/types";
 
-const ACCENT: Record<CoverAccent, string> = {
-  cyan: "from-cyan/40 via-transparent to-magenta/25",
-  magenta: "from-magenta/45 via-transparent to-cyan/20",
-  sunset: "from-magenta/35 via-cyan/15 to-magenta/35",
+type Palette = {
+  from: string;
+  via: string;
+  to: string;
+  haze: string;
+  structure: string;
+  window: string;
 };
 
-const SKYLINE = [42, 70, 38, 88, 55, 96, 48, 74, 36, 62, 82, 44];
+const PALETTE: Record<CoverAccent, Palette> = {
+  cyan: {
+    from: "#14181f",
+    via: "#1c2430",
+    to: "#0b0b0b",
+    haze: "rgb(252 175 23 / 0.12)",
+    structure: "rgb(255 255 255 / 0.14)",
+    window: "rgb(252 175 23 / 0.55)",
+  },
+  magenta: {
+    from: "#1a1512",
+    via: "#2a2118",
+    to: "#0b0b0b",
+    haze: "rgb(255 192 0 / 0.14)",
+    structure: "rgb(255 255 255 / 0.12)",
+    window: "rgb(255 192 0 / 0.5)",
+  },
+  sunset: {
+    from: "#1c170e",
+    via: "#2c2414",
+    to: "#0b0b0b",
+    haze: "rgb(252 175 23 / 0.2)",
+    structure: "rgb(255 255 255 / 0.1)",
+    window: "rgb(252 175 23 / 0.7)",
+  },
+};
+
+const BLOCKS = [38, 62, 44, 78, 52, 90, 36, 70, 48, 84, 40, 66];
 
 type CoverArtProps = {
   accent: CoverAccent;
@@ -14,29 +44,53 @@ type CoverArtProps = {
   className?: string;
 };
 
+function hashTitle(title: string): number {
+  return title.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
+}
+
 export function CoverArt({ accent, title, className = "" }: CoverArtProps) {
+  const palette = PALETTE[accent];
+  const offset = hashTitle(title) % BLOCKS.length;
+
   return (
     <div
-      className={`cover-grid relative overflow-hidden bg-night-elevated ${className}`}
+      className={`film-grain relative overflow-hidden bg-ink ${className}`}
       aria-hidden="true"
     >
-      <div className={`absolute inset-0 bg-linear-to-br ${ACCENT[accent]}`} />
-      <div className="absolute -right-8 top-0 h-44 w-44 rounded-full bg-cyan/25 blur-3xl" />
-      <div className="absolute -left-10 bottom-0 h-40 w-40 rounded-full bg-magenta/30 blur-3xl" />
-      <div className="absolute inset-x-4 bottom-0 flex h-[70%] items-end justify-between gap-1">
-        {SKYLINE.map((height, index) => (
-          <span
-            key={`${height}-${index}`}
-            className={
-              index % 4 === 2
-                ? "bg-cyan/55"
-                : index % 5 === 0
-                  ? "bg-magenta/50"
-                  : "bg-paper/20"
-            }
-            style={{ height: `${height}%`, width: "100%" }}
-          />
-        ))}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: `linear-gradient(160deg, ${palette.from} 0%, ${palette.via} 42%, ${palette.to} 100%)`,
+        }}
+      />
+      <div
+        className="absolute -top-16 left-1/3 h-48 w-64 rounded-full"
+        style={{ background: palette.haze }}
+      />
+      <div className="absolute inset-x-0 bottom-0 h-1/2 bg-linear-to-t from-black to-transparent" />
+      <div className="absolute inset-x-6 bottom-0 flex h-[62%] items-end justify-between gap-[3px]">
+        {BLOCKS.map((height, index) => {
+          const shifted = BLOCKS[(index + offset) % BLOCKS.length];
+          const lit = (index + offset) % 5 === 0;
+          return (
+            <span
+              key={`${title}-${index}`}
+              className="relative"
+              style={{
+                height: `${shifted}%`,
+                width: "100%",
+                background: palette.structure,
+              }}
+            >
+              {lit ? (
+                <span
+                  className="absolute top-1/3 left-1/4 h-1.5 w-1.5"
+                  style={{ background: palette.window }}
+                />
+              ) : null}
+            </span>
+          );
+        })}
       </div>
       <span className="sr-only">{title}</span>
     </div>

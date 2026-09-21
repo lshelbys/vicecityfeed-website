@@ -13,6 +13,7 @@ export const CATEGORY_SLUGS = [
   "map-lore",
   "vehicles-guns",
   "guides",
+  "hardware",
 ] as const;
 
 export type CategorySlug = (typeof CATEGORY_SLUGS)[number];
@@ -56,6 +57,10 @@ export type Article = ArticleMeta & {
   content: string;
   readingTimeMinutes: number;
   wordCount: number;
+};
+
+export type FeedArticle = ArticleMeta & {
+  readingTimeMinutes: number;
 };
 
 export type Difficulty = "Street" | "Heist" | "Legend";
