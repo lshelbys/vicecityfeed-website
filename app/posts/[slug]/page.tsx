@@ -118,7 +118,10 @@ export default async function PostPage({ params }: PostPageProps) {
             </span>
           </div>
         </header>
-        <div className="group relative mx-auto mt-8 max-w-4xl overflow-hidden rounded-2xl">
+        <div
+          data-scroll-cue-until
+          className="group relative mx-auto mt-8 max-w-4xl overflow-hidden rounded-2xl"
+        >
           <CoverArt
             accent={article.coverAccent}
             title={article.title}

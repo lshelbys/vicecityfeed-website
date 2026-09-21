@@ -5,6 +5,7 @@ import { Inter } from "next/font/google";
 export const dynamic = "force-static";
 import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
+import { ScrollCue } from "@/components/ScrollCue";
 import { getArticleMeta } from "@/lib/articles";
 import { SITE } from "@/lib/site";
 import "./globals.css";
@@ -82,6 +83,7 @@ export default function RootLayout({
           Skip to content
         </a>
         <Navbar articles={articles} />
+        <ScrollCue />
         <div className="flex-1">{children}</div>
         <Footer />
       </body>

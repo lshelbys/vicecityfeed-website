@@ -13,7 +13,11 @@ export function Hero({ article }: HeroProps) {
   const cta = articleCta(article.tags, article.slug);
 
   return (
-    <section aria-labelledby="hero-heading" className="px-4 pt-4 md:px-6">
+    <section
+      aria-labelledby="hero-heading"
+      data-scroll-cue-until
+      className="px-4 pt-4 md:px-6"
+    >
       <article className="group relative mx-auto max-w-7xl overflow-hidden rounded-2xl">
         <Link href={href} className="block">
           <div className="relative aspect-16/10 min-h-[22rem] overflow-hidden md:min-h-[28rem] lg:min-h-[34rem]">
