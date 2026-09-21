@@ -30,11 +30,18 @@ export function ScrollCue() {
   }, []);
 
   useEffect(() => {
-    const frame = requestAnimationFrame(update);
+    const frame = window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(update);
+    });
+    const retry = window.setTimeout(update, 80);
+    const observer = new ResizeObserver(update);
+    observer.observe(document.documentElement);
     window.addEventListener("scroll", update, { passive: true });
     window.addEventListener("resize", update);
     return () => {
-      cancelAnimationFrame(frame);
+      window.cancelAnimationFrame(frame);
+      window.clearTimeout(retry);
+      observer.disconnect();
       window.removeEventListener("scroll", update);
       window.removeEventListener("resize", update);
     };
