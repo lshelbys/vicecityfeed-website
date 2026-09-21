@@ -1,0 +1,186 @@
+@import "tailwindcss";
+
+:root {
+  --night: #121216;
+  --night-elevated: #18181f;
+  --night-card: #1c1c26;
+  --cyan: #00f0ff;
+  --magenta: #ff007f;
+  --paper: #f4f4f6;
+  --muted: #9a9aa8;
+  --line: rgb(244 244 246 / 0.12);
+}
+
+@theme inline {
+  --color-night: var(--night);
+  --color-night-elevated: var(--night-elevated);
+  --color-night-card: var(--night-card);
+  --color-cyan: var(--cyan);
+  --color-magenta: var(--magenta);
+  --color-paper: var(--paper);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --font-sans: var(--font-body);
+  --font-display: var(--font-display);
+  --font-mono: var(--font-mono);
+}
+
+* {
+  border-color: var(--line);
+}
+
+html {
+  background: var(--night);
+  color: var(--paper);
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(1200px 600px at 10% -10%, rgb(0 240 255 / 0.07), transparent 50%),
+    radial-gradient(900px 500px at 110% 0%, rgb(255 0 127 / 0.08), transparent 45%),
+    var(--night);
+  color: var(--paper);
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+}
+
+::selection {
+  background: rgb(0 240 255 / 0.25);
+  color: var(--paper);
+}
+
+.font-display {
+  font-family: var(--font-display), Impact, "Arial Narrow", sans-serif;
+  letter-spacing: 0.04em;
+}
+
+.logo-glow {
+  transition:
+    text-shadow 220ms ease,
+    color 220ms ease,
+    filter 220ms ease;
+}
+
+.logo-glow:hover,
+.logo-glow:focus-visible {
+  color: var(--cyan);
+  text-shadow:
+    0 0 8px rgb(0 240 255 / 0.9),
+    0 0 22px rgb(0 240 255 / 0.7),
+    0 0 42px rgb(255 0 127 / 0.55);
+}
+
+.neon-border {
+  position: relative;
+  background: var(--night-card);
+  box-shadow:
+    0 0 0 1px rgb(244 244 246 / 0.08),
+    0 18px 40px rgb(0 0 0 / 0.35);
+}
+
+.neon-border:hover {
+  box-shadow:
+    0 0 0 1px rgb(0 240 255 / 0.35),
+    0 0 28px rgb(0 240 255 / 0.12),
+    0 18px 40px rgb(0 0 0 / 0.4);
+}
+
+.ticker-track {
+  animation: ticker 42s linear infinite;
+}
+
+.ticker-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes ticker {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .ticker-track {
+    animation: none;
+  }
+}
+
+.prose-vcf {
+  color: rgb(244 244 246 / 0.88);
+  font-size: 1.0625rem;
+  line-height: 1.75;
+}
+
+.prose-vcf p {
+  margin: 1.1em 0;
+}
+
+.prose-vcf aside p {
+  margin: 0.35em 0;
+}
+
+.prose-vcf h2 {
+  font-family: var(--font-display), sans-serif;
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  letter-spacing: 0.04em;
+  color: var(--paper);
+  margin: 2rem 0 0.75rem;
+  scroll-margin-top: 6rem;
+}
+
+.prose-vcf h3 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--cyan);
+  margin: 1.6rem 0 0.6rem;
+  scroll-margin-top: 6rem;
+}
+
+.prose-vcf ul,
+.prose-vcf ol {
+  margin: 1em 0 1em 1.2em;
+}
+
+.prose-vcf li {
+  margin: 0.35em 0;
+}
+
+.prose-vcf a {
+  color: var(--cyan);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.prose-vcf a:hover {
+  color: var(--magenta);
+}
+
+.prose-vcf strong {
+  color: var(--paper);
+  font-weight: 600;
+}
+
+.prose-vcf blockquote {
+  margin: 1.5rem 0;
+  padding: 0.9rem 1.1rem 0.9rem 1.2rem;
+  border-left: 3px solid var(--cyan);
+  background: rgb(0 240 255 / 0.05);
+  color: var(--paper);
+  box-shadow: inset 0 0 24px rgb(0 240 255 / 0.04);
+  font-style: italic;
+}
+
+.cover-grid {
+  background-image:
+    linear-gradient(rgb(244 244 246 / 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(244 244 246 / 0.04) 1px, transparent 1px);
+  background-size: 28px 28px;
+}

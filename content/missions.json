@@ -1,0 +1,68 @@
+[
+  {
+    "slug": "port-gellhorn-run",
+    "title": "The Port Gellhorn Run",
+    "excerpt": "Split the crane, the office, and the getaway boat. Best early Heist if Lucia takes overwatch.",
+    "difficulty": "Heist",
+    "durationLabel": "22:00",
+    "durationMinutes": 22,
+    "protagonists": ["Jason", "Lucia"],
+    "location": "Port Gellhorn",
+    "articleSlug": "port-gellhorn-run-mission-intel"
+  },
+  {
+    "slug": "pink-sands-getaway",
+    "title": "Pink Sands Getaway",
+    "excerpt": "A short coastal smash-and-grab. Street difficulty, brutal if you idle on the causeway.",
+    "difficulty": "Street",
+    "durationLabel": "09:30",
+    "durationMinutes": 9,
+    "protagonists": ["Lucia"],
+    "location": "Vice City Beach",
+    "articleSlug": "first-ten-hours-leonida-survival"
+  },
+  {
+    "slug": "grassrivers-ambush",
+    "title": "Grassrivers Ambush",
+    "excerpt": "Night swamp approach, no headlights, one window to hit the convoy. Legend for a reason.",
+    "difficulty": "Legend",
+    "durationLabel": "31:00",
+    "durationMinutes": 31,
+    "protagonists": ["Jason"],
+    "location": "Leonida Grassrivers",
+    "articleSlug": "leonida-keys-swamps-lore"
+  },
+  {
+    "slug": "vice-tonight-broadcast",
+    "title": "Vice Tonight Broadcast",
+    "excerpt": "Infiltrate a live taping, plant the drive, walk out with the studio lights still hot.",
+    "difficulty": "Street",
+    "durationLabel": "14:00",
+    "durationMinutes": 14,
+    "protagonists": ["Lucia"],
+    "location": "Vice City Media Row",
+    "articleSlug": "neon-after-dark-vice-city-districts"
+  },
+  {
+    "slug": "keys-connector",
+    "title": "The Keys Connector",
+    "excerpt": "Bridge-to-bridge transfer with a dual-vehicle swap. Miss the ferry window and the Heist collapses.",
+    "difficulty": "Heist",
+    "durationLabel": "18:45",
+    "durationMinutes": 19,
+    "protagonists": ["Jason", "Lucia"],
+    "location": "Leonida Keys",
+    "articleSlug": "leonida-map-size-compared"
+  },
+  {
+    "slug": "midnight-marina",
+    "title": "Midnight at the Marina",
+    "excerpt": "Yacht security, wet suits, and a garage extraction that rewards players who built the right boat.",
+    "difficulty": "Legend",
+    "durationLabel": "27:10",
+    "durationMinutes": 27,
+    "protagonists": ["Jason", "Lucia"],
+    "location": "Bayside Marina",
+    "articleSlug": "bayside-marina-mod-garage-preview"
+  }
+]
