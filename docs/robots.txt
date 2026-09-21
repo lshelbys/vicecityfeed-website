@@ -1,0 +1,5 @@
+User-Agent: *
+Allow: /
+
+Host: vicecityfeed.com
+Sitemap: https://vicecityfeed.com/sitemap.xml
