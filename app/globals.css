@@ -123,6 +123,10 @@ body {
   margin: 1.1em 0;
 }
 
+.prose-vcf aside p {
+  margin: 0.35em 0;
+}
+
 .prose-vcf h2 {
   font-family: var(--font-display), sans-serif;
   font-size: clamp(1.8rem, 3vw, 2.4rem);

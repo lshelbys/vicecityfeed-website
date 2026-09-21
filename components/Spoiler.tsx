@@ -22,7 +22,7 @@ export function Spoiler({ children }: SpoilerProps) {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="text-sm text-muted underline decoration-magenta/50 underline-offset-4 hover:text-paper"
+          className="mt-1 block text-sm text-muted underline decoration-magenta/50 underline-offset-4 hover:text-paper"
         >
           Reveal spoiler
         </button>

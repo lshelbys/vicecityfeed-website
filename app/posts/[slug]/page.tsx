@@ -124,7 +124,7 @@ export default async function PostPage({ params }: PostPageProps) {
             className="h-56 md:h-80"
           />
         </div>
-        <div className="mt-10 grid gap-10 xl:grid-cols-[minmax(0,1fr)_16rem]">
+        <div className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_14rem] xl:grid-cols-[minmax(0,1fr)_16rem]">
           <ArticleBody markdown={article.content} />
           <TableOfContents headings={headings} />
         </div>

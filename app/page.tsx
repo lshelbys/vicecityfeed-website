@@ -1,7 +1,6 @@
 import { BreakingTicker } from "@/components/BreakingTicker";
 import { HeroGrid } from "@/components/HeroGrid";
 import { MissionCard } from "@/components/MissionCard";
-import { NewsletterCTA } from "@/components/NewsletterCTA";
 import { WireFeed } from "@/components/WireFeed";
 import { getArticleMeta, getBreakingItems, getHeroArticles } from "@/lib/articles";
 import { getMissions } from "@/lib/missions";
@@ -85,10 +84,6 @@ export default function HomePage() {
           ))}
         </div>
       </section>
-
-      <div className="mx-auto max-w-7xl px-4 py-12 md:px-6">
-        <NewsletterCTA />
-      </div>
     </main>
   );
 }

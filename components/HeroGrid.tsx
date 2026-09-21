@@ -34,7 +34,7 @@ export function HeroGrid({ lead, secondary }: HeroGridProps) {
               title={lead.title}
               className="h-64 sm:h-80 lg:h-full lg:min-h-[28rem]"
             />
-            <div className="absolute inset-0 bg-linear-to-t from-night via-night/55 to-transparent" />
+            <div className="absolute inset-0 bg-linear-to-t from-night via-night/35 to-transparent" />
             <div className="absolute inset-x-0 bottom-0 flex flex-col gap-3 p-6 md:p-8">
               <div className="flex flex-wrap items-center gap-3 text-[11px] uppercase tracking-[0.18em] text-cyan">
                 <span>{lead.category}</span>
