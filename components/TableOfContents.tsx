@@ -50,8 +50,8 @@ export function TableOfContents({ headings }: TableOfContentsProps) {
                 heading.level === 3 ? "pl-6" : "pl-4"
               } ${
                 active === heading.id
-                  ? "border-gold text-paper"
-                  : "border-transparent text-muted hover:text-paper"
+                  ? "border-teal text-teal"
+                  : "border-transparent text-muted hover:text-magenta"
               }`}
             >
               {heading.text}

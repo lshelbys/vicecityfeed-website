@@ -90,10 +90,10 @@ export default async function PostPage({ params }: PostPageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <article>
-        <header className="mx-auto max-w-3xl">
+        <header className="reveal mx-auto max-w-3xl">
           <Link
             href={`/leonida-wire?cat=${CATEGORY_TO_SLUG[article.category]}`}
-            className="rounded-full bg-raised px-3 py-1 text-[11px] font-semibold tracking-wide text-white uppercase hover:bg-white hover:text-black"
+            className="rounded-full bg-raised px-3 py-1 text-[11px] font-semibold tracking-wide text-white uppercase hover:bg-teal hover:text-ink"
           >
             {CATEGORY_SHORT[article.category]}
           </Link>
@@ -118,15 +118,13 @@ export default async function PostPage({ params }: PostPageProps) {
             </span>
           </div>
         </header>
-        <div
-          data-scroll-cue-until
-          className="group relative mx-auto mt-8 max-w-4xl overflow-hidden rounded-2xl"
-        >
+        <div className="group relative mx-auto mt-8 max-w-4xl overflow-hidden rounded-2xl">
           <CoverArt
             accent={article.coverAccent}
             title={article.title}
-            className="aspect-video h-auto origin-center transition-transform duration-300 group-hover:scale-105"
+            className="aspect-video h-auto origin-center transition-transform duration-500 group-hover:scale-110"
           />
+          <div className="vice-line absolute inset-x-0 top-0" />
         </div>
         <div className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_14rem] xl:grid-cols-[minmax(0,1fr)_16rem]">
           <ArticleBody markdown={article.content} />
@@ -141,7 +139,7 @@ export default async function PostPage({ params }: PostPageProps) {
           >
             Related
           </h2>
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="reveal-stagger grid gap-6 md:grid-cols-3">
             {related.map((item) => (
               <ArticleCard key={item.slug} article={item} />
             ))}

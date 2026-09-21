@@ -11,28 +11,28 @@ type Palette = {
 
 const PALETTE: Record<CoverAccent, Palette> = {
   cyan: {
-    from: "#14181f",
-    via: "#1c2430",
+    from: "#10201f",
+    via: "#1a3334",
     to: "#0b0b0b",
-    haze: "rgb(252 175 23 / 0.12)",
-    structure: "rgb(255 255 255 / 0.14)",
-    window: "rgb(252 175 23 / 0.55)",
+    haze: "rgb(59 184 179 / 0.18)",
+    structure: "rgb(255 255 255 / 0.13)",
+    window: "rgb(59 184 179 / 0.7)",
   },
   magenta: {
-    from: "#1a1512",
-    via: "#2a2118",
+    from: "#1c1016",
+    via: "#2a1822",
     to: "#0b0b0b",
-    haze: "rgb(255 192 0 / 0.14)",
+    haze: "rgb(217 86 138 / 0.16)",
     structure: "rgb(255 255 255 / 0.12)",
-    window: "rgb(255 192 0 / 0.5)",
+    window: "rgb(217 86 138 / 0.65)",
   },
   sunset: {
-    from: "#1c170e",
-    via: "#2c2414",
+    from: "#1c140c",
+    via: "#2a1c12",
     to: "#0b0b0b",
-    haze: "rgb(252 175 23 / 0.2)",
+    haze: "rgb(240 138 74 / 0.2)",
     structure: "rgb(255 255 255 / 0.1)",
-    window: "rgb(252 175 23 / 0.7)",
+    window: "rgb(252 175 23 / 0.75)",
   },
 };
 

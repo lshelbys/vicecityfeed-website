@@ -34,7 +34,7 @@ export default function HomePage() {
       >
         <h2
           id="wire-heading"
-          className="mb-6 text-2xl font-extrabold tracking-tight text-paper md:text-3xl"
+          className="reveal mb-6 text-2xl font-extrabold tracking-tight text-paper md:text-3xl"
         >
           Newswire
         </h2>

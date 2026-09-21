@@ -19,7 +19,7 @@ export default function TheMapPage() {
         title="The Map"
         description="Acreage, density, nightlife districts, and the quiet parts of the state the trailers skip."
       />
-      <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+      <div className="reveal-stagger grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
         {articles.map((article) => (
           <ArticleCard
             key={article.slug}

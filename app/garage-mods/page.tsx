@@ -21,7 +21,7 @@ export default function GarageModsPage() {
         title="Garage & Mods"
         description="Liveries, stance, ammo types, and what the PC community should expect once the toolchain lands."
       />
-      <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+      <div className="reveal-stagger grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
         {articles.map((article) => (
           <ArticleCard
             key={article.slug}

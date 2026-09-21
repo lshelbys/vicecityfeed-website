@@ -19,7 +19,7 @@ export default function MissionIntelPage() {
         title="Mission Intel"
         description="Difficulty, estimated timers, and dual-protag splits. These are editorial notes, not spoiler-free — open the linked briefing before you burn a save."
       />
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <div className="reveal-stagger grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {missions.map((mission) => (
           <MissionCard key={mission.slug} mission={mission} />
         ))}

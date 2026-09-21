@@ -3,7 +3,10 @@ import { SITE } from "@/lib/site";
 
 export function SiteLogo() {
   return (
-    <Link href="/" className="flex min-w-0 items-center gap-2.5 text-paper">
+    <Link
+      href="/"
+      className="flex min-w-0 items-center gap-2.5 text-paper transition-colors duration-200 hover:text-teal"
+    >
       <span className="flex size-8 shrink-0 items-center justify-center rounded-md bg-gold">
         <svg viewBox="0 0 24 24" className="size-4" aria-hidden>
           <path

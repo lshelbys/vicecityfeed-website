@@ -39,7 +39,7 @@ export function Footer() {
           <ul className="flex flex-wrap gap-x-5 gap-y-2">
             {FOOTER_SITEMAP.map((item) => (
               <li key={item.href}>
-                <Link href={item.href} className="text-muted hover:text-paper">
+                <Link href={item.href} className="text-muted transition-colors hover:text-teal">
                   {item.label}
                 </Link>
               </li>

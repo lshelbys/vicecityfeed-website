@@ -43,6 +43,7 @@ export function Navbar({ articles }: NavbarProps) {
 
   return (
     <header className="sticky top-0 z-50 bg-ink">
+      <div className="vice-line" />
       <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3 md:px-6">
         <SiteLogo />
         <div className="ml-auto flex items-center gap-2">
@@ -76,7 +77,7 @@ export function Navbar({ articles }: NavbarProps) {
                     <Link
                       href={link.href}
                       role="menuitem"
-                      className="flex items-center gap-2 rounded-full px-3 py-2 text-sm text-paper hover:bg-white hover:text-black"
+                      className="flex items-center gap-2 rounded-full px-3 py-2 text-sm text-paper hover:bg-teal hover:text-ink"
                       onClick={() => setLauncherOpen(false)}
                       {...(link.external
                         ? { target: "_blank", rel: "noreferrer noopener" }

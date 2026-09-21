@@ -5,7 +5,6 @@ import { Inter } from "next/font/google";
 export const dynamic = "force-static";
 import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
-import { ScrollCue } from "@/components/ScrollCue";
 import { getArticleMeta } from "@/lib/articles";
 import { SITE } from "@/lib/site";
 import "./globals.css";
@@ -78,12 +77,11 @@ export default function RootLayout({
       <body className={`${body.className} min-h-full flex flex-col bg-ink text-paper`}>
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-white focus:px-3 focus:py-2 focus:text-black"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-teal focus:px-3 focus:py-2 focus:text-ink"
         >
           Skip to content
         </a>
         <Navbar articles={articles} />
-        <ScrollCue />
         <div className="flex-1">{children}</div>
         <Footer />
       </body>

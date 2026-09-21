@@ -21,7 +21,7 @@ export default function ReviewsPage() {
         title="Reviews"
         description="Character studies, radio, and the night economy — scored like a desk, not a hype cycle."
       />
-      <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+      <div className="reveal-stagger grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
         {articles.map((article) => (
           <ArticleCard
             key={article.slug}

@@ -6,7 +6,7 @@ type PageHeaderProps = {
 
 export function PageHeader({ kicker, title, description }: PageHeaderProps) {
   return (
-    <header className="mb-8" data-scroll-cue-until>
+    <header className="reveal mb-8">
       <p className="text-[11px] font-semibold tracking-[0.18em] text-muted uppercase">
         {kicker}
       </p>
