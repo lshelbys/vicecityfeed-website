@@ -38,8 +38,13 @@ jobs:
 
       - name: Ensure Pages metadata
         run: |
+          printf '%s\n' 'vicecityfeed.com' > out/CNAME
           touch out/.nojekyll
-          cp CNAME out/CNAME
+          test -s out/CNAME
+          test -f out/.nojekyll
+          test -f out/index.html
+          echo '--- out/CNAME ---'
+          cat out/CNAME
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
@@ -56,3 +61,13 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Bind custom domain
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh api --method PUT "repos/${{ github.repository }}/pages" \
+            -H "Accept: application/vnd.github+json" \
+            -f build_type='workflow' \
+            -f cname='vicecityfeed.com'
