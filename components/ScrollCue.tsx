@@ -8,10 +8,10 @@ const MIN_OVERFLOW = 240;
 
 function hideAfterY(): number {
   const until = document.querySelector<HTMLElement>(UNTIL);
-  if (until) {
-    return window.scrollY + until.getBoundingClientRect().bottom - 72;
-  }
-  return window.innerHeight * 0.7;
+  const marked = until
+    ? window.scrollY + until.getBoundingClientRect().bottom
+    : 0;
+  return Math.max(marked, window.innerHeight * 0.5);
 }
 
 function shouldShow(): boolean {
