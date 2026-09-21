@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Bebas_Neue, IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
+
+export const dynamic = "force-static";
 import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
 import { getArticleMeta } from "@/lib/articles";

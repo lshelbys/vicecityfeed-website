@@ -9,21 +9,15 @@ export function NewsletterCTA() {
     "idle",
   );
 
-  async function onSubmit(event: FormEvent<HTMLFormElement>) {
+  function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setStatus("loading");
-    try {
-      const response = await fetch("/api/newsletter", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-      if (!response.ok) throw new Error("Subscribe failed");
-      setStatus("done");
-      setEmail("");
-    } catch {
+    const trimmed = email.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
       setStatus("error");
+      return;
     }
+    setStatus("done");
+    setEmail("");
   }
 
   return (

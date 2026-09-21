@@ -1,21 +1,43 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Suspense, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { ArticleCard } from "@/components/ArticleCard";
 import { CategoryFilter } from "@/components/CategoryFilter";
 import { filterArticlesByCategory } from "@/lib/filters";
 import type { ArticleMeta, CategorySlug } from "@/lib/types";
 
+const VALID: CategorySlug[] = [
+  "all",
+  "leaks-news",
+  "map-lore",
+  "vehicles-guns",
+  "guides",
+];
+
 type WireFeedProps = {
   articles: ArticleMeta[];
   initialCategory?: CategorySlug;
+  syncWithUrl?: boolean;
 };
 
-export function WireFeed({
+function categoryFromParam(value: string | null): CategorySlug | null {
+  if (value && VALID.includes(value as CategorySlug)) {
+    return value as CategorySlug;
+  }
+  return null;
+}
+
+function WireFeedInner({
   articles,
   initialCategory = "all",
+  syncWithUrl = false,
 }: WireFeedProps) {
-  const [category, setCategory] = useState<CategorySlug>(initialCategory);
+  const searchParams = useSearchParams();
+  const fromUrl = syncWithUrl ? categoryFromParam(searchParams.get("cat")) : null;
+  const [category, setCategory] = useState<CategorySlug>(
+    fromUrl ?? initialCategory,
+  );
 
   const filtered = useMemo(
     () => filterArticlesByCategory(articles, category),
@@ -35,5 +57,17 @@ export function WireFeed({
         </div>
       )}
     </div>
+  );
+}
+
+export function WireFeed(props: WireFeedProps) {
+  return (
+    <Suspense
+      fallback={
+        <p className="text-sm text-muted">Loading the wire…</p>
+      }
+    >
+      <WireFeedInner {...props} />
+    </Suspense>
   );
 }
