@@ -38,7 +38,6 @@ const PROTECTED = new Set([
   "eslint.config.mjs",
   "postcss.config.mjs",
   "README.md",
-  "_config.yml",
 ]);
 
 if (!existsSync(out)) {
@@ -81,7 +80,10 @@ for (const name of readdirSync(out)) {
 
 writeFileSync(manifestPath, `${JSON.stringify(published.sort(), null, 2)}\n`);
 writeFileSync(join(root, "CNAME"), "vicecityfeed.com\n");
-writeFileSync(join(root, ".nojekyll"), "");
+writeFileSync(
+  join(root, ".nojekyll"),
+  "# Disable Jekyll so GitHub Pages publishes index.html and _next/ as-is.\n",
+);
 rmSync(join(root, "docs"), { recursive: true, force: true });
 
 console.log(
