@@ -17,6 +17,16 @@ type NavbarProps = {
   logoSrc?: string;
 };
 
+function isTypingTarget(target: EventTarget | null) {
+  if (!(target instanceof HTMLElement)) return false;
+  if (target.isContentEditable) return true;
+  const tag = target.tagName;
+  if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return true;
+  return Boolean(
+    target.closest("input, textarea, select, [contenteditable='true']"),
+  );
+}
+
 export function Navbar({ articles, logoSrc }: NavbarProps) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [compact, setCompact] = useState(false);
@@ -26,6 +36,13 @@ export function Navbar({ articles, logoSrc }: NavbarProps) {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
         event.preventDefault();
         setSearchOpen(true);
+        return;
+      }
+      if (event.key === "/" && !event.metaKey && !event.ctrlKey && !event.altKey) {
+        if (isTypingTarget(event.target)) return;
+        event.preventDefault();
+        setSearchOpen(true);
+        return;
       }
       if (event.key === "Escape") {
         setSearchOpen(false);

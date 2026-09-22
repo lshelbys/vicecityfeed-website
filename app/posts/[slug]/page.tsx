@@ -14,6 +14,7 @@ import {
   getArticle,
   getRelatedArticles,
 } from "@/lib/articles";
+import { authorHref } from "@/lib/authors";
 import { formatDate } from "@/lib/format";
 import {
   CATEGORY_SECTION,
@@ -152,7 +153,13 @@ export default async function PostPage({ params }: PostPageProps) {
               {formatDate(article.publishedAt)}
             </time>
             <p className="mt-1 text-sm font-semibold text-white">
-              {article.author.name}
+              <Link
+                href={authorHref(article.author)}
+                data-author-slug={article.author.handle}
+                className="link-draw"
+              >
+                {article.author.name}
+              </Link>
             </p>
             <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
               <Link

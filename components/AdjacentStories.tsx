@@ -2,6 +2,7 @@ import Link from "next/link";
 import { CoverArt } from "@/components/CoverArt";
 import { SaveControl } from "@/components/SaveControl";
 import { ReadingMark } from "@/components/ReadingMark";
+import { authorHref } from "@/lib/authors";
 import { formatRelativeTime } from "@/lib/format";
 import { coverKind } from "@/lib/site";
 import type { ArticleMeta } from "@/lib/types";
@@ -50,15 +51,21 @@ function AdjacentCard({
             {article.excerpt}
           </p>
         ) : null}
-        <p className="mt-2 text-xs font-medium tracking-wide text-white">
-          <time dateTime={article.publishedAt} data-relative-time>
-            {formatRelativeTime(article.publishedAt)}
-          </time>
-          {" · "}
-          {article.author.name}
-          <ReadingMark slug={article.slug} />
-        </p>
       </Link>
+      <p className="mt-2 text-xs font-medium tracking-wide text-white">
+        <time dateTime={article.publishedAt} data-relative-time>
+          {formatRelativeTime(article.publishedAt)}
+        </time>
+        {" · "}
+        <Link
+          href={authorHref(article.author)}
+          data-author-slug={article.author.handle}
+          className="text-white"
+        >
+          {article.author.name}
+        </Link>
+        <ReadingMark slug={article.slug} />
+      </p>
     </article>
   );
 }

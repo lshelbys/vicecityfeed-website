@@ -4,11 +4,13 @@ import articlesJson from "@/content/articles.json";
 import type {
   Article,
   ArticleMeta,
+  Author,
   BreakingItem,
   CategorySlug,
   FeedArticle,
   SectionSlug,
 } from "./types";
+import { getAuthorSlug } from "./authors";
 import { readingTimeFromMarkdown } from "./format";
 import { filterArticlesByCategory, searchArticleMeta } from "./filters";
 
@@ -112,4 +114,29 @@ export function getBreakingItems(): BreakingItem[] {
 
 export function getAllSlugs(): string[] {
   return articlesMeta.map((article) => article.slug);
+}
+
+export { authorHref, getAuthorSlug } from "./authors";
+
+export function getAuthors(): Author[] {
+  const seen = new Map<string, Author>();
+  for (const article of getArticleMeta()) {
+    const slug = getAuthorSlug(article.author);
+    if (!seen.has(slug)) seen.set(slug, article.author);
+  }
+  return [...seen.values()];
+}
+
+export function getAuthor(slug: string): Author | undefined {
+  return getAuthors().find((author) => getAuthorSlug(author) === slug);
+}
+
+export function getFeedArticlesByAuthor(slug: string): FeedArticle[] {
+  return getFeedArticles().filter(
+    (article) => getAuthorSlug(article.author) === slug,
+  );
+}
+
+export function getAllAuthorSlugs(): string[] {
+  return getAuthors().map(getAuthorSlug);
 }
