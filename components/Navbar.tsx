@@ -43,14 +43,13 @@ export function Navbar({ articles }: NavbarProps) {
 
   return (
     <header className="sticky top-0 z-50 bg-ink">
-      <div className="vice-line" />
-      <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3 md:px-6">
+      <div className="mx-auto flex max-w-7xl min-w-0 items-center gap-2 px-4 py-2.5 md:gap-3 md:px-6 md:py-3">
         <SiteLogo />
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto flex shrink-0 items-center gap-1.5 md:gap-2">
           <button
             type="button"
             onClick={() => setSearchOpen(true)}
-            className={outlinePillClass("size-10")}
+            className={outlinePillClass("size-11")}
             aria-haspopup="dialog"
             aria-label="Search"
           >
@@ -60,7 +59,7 @@ export function Navbar({ articles }: NavbarProps) {
             <button
               type="button"
               onClick={() => setLauncherOpen((value) => !value)}
-              className={outlinePillClass("size-10")}
+              className={outlinePillClass("size-11")}
               aria-expanded={launcherOpen}
               aria-haspopup="menu"
               aria-label="Social launcher"
@@ -77,7 +76,7 @@ export function Navbar({ articles }: NavbarProps) {
                     <Link
                       href={link.href}
                       role="menuitem"
-                      className="flex items-center gap-2 rounded-full px-3 py-2 text-sm text-paper hover:bg-teal hover:text-ink"
+                      className="flex min-h-11 items-center gap-2 rounded-full px-3 py-2 text-sm text-paper hover:bg-teal hover:text-ink"
                       onClick={() => setLauncherOpen(false)}
                       {...(link.external
                         ? { target: "_blank", rel: "noreferrer noopener" }
@@ -93,23 +92,22 @@ export function Navbar({ articles }: NavbarProps) {
           </div>
         </div>
       </div>
-      <nav
-        aria-label="Secondary"
-        className="border-t border-white/5"
-      >
-        <div className="no-scrollbar mx-auto flex max-w-7xl gap-2 overflow-x-auto px-4 py-3 md:px-6">
-          {NAV_ITEMS.map((item) => {
-            const active = isNavActive(pathname, item.href);
-            return (
-              <Link
-                key={`${item.href}-${item.label}`}
-                href={item.href}
-                className={pillClass(active)}
-              >
-                {item.label}
-              </Link>
-            );
-          })}
+      <nav aria-label="Secondary" className="border-t border-white/5">
+        <div className="pill-scroll no-scrollbar mx-auto min-w-0 max-w-7xl overflow-x-auto">
+          <div className="flex w-max gap-2 px-4 py-2.5 md:px-6 md:py-3">
+            {NAV_ITEMS.map((item) => {
+              const active = isNavActive(pathname, item.href);
+              return (
+                <Link
+                  key={`${item.href}-${item.label}`}
+                  href={item.href}
+                  className={pillClass(active)}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
+          </div>
         </div>
       </nav>
       <SearchModal

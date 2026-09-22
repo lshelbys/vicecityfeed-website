@@ -38,7 +38,7 @@ export function ArticleCard({
         </div>
         <div className="mt-3">
           <h3
-            className={`font-extrabold tracking-tight text-paper transition-colors duration-200 group-hover:text-teal ${
+            className={`text-balance break-words font-extrabold tracking-tight text-paper transition-colors duration-200 group-hover:text-teal ${
               featured ? "text-2xl md:text-3xl" : "text-lg md:text-xl"
             }`}
           >

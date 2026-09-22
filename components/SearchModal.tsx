@@ -38,7 +38,7 @@ export function SearchModal({ open, onClose, articles }: SearchModalProps) {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-start justify-center px-4 py-24">
+    <div className="fixed inset-0 z-[60] flex items-start justify-center px-4 py-16 sm:py-24">
       <button
         type="button"
         className="absolute inset-0 bg-black/70"

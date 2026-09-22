@@ -46,7 +46,7 @@ function WireFeedInner({
   );
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <CategoryFilter active={category} onSelect={setCategory} />
       {filtered.length === 0 ? (
         <p className="text-sm text-muted">No stories in this lane yet.</p>

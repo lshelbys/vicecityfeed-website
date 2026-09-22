@@ -15,46 +15,50 @@ export function CategoryFilter({
   basePath,
 }: CategoryFilterProps) {
   return (
-    <div
-      role="tablist"
-      aria-label="Filter Newswire by category"
-      className="no-scrollbar flex gap-2 overflow-x-auto"
-    >
-      {CATEGORY_FILTERS.map((filter) => {
-        const isActive = filter.slug === active;
+    <div className="min-w-0">
+      <div
+        role="tablist"
+        aria-label="Filter Newswire by category"
+        className="pill-scroll no-scrollbar -mx-4 overflow-x-auto md:mx-0"
+      >
+        <div className="flex w-max gap-2 px-4 md:px-0">
+          {CATEGORY_FILTERS.map((filter) => {
+            const isActive = filter.slug === active;
 
-        if (onSelect) {
-          return (
-            <button
-              key={filter.slug}
-              type="button"
-              role="tab"
-              aria-selected={isActive}
-              className={pillClass(isActive)}
-              onClick={() => onSelect(filter.slug)}
-            >
-              {filter.label}
-            </button>
-          );
-        }
+            if (onSelect) {
+              return (
+                <button
+                  key={filter.slug}
+                  type="button"
+                  role="tab"
+                  aria-selected={isActive}
+                  className={pillClass(isActive)}
+                  onClick={() => onSelect(filter.slug)}
+                >
+                  {filter.label}
+                </button>
+              );
+            }
 
-        const href =
-          filter.slug === "all"
-            ? basePath ?? "/leonida-wire"
-            : `${basePath ?? "/leonida-wire"}?cat=${filter.slug}`;
+            const href =
+              filter.slug === "all"
+                ? basePath ?? "/leonida-wire"
+                : `${basePath ?? "/leonida-wire"}?cat=${filter.slug}`;
 
-        return (
-          <Link
-            key={filter.slug}
-            href={href}
-            role="tab"
-            aria-selected={isActive}
-            className={pillClass(isActive)}
-          >
-            {filter.label}
-          </Link>
-        );
-      })}
+            return (
+              <Link
+                key={filter.slug}
+                href={href}
+                role="tab"
+                aria-selected={isActive}
+                className={pillClass(isActive)}
+              >
+                {filter.label}
+              </Link>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 }

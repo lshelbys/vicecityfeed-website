@@ -82,7 +82,7 @@ export default function RootLayout({
           Skip to content
         </a>
         <Navbar articles={articles} />
-        <div className="flex-1">{children}</div>
+        <div className="flex-1 min-w-0">{children}</div>
         <Footer />
       </body>
     </html>

@@ -1,6 +1,6 @@
 export function pillClass(active = false, extra = "") {
   return [
-    "inline-flex shrink-0 items-center justify-center rounded-full px-4 py-1.5 text-sm font-medium whitespace-nowrap transition-colors duration-200",
+    "inline-flex min-h-11 shrink-0 items-center justify-center rounded-full px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors duration-200",
     active
       ? "bg-teal text-ink"
       : "bg-raised text-white hover:bg-teal hover:text-ink",
@@ -12,7 +12,7 @@ export function pillClass(active = false, extra = "") {
 
 export function outlinePillClass(extra = "") {
   return [
-    "inline-flex shrink-0 items-center justify-center rounded-full border border-white/15 text-white transition-colors duration-200 hover:border-teal hover:bg-teal hover:text-ink",
+    "inline-flex min-h-11 shrink-0 items-center justify-center rounded-full border border-white/15 text-white transition-colors duration-200 hover:border-teal hover:bg-teal hover:text-ink",
     extra,
   ]
     .filter(Boolean)
@@ -21,7 +21,7 @@ export function outlinePillClass(extra = "") {
 
 export function ctaPillClass(variant: "white" | "gold" = "white", extra = "") {
   return [
-    "inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-bold transition-colors duration-200",
+    "inline-flex min-h-11 items-center justify-center rounded-full px-5 py-2.5 text-sm font-bold transition-colors duration-200",
     variant === "gold"
       ? "bg-gold text-ink hover:bg-sunset"
       : "bg-white text-ink hover:bg-teal",

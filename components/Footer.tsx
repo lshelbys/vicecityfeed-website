@@ -23,7 +23,7 @@ export function Footer() {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className={outlinePillClass("size-10")}
+                  className={outlinePillClass("size-11")}
                   {...(link.external
                     ? { target: "_blank", rel: "noreferrer noopener" }
                     : {})}

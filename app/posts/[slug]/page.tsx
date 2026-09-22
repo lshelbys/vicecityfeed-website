@@ -97,7 +97,7 @@ export default async function PostPage({ params }: PostPageProps) {
           >
             {CATEGORY_SHORT[article.category]}
           </Link>
-          <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-paper md:text-6xl">
+          <h1 className="mt-4 text-3xl leading-snug font-extrabold tracking-tight text-balance break-words text-paper md:text-6xl md:leading-tight">
             {article.title}
           </h1>
           <p className="mt-4 text-base text-muted md:text-lg">{article.excerpt}</p>
@@ -124,7 +124,6 @@ export default async function PostPage({ params }: PostPageProps) {
             title={article.title}
             className="aspect-video h-auto origin-center transition-transform duration-500 group-hover:scale-110"
           />
-          <div className="vice-line absolute inset-x-0 top-0" />
         </div>
         <div className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_14rem] xl:grid-cols-[minmax(0,1fr)_16rem]">
           <ArticleBody markdown={article.content} />
