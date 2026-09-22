@@ -21,9 +21,11 @@ export function NavPills() {
 
     measure();
     const frame = requestAnimationFrame(measure);
+    const fonts = document.fonts?.ready?.then(measure);
     window.addEventListener("resize", measure);
     return () => {
       cancelAnimationFrame(frame);
+      fonts?.catch(() => {});
       window.removeEventListener("resize", measure);
     };
   }, [pathname]);
@@ -32,7 +34,7 @@ export function NavPills() {
     <div ref={rowRef} className="relative flex w-max gap-2 px-4 md:px-6">
       <span
         aria-hidden
-        className="nav-pill-indicator pointer-events-none absolute top-1/2 left-0 z-0 h-11 -translate-y-1/2 rounded-full bg-teal"
+        className="nav-pill-indicator pointer-events-none absolute top-1/2 left-0 z-0 h-11 rounded-full bg-teal"
         style={{
           width: indicator.w,
           transform: `translate3d(${indicator.x}px, -50%, 0)`,
