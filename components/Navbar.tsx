@@ -1,15 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { Search } from "lucide-react";
+import { NavPills } from "@/components/NavPills";
 import { ReleaseCountdown } from "@/components/ReleaseCountdown";
 import { SearchModal } from "@/components/SearchModal";
 import { SiteLogo } from "@/components/SiteLogo";
 import { SocialLauncher } from "@/components/SocialLauncher";
-import { outlinePillClass, pillClass } from "@/components/pills";
-import { isNavActive, NAV_ITEMS } from "@/lib/site";
+import { outlinePillClass } from "@/components/pills";
 import type { ArticleMeta } from "@/lib/types";
 
 type NavbarProps = {
@@ -18,8 +16,8 @@ type NavbarProps = {
 };
 
 export function Navbar({ articles, logoSrc }: NavbarProps) {
-  const pathname = usePathname();
   const [searchOpen, setSearchOpen] = useState(false);
+  const [compact, setCompact] = useState(false);
 
   useEffect(() => {
     function onKey(event: KeyboardEvent) {
@@ -35,9 +33,22 @@ export function Navbar({ articles, logoSrc }: NavbarProps) {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
+  useEffect(() => {
+    function onScroll() {
+      setCompact(window.scrollY > 18);
+    }
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <header className="sticky top-0 z-50 bg-ink">
-      <div className="mx-auto grid max-w-7xl min-w-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 px-4 py-2 md:gap-3 md:px-6 md:py-2.5">
+    <header className="header-bar sticky top-0 z-50 bg-ink" data-compact={compact ? "true" : "false"}>
+      <div
+        className={`header-primary mx-auto grid max-w-7xl min-w-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 px-4 md:gap-3 md:px-6 ${
+          compact ? "py-1 md:py-1.5" : "py-2 md:py-2.5"
+        }`}
+      >
         <div className="min-w-0 justify-self-start">
           <ReleaseCountdown />
         </div>
@@ -56,21 +67,12 @@ export function Navbar({ articles, logoSrc }: NavbarProps) {
         </div>
       </div>
       <nav aria-label="Secondary">
-        <div className="pill-scroll no-scrollbar mx-auto min-w-0 max-w-7xl overflow-x-auto">
-          <div className="flex w-max gap-2 px-4 py-2.5 md:px-6 md:py-3">
-            {NAV_ITEMS.map((item) => {
-              const active = isNavActive(pathname, item.href);
-              return (
-                <Link
-                  key={`${item.href}-${item.label}`}
-                  href={item.href}
-                  className={pillClass(active)}
-                >
-                  {item.label}
-                </Link>
-              );
-            })}
-          </div>
+        <div
+          className={`header-nav pill-scroll no-scrollbar mx-auto min-w-0 max-w-7xl overflow-x-auto ${
+            compact ? "py-1.5 md:py-2" : "py-2.5 md:py-3"
+          }`}
+        >
+          <NavPills />
         </div>
       </nav>
       <SearchModal

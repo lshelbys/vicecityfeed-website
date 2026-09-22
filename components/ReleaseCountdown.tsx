@@ -7,6 +7,16 @@ function pad(value: number) {
   return String(value).padStart(2, "0");
 }
 
+function TickValue({ value }: { value: string }) {
+  return (
+    <span className="inline-flex overflow-hidden">
+      <span key={value} className="tick-digit">
+        {value}
+      </span>
+    </span>
+  );
+}
+
 export function ReleaseCountdown() {
   const [remaining, setRemaining] = useState(() => remainingUntilRelease());
 
@@ -23,18 +33,17 @@ export function ReleaseCountdown() {
     : "GTA 6 is out";
 
   return (
-    <p
-      className="min-w-0 text-white"
-      aria-live="polite"
-      aria-label={label}
-    >
+    <p className="min-w-0 text-white" aria-live="polite" aria-label={label}>
       <span className="block text-[9px] font-semibold tracking-[0.16em] uppercase md:text-[10px]">
         GTA 6
       </span>
       <span className="mt-0.5 block text-[13px] font-semibold tracking-tight tabular-nums md:text-sm">
         {live ? (
           <>
-            {remaining.days}d {pad(remaining.hours)}h
+            <TickValue value={String(remaining.days)} />
+            d{" "}
+            <TickValue value={pad(remaining.hours)} />
+            h
           </>
         ) : (
           "Out now"

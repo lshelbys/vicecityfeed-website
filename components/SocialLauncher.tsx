@@ -44,13 +44,13 @@ export function SocialLauncher() {
       >
         <span className="relative size-4">
           <Ellipsis
-            className={`absolute inset-0 size-4 transition duration-200 ease-out ${
+            className={`absolute inset-0 size-4 transition duration-300 ease-out ${
               open ? "scale-75 opacity-0" : "scale-100 opacity-100"
             }`}
             aria-hidden
           />
           <X
-            className={`absolute inset-0 size-4 transition duration-200 ease-out ${
+            className={`absolute inset-0 size-4 transition duration-300 ease-out ${
               open ? "scale-100 opacity-100" : "scale-75 opacity-0"
             }`}
             aria-hidden
@@ -60,10 +60,10 @@ export function SocialLauncher() {
       <ul
         id={menuId}
         role="menu"
-        className={`absolute right-0 z-20 mt-2 w-40 rounded-xl bg-surface p-1.5 shadow-[0_12px_40px_rgb(0_0_0/0.45)] transition duration-200 ease-out ${
+        className={`absolute right-0 z-20 mt-2 w-40 rounded-xl bg-surface p-1.5 shadow-[0_12px_40px_rgb(0_0_0/0.45)] transition duration-300 ease-out ${
           open
             ? "pointer-events-auto translate-y-0 opacity-100"
-            : "pointer-events-none -translate-y-1 opacity-0"
+            : "pointer-events-none -translate-y-1.5 opacity-0"
         }`}
       >
         {SOCIAL_LINKS.map((link) => (
@@ -71,7 +71,7 @@ export function SocialLauncher() {
             <Link
               href={link.href}
               role="menuitem"
-              className="flex min-h-10 items-center gap-2.5 rounded-lg px-2.5 text-sm text-paper transition-colors duration-200 ease-out hover:bg-teal hover:text-ink"
+              className="flex min-h-10 items-center gap-2.5 rounded-lg px-2.5 text-sm text-paper transition-colors duration-300 ease-out hover:bg-teal hover:text-ink"
               onClick={() => setOpen(false)}
               {...(link.external
                 ? { target: "_blank", rel: "noreferrer noopener" }

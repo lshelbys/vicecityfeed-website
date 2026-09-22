@@ -97,7 +97,7 @@ export default async function PostPage({ params }: PostPageProps) {
         <nav aria-label="Breadcrumb" className="reveal">
           <ol className="flex flex-wrap items-center gap-x-2 text-[11px] font-bold tracking-[0.14em] text-white uppercase md:text-xs">
             <li>
-              <Link href="/" className="underline-offset-4 hover:underline">
+              <Link href="/" className="link-draw">
                 Newswire
               </Link>
             </li>
@@ -105,7 +105,7 @@ export default async function PostPage({ params }: PostPageProps) {
             <li>
               <Link
                 href={section.href}
-                className="underline-offset-4 hover:underline"
+                className="link-draw"
               >
                 {section.label}
               </Link>
@@ -114,18 +114,18 @@ export default async function PostPage({ params }: PostPageProps) {
             <li>
               <Link
                 href={categoryHref}
-                className="underline-offset-4 hover:underline"
+                className="link-draw"
               >
                 {categoryLabel}
               </Link>
             </li>
           </ol>
         </nav>
-        <header className="reveal mt-6">
-          <h1 className="text-[2.1rem] leading-[1.05] font-extrabold tracking-tight text-balance break-words text-white sm:text-5xl md:text-6xl lg:text-7xl">
+        <header className="mt-6">
+          <h1 className="reveal text-[2.1rem] leading-[1.05] font-extrabold tracking-tight text-balance break-words text-white sm:text-5xl md:text-6xl lg:text-7xl">
             {article.title}
           </h1>
-          <p className="mt-6 text-xl leading-snug font-bold text-balance text-white md:text-2xl">
+          <p className="reveal reveal-delay mt-6 text-xl leading-snug font-bold text-balance text-white md:text-2xl">
             {article.excerpt}
           </p>
           <time
@@ -139,7 +139,7 @@ export default async function PostPage({ params }: PostPageProps) {
           <CoverArt
             accent={article.coverAccent}
             title={article.title}
-            className="aspect-video h-auto origin-center transition-transform duration-500 group-hover:scale-110"
+            className="aspect-video h-auto origin-center transition-transform duration-500 ease-out group-hover:scale-105"
           />
         </div>
         <div className="mt-10">

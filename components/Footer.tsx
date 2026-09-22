@@ -17,8 +17,8 @@ export function Footer({ logoSrc = LOGO_PNG }: FooterProps) {
     <footer className="mt-16 bg-ink">
       <div className="mx-auto flex max-w-7xl flex-col gap-10 px-4 py-12 md:flex-row md:items-start md:justify-between md:px-6">
         <div className="max-w-sm">
-          <Link href="/" aria-label={SITE.name} className="inline-flex">
-            <BrandMark src={logoSrc} size="footer" />
+          <Link href="/" aria-label={SITE.name} className="site-logo-link inline-flex">
+            <BrandMark src={logoSrc} size="footer" className="site-logo-mark" />
           </Link>
           <p className="mt-3 text-sm text-muted">
             Independent editorial coverage of Leonida. Not affiliated with
@@ -45,7 +45,7 @@ export function Footer({ logoSrc = LOGO_PNG }: FooterProps) {
           <ul className="flex flex-wrap gap-x-5 gap-y-2">
             {FOOTER_SITEMAP.map((item) => (
               <li key={item.href}>
-                <Link href={item.href} className="text-white underline-offset-4 hover:underline">
+                <Link href={item.href} className="link-draw text-white">
                   {item.label}
                 </Link>
               </li>

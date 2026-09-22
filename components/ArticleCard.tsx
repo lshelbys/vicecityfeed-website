@@ -19,7 +19,7 @@ export function ArticleCard({
   const category = CATEGORY_SHORT[article.category];
 
   return (
-    <article className="group transition-transform duration-200 ease-out hover:-translate-y-0.5">
+    <article className="group transition-transform duration-300 ease-out hover:-translate-y-1">
       <Link href={href} className="block">
         <div
           className={`relative overflow-hidden rounded-2xl ${
@@ -29,10 +29,10 @@ export function ArticleCard({
           <CoverArt
             accent={article.coverAccent}
             title={article.title}
-            className="h-full w-full origin-center transition-transform duration-500 group-hover:scale-110"
+            className="h-full w-full origin-center transition-transform duration-500 ease-out group-hover:scale-105"
           />
           <div className="absolute inset-0 bg-linear-to-t from-black/35 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-          <span className="absolute top-3 left-3 rounded-full bg-black/70 px-3 py-1 text-[11px] font-semibold tracking-wide text-white uppercase transition-colors duration-200 group-hover:bg-teal group-hover:text-ink">
+          <span className="absolute top-3 left-3 rounded-full bg-black/70 px-3 py-1 text-[11px] font-semibold tracking-wide text-white uppercase transition-colors duration-300 ease-out group-hover:bg-teal group-hover:text-ink">
             {category}
           </span>
         </div>

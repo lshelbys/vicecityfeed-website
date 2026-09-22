@@ -35,13 +35,19 @@ export function SearchModal({ open, onClose, articles }: SearchModalProps) {
     };
   }, [open]);
 
-  if (!open) return null;
-
   return (
-    <div className="fixed inset-0 z-[60] flex items-start justify-center px-4 py-16 sm:py-24">
+    <div
+      className={`fixed inset-0 z-[60] flex items-start justify-center px-4 py-16 sm:py-24 ${
+        open ? "pointer-events-auto" : "pointer-events-none"
+      }`}
+      aria-hidden={!open}
+      {...(!open ? { inert: true } : {})}
+    >
       <button
         type="button"
-        className="absolute inset-0 bg-black/70"
+        className={`absolute inset-0 bg-black/70 transition-opacity duration-300 ease-out ${
+          open ? "opacity-100" : "opacity-0"
+        }`}
         aria-label="Close search"
         onClick={close}
       />
@@ -49,7 +55,9 @@ export function SearchModal({ open, onClose, articles }: SearchModalProps) {
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className="relative z-10 w-full max-w-xl rounded-2xl border border-line bg-surface p-4"
+        className={`relative z-10 w-full max-w-xl rounded-2xl bg-surface p-4 shadow-[0_16px_48px_rgb(0_0_0/0.5)] transition duration-300 ease-out ${
+          open ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0"
+        }`}
       >
         <h2 id={titleId} className="sr-only">
           Search Vice City Feed
@@ -57,7 +65,7 @@ export function SearchModal({ open, onClose, articles }: SearchModalProps) {
         <label htmlFor="site-search" className="sr-only">
           Search ViceCityFeed
         </label>
-        <div className="flex items-center gap-2 rounded-full border border-white/15 px-4 focus-within:border-teal">
+        <div className="flex items-center gap-2 rounded-full border border-white/15 px-4 transition-[border-color] duration-300 ease-out focus-within:border-teal">
           <Search className="size-4 text-white" aria-hidden />
           <input
             id="site-search"
@@ -77,7 +85,7 @@ export function SearchModal({ open, onClose, articles }: SearchModalProps) {
               <Link
                 href={`/posts/${article.slug}`}
                 onClick={close}
-                className="block rounded-xl px-3 py-3 hover:bg-raised"
+                className="block rounded-xl px-3 py-3 transition-colors duration-300 ease-out hover:bg-raised"
               >
                 <p className="text-[11px] font-semibold tracking-wide text-white uppercase">
                   {CATEGORY_SHORT[article.category]}

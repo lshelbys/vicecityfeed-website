@@ -1,0 +1,59 @@
+"use client";
+
+import { useLayoutEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { isNavActive, NAV_ITEMS } from "@/lib/site";
+
+export function NavPills() {
+  const pathname = usePathname();
+  const rowRef = useRef<HTMLDivElement>(null);
+  const [indicator, setIndicator] = useState({ x: 0, w: 0, ready: false });
+
+  useLayoutEffect(() => {
+    function measure() {
+      const row = rowRef.current;
+      if (!row) return;
+      const active = row.querySelector<HTMLElement>("[data-nav-active='true']");
+      if (!active) return;
+      setIndicator({ x: active.offsetLeft, w: active.offsetWidth, ready: true });
+    }
+
+    measure();
+    const frame = requestAnimationFrame(measure);
+    window.addEventListener("resize", measure);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("resize", measure);
+    };
+  }, [pathname]);
+
+  return (
+    <div ref={rowRef} className="relative flex w-max gap-2 px-4 md:px-6">
+      <span
+        aria-hidden
+        className="nav-pill-indicator pointer-events-none absolute top-1/2 left-0 z-0 h-11 -translate-y-1/2 rounded-full bg-teal"
+        style={{
+          width: indicator.w,
+          transform: `translate3d(${indicator.x}px, -50%, 0)`,
+          opacity: indicator.ready ? 1 : 0,
+        }}
+      />
+      {NAV_ITEMS.map((item) => {
+        const active = isNavActive(pathname, item.href);
+        return (
+          <Link
+            key={`${item.href}-${item.label}`}
+            href={item.href}
+            data-nav-active={active ? "true" : "false"}
+            className={`relative z-10 inline-flex min-h-11 shrink-0 items-center justify-center rounded-full px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors duration-300 ease-out ${
+              active ? "text-ink" : "text-white hover:bg-white/8"
+            }`}
+          >
+            {item.label}
+          </Link>
+        );
+      })}
+    </div>
+  );
+}

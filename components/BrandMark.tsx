@@ -18,17 +18,18 @@ const sizeClass: Record<BrandMarkSize, string> = {
 export function BrandMark({
   src = LOGO_PNG,
   size = "header",
-  className = sizeClass[size],
+  className = "",
 }: BrandMarkProps) {
+  const classes = `${sizeClass[size]} ${className}`.trim();
   if (src === LOGO_SVG) {
     return (
       <picture>
         <source srcSet={LOGO_SVG} type="image/svg+xml" />
-        <img src={LOGO_PNG} alt="" className={className} />
+        <img src={LOGO_PNG} alt="" className={classes} />
       </picture>
     );
   }
 
   /* eslint-disable-next-line @next/next/no-img-element */
-  return <img src={src} alt="" className={className} />;
+  return <img src={src} alt="" className={classes} />;
 }
