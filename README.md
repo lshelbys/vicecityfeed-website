@@ -22,8 +22,9 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ```bash
 npm run build
-npm start
 ```
+
+`next build` writes a static export to `out/`, then `scripts/write-pages-metadata.mjs` copies only the generated site files to the repository root for GitHub Pages (`main` / `(root)`). Source folders (`app/`, `components/`, `content/`, etc.) are left intact.
 
 ## Content
 
