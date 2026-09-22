@@ -102,7 +102,7 @@ export function SearchModal({ open, onClose, articles }: SearchModalProps) {
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search the wire…"
-            className="h-12 w-full bg-transparent text-sm text-white outline-none placeholder:text-white"
+            className="h-12 w-full border-0 bg-transparent text-sm text-white outline-none placeholder:text-white focus-visible:outline-none"
           />
         </div>
         <div className="mt-4 max-h-80 overflow-y-auto">
