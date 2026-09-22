@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Clock, MapPin, Users } from "lucide-react";
 import { CoverArt } from "@/components/CoverArt";
+import { coverKind } from "@/lib/site";
 import type { ArticleMeta, Difficulty, Mission } from "@/lib/types";
 
 const DIFFICULTY_TONE: Record<Difficulty, string> = {
@@ -30,6 +31,7 @@ export function MissionCard({
             <CoverArt
               accent={article.coverAccent}
               title={mission.title}
+              kind={coverKind(article.category)}
               className="h-full w-full origin-center transition-transform duration-500 ease-out group-hover:scale-105"
             />
             <span

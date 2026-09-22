@@ -62,6 +62,10 @@ export const CATEGORY_SHORT: Record<Category, string> = {
   Guides: "Guides",
 };
 
+export function coverKind(category: Category): string {
+  return CATEGORY_SHORT[category].toUpperCase();
+}
+
 export const CATEGORY_SECTION: Record<Category, { href: string; label: string }> =
   {
     "Leaks & News": { href: "/leonida-wire", label: "Leonida Wire" },

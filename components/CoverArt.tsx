@@ -89,6 +89,7 @@ type CoverArtProps = {
   title: string;
   className?: string;
   lead?: boolean;
+  kind?: string;
 };
 
 function hashTitle(title: string): number {
@@ -109,6 +110,7 @@ export function CoverArt({
   title,
   className = "",
   lead = false,
+  kind,
 }: CoverArtProps) {
   const palette = PALETTE[accent];
   const seed = hashTitle(title);
@@ -123,7 +125,7 @@ export function CoverArt({
 
   return (
     <div
-      className={`film-grain relative overflow-hidden bg-ink ${className}`}
+      className={`film-grain @container relative overflow-hidden bg-ink ${className}`}
       aria-hidden="true"
     >
       <div
@@ -361,6 +363,18 @@ export function CoverArt({
             "radial-gradient(ellipse at 50% 36%, transparent 34%, rgb(0 0 0 / 0.38) 100%)",
         }}
       />
+      {kind ? (
+        <span
+          data-cover-kind={kind}
+          className={`pointer-events-none absolute bottom-[6%] left-[-1%] z-[1] select-none px-3 font-extrabold uppercase leading-none tracking-[-0.07em] text-white/18 ${
+            lead
+              ? "text-[clamp(3.6rem,28cqi,8.5rem)]"
+              : "text-[clamp(2.4rem,32cqi,5.2rem)]"
+          }`}
+        >
+          {kind}
+        </span>
+      ) : null}
       <span className="sr-only">{title}</span>
     </div>
   );

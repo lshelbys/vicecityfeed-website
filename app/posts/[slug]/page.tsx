@@ -4,6 +4,7 @@ import { ArticleBody } from "@/components/ArticleBody";
 import { ArticleCard } from "@/components/ArticleCard";
 import { CopyLink } from "@/components/CopyLink";
 import { SaveControl } from "@/components/SaveControl";
+import { ShareLink } from "@/components/ShareLink";
 import { CoverArt } from "@/components/CoverArt";
 import { ReadingProgress } from "@/components/ReadingProgress";
 import { AdjacentStories } from "@/components/AdjacentStories";
@@ -17,6 +18,7 @@ import { formatDate } from "@/lib/format";
 import {
   CATEGORY_SECTION,
   CATEGORY_SHORT,
+  coverKind,
   newswireFilterHref,
   SITE,
 } from "@/lib/site";
@@ -159,8 +161,15 @@ export default async function PostPage({ params }: PostPageProps) {
               >
                 {categoryLabel}
               </Link>
-              <ReadingProgress minutes={article.readingTimeMinutes} />
+              <ReadingProgress
+                slug={article.slug}
+                minutes={article.readingTimeMinutes}
+              />
               <CopyLink url={`${SITE.url}/posts/${article.slug}`} />
+              <ShareLink
+                title={article.title}
+                url={`${SITE.url}/posts/${article.slug}`}
+              />
               <SaveControl slug={article.slug} variant="inline" />
             </div>
           </div>
@@ -169,6 +178,7 @@ export default async function PostPage({ params }: PostPageProps) {
           <CoverArt
             accent={article.coverAccent}
             title={article.title}
+            kind={coverKind(article.category)}
             lead
             className="aspect-video h-auto origin-center transition-transform duration-500 ease-out group-hover:scale-105"
           />
@@ -180,6 +190,7 @@ export default async function PostPage({ params }: PostPageProps) {
               accent: article.coverAccent,
               title: article.title,
               caption: article.excerpt,
+              kind: coverKind(article.category),
             }}
           />
         </div>

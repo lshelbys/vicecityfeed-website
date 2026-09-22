@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { CoverArt } from "@/components/CoverArt";
 import { SaveControl } from "@/components/SaveControl";
-import { formatDate } from "@/lib/format";
+import { ReadingMark } from "@/components/ReadingMark";
+import { formatRelativeTime } from "@/lib/format";
+import { coverKind } from "@/lib/site";
 import type { ArticleMeta } from "@/lib/types";
 
 type AdjacentStoriesProps = {
@@ -31,6 +33,7 @@ function AdjacentCard({
             <CoverArt
               accent={article.coverAccent}
               title={article.title}
+              kind={coverKind(article.category)}
               className="h-full w-full origin-center transition-transform duration-500 ease-out group-hover:scale-105"
             />
           </div>
@@ -48,11 +51,12 @@ function AdjacentCard({
           </p>
         ) : null}
         <p className="mt-2 text-xs font-medium tracking-wide text-white">
-          <time dateTime={article.publishedAt}>
-            {formatDate(article.publishedAt)}
+          <time dateTime={article.publishedAt} data-relative-time>
+            {formatRelativeTime(article.publishedAt)}
           </time>
           {" · "}
           {article.author.name}
+          <ReadingMark slug={article.slug} />
         </p>
       </Link>
     </article>

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { CoverArt } from "@/components/CoverArt";
 import { ctaPillClass } from "@/components/pills";
-import { articleCta, CATEGORY_SHORT } from "@/lib/site";
+import { articleCta, CATEGORY_SHORT, coverKind } from "@/lib/site";
 import type { ArticleMeta } from "@/lib/types";
 
 type HeroProps = {
@@ -21,6 +21,7 @@ export function Hero({ article }: HeroProps) {
               <CoverArt
                 accent={article.coverAccent}
                 title={article.title}
+                kind={coverKind(article.category)}
                 lead
                 className="h-full w-full origin-center transition-transform duration-500 group-hover:scale-110"
               />

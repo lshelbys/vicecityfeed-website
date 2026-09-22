@@ -14,6 +14,7 @@ type ArticleBodyProps = {
     accent: CoverAccent;
     title: string;
     caption: string;
+    kind?: string;
   };
 };
 
@@ -84,6 +85,7 @@ export function ArticleBody({ markdown, figure }: ArticleBodyProps) {
                 accent={figure.accent}
                 title={figure.title}
                 caption={figure.caption}
+                kind={figure.kind}
               />
               {rest ? (
                 <ReactMarkdown components={markdownComponents}>{rest}</ReactMarkdown>

@@ -10,13 +10,19 @@ type ArticleFigureProps = {
   accent: CoverAccent;
   title: string;
   caption: string;
+  kind?: string;
 };
 
 function prefersReducedMotion() {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
-export function ArticleFigure({ accent, title, caption }: ArticleFigureProps) {
+export function ArticleFigure({
+  accent,
+  title,
+  caption,
+  kind,
+}: ArticleFigureProps) {
   const [mounted, setMounted] = useState(false);
   const [open, setOpen] = useState(false);
   const titleId = useId();
@@ -64,6 +70,7 @@ export function ArticleFigure({ accent, title, caption }: ArticleFigureProps) {
           <CoverArt
             accent={accent}
             title={title}
+            kind={kind}
             lead
             className="aspect-video h-auto w-full"
           />
@@ -107,6 +114,7 @@ export function ArticleFigure({ accent, title, caption }: ArticleFigureProps) {
                 <CoverArt
                   accent={accent}
                   title={title}
+                  kind={kind}
                   lead
                   className="aspect-video h-auto w-full rounded-2xl"
                 />

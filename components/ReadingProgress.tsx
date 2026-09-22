@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { writeReadingPercent } from "@/lib/reading";
 
 type ReadingProgressProps = {
   minutes: number;
+  slug: string;
 };
 
-export function ReadingProgress({ minutes }: ReadingProgressProps) {
+export function ReadingProgress({ minutes, slug }: ReadingProgressProps) {
   const [percent, setPercent] = useState(0);
 
   useEffect(() => {
@@ -19,10 +21,12 @@ export function ReadingProgress({ minutes }: ReadingProgressProps) {
       const scrolled = window.scrollY - node.offsetTop;
       if (total <= 0) {
         setPercent(100);
+        writeReadingPercent(slug, 100);
         return;
       }
       const next = Math.round(Math.min(100, Math.max(0, (scrolled / total) * 100)));
       setPercent(next);
+      if (next >= 1) writeReadingPercent(slug, next);
     }
 
     onScroll();
@@ -32,7 +36,7 @@ export function ReadingProgress({ minutes }: ReadingProgressProps) {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
     };
-  }, []);
+  }, [slug]);
 
   const remaining = Math.max(0, Math.ceil((minutes * (100 - percent)) / 100));
   const label =

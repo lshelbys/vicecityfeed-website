@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { CoverArt } from "@/components/CoverArt";
 import { SaveControl } from "@/components/SaveControl";
-import { formatDate, formatReadTime } from "@/lib/format";
-import { CATEGORY_SHORT } from "@/lib/site";
+import { ReadingMark } from "@/components/ReadingMark";
+import { formatReadTime, formatRelativeTime } from "@/lib/format";
+import { CATEGORY_SHORT, coverKind } from "@/lib/site";
 import type { ArticleMeta } from "@/lib/types";
 
 type ArticleCardProps = {
@@ -27,6 +28,7 @@ export function ArticleCard({
             <CoverArt
               accent={article.coverAccent}
               title={article.title}
+              kind={coverKind(article.category)}
               className="h-full w-full origin-center transition-transform duration-500 ease-out group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
@@ -52,8 +54,8 @@ export function ArticleCard({
           </p>
         ) : null}
         <p className="mt-2 text-xs font-medium tracking-wide text-white">
-          <time dateTime={article.publishedAt}>
-            {formatDate(article.publishedAt)}
+          <time dateTime={article.publishedAt} data-relative-time>
+            {formatRelativeTime(article.publishedAt)}
           </time>
           {" · "}
           {article.author.name}
@@ -63,6 +65,7 @@ export function ArticleCard({
               {formatReadTime(readingTimeMinutes)}
             </>
           ) : null}
+          <ReadingMark slug={article.slug} />
         </p>
       </Link>
     </article>
