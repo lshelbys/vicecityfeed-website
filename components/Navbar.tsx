@@ -7,6 +7,7 @@ import { NavPills } from "@/components/NavPills";
 import { ReleaseCountdown } from "@/components/ReleaseCountdown";
 import { SearchModal } from "@/components/SearchModal";
 import { SiteLogo } from "@/components/SiteLogo";
+import { SavedNav } from "@/components/SavedNav";
 import { SocialLauncher } from "@/components/SocialLauncher";
 import { outlinePillClass } from "@/components/pills";
 import type { ArticleMeta } from "@/lib/types";
@@ -64,6 +65,7 @@ export function Navbar({ articles, logoSrc }: NavbarProps) {
           >
             <Search className="size-4" aria-hidden />
           </button>
+          <SavedNav />
           <SocialLauncher />
         </div>
       </div>

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { ArticleBody } from "@/components/ArticleBody";
 import { ArticleCard } from "@/components/ArticleCard";
 import { CopyLink } from "@/components/CopyLink";
+import { SaveControl } from "@/components/SaveControl";
 import { CoverArt } from "@/components/CoverArt";
 import { ReadingProgress } from "@/components/ReadingProgress";
 import { AdjacentStories } from "@/components/AdjacentStories";
@@ -160,6 +161,7 @@ export default async function PostPage({ params }: PostPageProps) {
               </Link>
               <ReadingProgress minutes={article.readingTimeMinutes} />
               <CopyLink url={`${SITE.url}/posts/${article.slug}`} />
+              <SaveControl slug={article.slug} variant="inline" />
             </div>
           </div>
         </header>

@@ -101,6 +101,13 @@ export function isNavActive(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
+export function isLiveSocialHref(href: string): boolean {
+  const value = href.trim().toLowerCase();
+  if (!value) return false;
+  if (value === "#" || value.startsWith("javascript:")) return false;
+  return true;
+}
+
 export function articleCta(tags: string[], slug: string): string {
   if (tags.includes("trailer") || slug.includes("trailer")) {
     return "Watch Trailer";

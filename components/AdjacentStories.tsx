@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CoverArt } from "@/components/CoverArt";
+import { SaveControl } from "@/components/SaveControl";
 import { formatDate } from "@/lib/format";
 import type { ArticleMeta } from "@/lib/types";
 
@@ -21,17 +22,22 @@ function AdjacentCard({
     <article
       className={`group ${align === "end" ? "sm:justify-self-end sm:text-right" : ""}`}
     >
+      <p className="text-[10px] font-semibold tracking-[0.16em] text-white uppercase">
+        {label}
+      </p>
+      <div className="relative mt-3">
+        <Link href={`/posts/${article.slug}`} className="block">
+          <div className="aspect-video overflow-hidden rounded-2xl">
+            <CoverArt
+              accent={article.coverAccent}
+              title={article.title}
+              className="h-full w-full origin-center transition-transform duration-500 ease-out group-hover:scale-105"
+            />
+          </div>
+        </Link>
+        <SaveControl slug={article.slug} />
+      </div>
       <Link href={`/posts/${article.slug}`} className="block">
-        <p className="text-[10px] font-semibold tracking-[0.16em] text-white uppercase">
-          {label}
-        </p>
-        <div className="relative mt-3 aspect-video overflow-hidden rounded-2xl">
-          <CoverArt
-            accent={article.coverAccent}
-            title={article.title}
-            className="h-full w-full origin-center transition-transform duration-500 ease-out group-hover:scale-105"
-          />
-        </div>
         <h3 className="mt-4 text-balance break-words text-lg font-extrabold tracking-tight text-white md:text-xl">
           {article.title}
         </h3>

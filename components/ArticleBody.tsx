@@ -1,6 +1,6 @@
 import ReactMarkdown from "react-markdown";
 import type { Components } from "react-markdown";
-import { CoverArt } from "@/components/CoverArt";
+import { ArticleFigure } from "@/components/ArticleFigure";
 import { MediaWrapper } from "@/components/MediaWrapper";
 import { ProTip } from "@/components/ProTip";
 import { Spoiler } from "@/components/Spoiler";
@@ -80,19 +80,11 @@ export function ArticleBody({ markdown, figure }: ArticleBodyProps) {
           return (
             <div key={index}>
               <ReactMarkdown components={markdownComponents}>{lead}</ReactMarkdown>
-              <figure className="my-10">
-                <div className="overflow-hidden rounded-2xl">
-                  <CoverArt
-                    accent={figure.accent}
-                    title={figure.title}
-                    lead
-                    className="aspect-video h-auto w-full"
-                  />
-                </div>
-                <figcaption className="mt-3 line-clamp-1 text-sm font-medium text-white">
-                  {figure.caption}
-                </figcaption>
-              </figure>
+              <ArticleFigure
+                accent={figure.accent}
+                title={figure.title}
+                caption={figure.caption}
+              />
               {rest ? (
                 <ReactMarkdown components={markdownComponents}>{rest}</ReactMarkdown>
               ) : null}

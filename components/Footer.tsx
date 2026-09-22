@@ -4,7 +4,7 @@ import { SocialGlyph } from "@/components/SocialGlyph";
 import { outlinePillClass } from "@/components/pills";
 import { BrandMark } from "@/components/BrandMark";
 import { LOGO_PNG } from "@/lib/logo-paths";
-import { FOOTER_SITEMAP, SITE, SOCIAL_LINKS } from "@/lib/site";
+import { FOOTER_SITEMAP, isLiveSocialHref, SITE, SOCIAL_LINKS } from "@/lib/site";
 
 type FooterProps = {
   logoSrc?: string;
@@ -25,20 +25,50 @@ export function Footer({ logoSrc = LOGO_PNG }: FooterProps) {
             Rockstar Games or Take-Two Interactive.
           </p>
           <ul className="mt-6 flex gap-2">
-            {SOCIAL_LINKS.map((link) => (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  className={outlinePillClass("size-11")}
-                  {...(link.external
-                    ? { target: "_blank", rel: "noreferrer noopener" }
-                    : {})}
-                  aria-label={link.label}
-                >
-                  <SocialGlyph label={link.label} />
-                </Link>
-              </li>
-            ))}
+            {SOCIAL_LINKS.map((link) => {
+              const isRss = link.href.endsWith("/rss.xml") || link.label === "RSS";
+              const live = isRss || isLiveSocialHref(link.href);
+              if (isRss) {
+                return (
+                  <li key={link.label}>
+                    <a
+                      href="/rss.xml"
+                      className={outlinePillClass("size-11")}
+                      aria-label={link.label}
+                    >
+                      <SocialGlyph label={link.label} />
+                    </a>
+                  </li>
+                );
+              }
+              if (!live) {
+                return (
+                  <li key={link.label}>
+                    <span
+                      className={outlinePillClass("size-11 cursor-default")}
+                      aria-label={`${link.label}, soon`}
+                      title={`${link.label} soon`}
+                    >
+                      <SocialGlyph label={link.label} />
+                    </span>
+                  </li>
+                );
+              }
+              return (
+                <li key={link.label}>
+                  <Link
+                    href={link.href}
+                    className={outlinePillClass("size-11")}
+                    {...(link.external
+                      ? { target: "_blank", rel: "noreferrer noopener" }
+                      : {})}
+                    aria-label={link.label}
+                  >
+                    <SocialGlyph label={link.label} />
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </div>
         <nav aria-label="Sitemap" className="text-sm">
@@ -48,9 +78,15 @@ export function Footer({ logoSrc = LOGO_PNG }: FooterProps) {
           <ul className="mt-4 flex flex-col gap-2.5">
             {FOOTER_SITEMAP.map((item) => (
               <li key={item.href}>
-                <Link href={item.href} className="link-draw text-white">
-                  {item.label}
-                </Link>
+                {item.href.endsWith("/rss.xml") ? (
+                  <a href="/rss.xml" className="link-draw text-white">
+                    {item.label}
+                  </a>
+                ) : (
+                  <Link href={item.href} className="link-draw text-white">
+                    {item.label}
+                  </Link>
+                )}
               </li>
             ))}
           </ul>

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Ellipsis, X } from "lucide-react";
 import { SocialGlyph } from "@/components/SocialGlyph";
 import { outlinePillClass } from "@/components/pills";
-import { SOCIAL_LINKS } from "@/lib/site";
+import { isLiveSocialHref, SOCIAL_LINKS } from "@/lib/site";
 
 export function SocialLauncher() {
   const [open, setOpen] = useState(false);
@@ -68,10 +68,11 @@ export function SocialLauncher() {
       >
         {SOCIAL_LINKS.map((link) => {
           const isRss = link.href.endsWith("/rss.xml") || link.label === "RSS";
+          const live = isRss || isLiveSocialHref(link.href);
           const itemClass =
             "flex min-h-10 items-center gap-2.5 rounded-lg px-2.5 text-sm text-paper transition-colors duration-300 ease-out hover:bg-teal hover:text-ink";
           return (
-            <li key={link.href}>
+            <li key={link.label}>
               {isRss ? (
                 <a
                   href="/rss.xml"
@@ -82,7 +83,7 @@ export function SocialLauncher() {
                   <SocialGlyph label={link.label} />
                   {link.label}
                 </a>
-              ) : (
+              ) : live ? (
                 <Link
                   href={link.href}
                   role="menuitem"
@@ -95,6 +96,20 @@ export function SocialLauncher() {
                   <SocialGlyph label={link.label} />
                   {link.label}
                 </Link>
+              ) : (
+                <button
+                  type="button"
+                  role="menuitem"
+                  className={`${itemClass} w-full cursor-default`}
+                  onClick={() => setOpen(false)}
+                  aria-label={`${link.label}, soon`}
+                >
+                  <SocialGlyph label={link.label} />
+                  {link.label}
+                  <span className="ml-auto text-[10px] font-semibold tracking-[0.12em] uppercase">
+                    Soon
+                  </span>
+                </button>
               )}
             </li>
           );
