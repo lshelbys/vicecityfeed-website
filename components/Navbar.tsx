@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Search } from "lucide-react";
+import { FadeScroll } from "@/components/FadeScroll";
 import { NavPills } from "@/components/NavPills";
 import { ReleaseCountdown } from "@/components/ReleaseCountdown";
 import { SearchModal } from "@/components/SearchModal";
@@ -67,13 +68,13 @@ export function Navbar({ articles, logoSrc }: NavbarProps) {
         </div>
       </div>
       <nav aria-label="Secondary">
-        <div
-          className={`header-nav pill-scroll no-scrollbar mx-auto min-w-0 max-w-7xl overflow-x-auto ${
+        <FadeScroll
+          className={`header-nav mx-auto min-w-0 max-w-7xl ${
             compact ? "py-1.5 md:py-2" : "py-2.5 md:py-3"
           }`}
         >
           <NavPills />
-        </div>
+        </FadeScroll>
       </nav>
       <SearchModal
         open={searchOpen}

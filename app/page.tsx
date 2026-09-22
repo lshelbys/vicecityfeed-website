@@ -56,13 +56,12 @@ export default function HomePage() {
         aria-labelledby="wire-heading"
         className="mx-auto max-w-7xl px-4 py-12 md:px-6"
       >
-        <h2
-          id="wire-heading"
-          className="reveal mb-8 text-2xl font-extrabold tracking-tight text-paper md:text-3xl"
-        >
-          Newswire
-        </h2>
-        <WireFeed articles={articles} />
+        <WireFeed
+          articles={articles}
+          heading="Newswire"
+          headingId="wire-heading"
+          syncWithUrl
+        />
       </section>
     </main>
   );

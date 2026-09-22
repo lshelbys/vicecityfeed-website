@@ -23,17 +23,22 @@ export function ReleaseCountdown() {
   useEffect(() => {
     const tick = () => setRemaining(remainingUntilRelease());
     tick();
-    const id = window.setInterval(tick, 30_000);
+    const id = window.setInterval(tick, 1_000);
     return () => window.clearInterval(id);
   }, []);
 
   const live = remaining.totalMs > 0;
   const label = live
-    ? `Time until GTA 6 release on 19 November 2026. ${remaining.days} days ${remaining.hours} hours remaining.`
+    ? `Time until GTA 6 release on 19 November 2026. ${remaining.days} days ${remaining.hours} hours ${remaining.minutes} minutes remaining.`
     : "GTA 6 is out";
 
   return (
-    <p className="min-w-0 leading-none text-white" aria-live="polite" aria-label={label}>
+    <p
+      className="min-w-0 leading-none text-white"
+      aria-live="polite"
+      aria-label={label}
+      data-countdown={live ? `${remaining.days}d-${pad(remaining.hours)}h-${pad(remaining.minutes)}m` : "out"}
+    >
       <span className="block text-[9px] font-semibold tracking-[0.12em] uppercase md:text-[10px] md:tracking-[0.16em]">
         GTA 6
       </span>
@@ -44,6 +49,11 @@ export function ReleaseCountdown() {
             d{" "}
             <TickValue value={pad(remaining.hours)} />
             h
+            <span className="hidden md:inline">
+              {" "}
+              <TickValue value={pad(remaining.minutes)} />
+              m
+            </span>
           </>
         ) : (
           "Out now"

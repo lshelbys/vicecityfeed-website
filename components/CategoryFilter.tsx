@@ -2,6 +2,7 @@
 
 import { useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { FadeScroll } from "@/components/FadeScroll";
 import { CATEGORY_FILTERS } from "@/lib/site";
 import type { CategorySlug } from "@/lib/types";
 
@@ -45,10 +46,10 @@ export function CategoryFilter({
 
   return (
     <div className="min-w-0">
-      <div
+      <FadeScroll
         role="tablist"
         aria-label="Filter Newswire by category"
-        className="pill-scroll no-scrollbar -mx-4 overflow-x-auto md:mx-0"
+        className="-mx-4 md:mx-0"
       >
         <div ref={rowRef} className="relative flex w-max gap-2 px-4 md:px-0">
           <span
@@ -101,7 +102,7 @@ export function CategoryFilter({
             );
           })}
         </div>
-      </div>
+      </FadeScroll>
     </div>
   );
 }

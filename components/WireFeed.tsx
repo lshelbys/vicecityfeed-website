@@ -21,6 +21,8 @@ type WireFeedProps = {
   articles: FeedArticle[];
   initialCategory?: CategorySlug;
   syncWithUrl?: boolean;
+  heading?: string;
+  headingId?: string;
 };
 
 function categoryFromParam(value: string | null): CategorySlug | null {
@@ -34,10 +36,16 @@ function prefersReducedMotion() {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
+function storyCountLabel(count: number) {
+  return `${count} ${count === 1 ? "story" : "stories"}`;
+}
+
 function WireFeedInner({
   articles,
   initialCategory = "all",
   syncWithUrl = false,
+  heading,
+  headingId = "wire-heading",
 }: WireFeedProps) {
   const searchParams = useSearchParams();
   const fromUrl = syncWithUrl ? categoryFromParam(searchParams.get("cat")) : null;
@@ -69,6 +77,23 @@ function WireFeedInner({
 
   return (
     <div className="min-w-0 space-y-8">
+      {heading ? (
+        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+          <h2
+            id={headingId}
+            className="reveal text-2xl font-extrabold tracking-tight text-white md:text-3xl"
+          >
+            {heading}
+          </h2>
+          <p
+            className="text-sm font-medium text-white"
+            aria-live="polite"
+            data-story-count={filtered.length}
+          >
+            {storyCountLabel(filtered.length)}
+          </p>
+        </div>
+      ) : null}
       <CategoryFilter active={category} onSelect={selectCategory} />
       {filtered.length === 0 ? (
         <div className="py-6">

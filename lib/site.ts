@@ -78,6 +78,10 @@ export const CATEGORY_TO_SLUG: Record<Category, Exclude<CategorySlug, "all" | "h
     Guides: "guides",
   };
 
+export function newswireFilterHref(category: Category) {
+  return `/?cat=${CATEGORY_TO_SLUG[category]}#newswire`;
+}
+
 export const SLUG_TO_CATEGORY: Record<
   Exclude<CategorySlug, "all" | "hardware">,
   Category

@@ -16,7 +16,7 @@ import { formatDate } from "@/lib/format";
 import {
   CATEGORY_SECTION,
   CATEGORY_SHORT,
-  CATEGORY_TO_SLUG,
+  newswireFilterHref,
   SITE,
 } from "@/lib/site";
 import Link from "next/link";
@@ -78,7 +78,7 @@ export default async function PostPage({ params }: PostPageProps) {
   const adjacent = getAdjacentArticles(article.slug);
   const section = CATEGORY_SECTION[article.category];
   const categoryLabel = CATEGORY_SHORT[article.category];
-  const categoryHref = `/leonida-wire?cat=${CATEGORY_TO_SLUG[article.category]}`;
+  const categoryHref = newswireFilterHref(article.category);
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
@@ -141,13 +141,19 @@ export default async function PostPage({ params }: PostPageProps) {
           <p className="reveal reveal-delay mt-7 text-xl leading-snug font-bold text-balance text-white md:text-2xl">
             {article.excerpt}
           </p>
-          <div className="mt-8 flex flex-wrap items-baseline gap-x-4 gap-y-1">
+          <div className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-2">
             <time
               dateTime={article.publishedAt}
               className="text-sm font-semibold tracking-wide text-white"
             >
               {formatDate(article.publishedAt)}
             </time>
+            <Link
+              href={categoryHref}
+              className="rounded-full bg-raised px-2.5 py-1 text-[10px] font-semibold tracking-[0.14em] text-white uppercase"
+            >
+              {categoryLabel}
+            </Link>
             <ReadingProgress minutes={article.readingTimeMinutes} />
             <CopyLink url={`${SITE.url}/posts/${article.slug}`} />
           </div>
