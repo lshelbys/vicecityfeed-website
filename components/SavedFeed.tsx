@@ -24,7 +24,7 @@ export function SavedFeed({ articles }: SavedFeedProps) {
 
   if (saved.length === 0) {
     return (
-      <div className="py-6" data-saved-empty="true">
+      <div className="min-h-[40vh] py-6" data-saved-empty="true">
         <p className="text-lg font-bold text-white">Nothing saved yet</p>
         <Link href="/" className={ctaPillClass("white", "mt-5")}>
           Back to Newswire

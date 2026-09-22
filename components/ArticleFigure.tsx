@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useId, useState } from "react";
+import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import { CoverArt } from "@/components/CoverArt";
 import type { CoverAccent } from "@/lib/types";
@@ -71,52 +72,55 @@ export function ArticleFigure({ accent, title, caption }: ArticleFigureProps) {
           {caption}
         </figcaption>
       </figure>
-      {mounted ? (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby={titleId}
-          aria-describedby={captionId}
-          data-lightbox
-          data-open={open ? "true" : "false"}
-          className={`figure-lightbox fixed inset-0 z-[70] flex flex-col items-center justify-center px-4 py-16 ${
-            open ? "opacity-100" : "opacity-0"
-          }`}
-        >
-          <button
-            type="button"
-            className="absolute inset-0 bg-black/90"
-            aria-label="Close cover"
-            onClick={hide}
-          />
-          <button
-            type="button"
-            onClick={hide}
-            aria-label="Close"
-            data-lightbox-close
-            className="absolute top-4 right-4 z-10 inline-flex size-11 items-center justify-center rounded-full text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-white"
-          >
-            <X className="size-5" aria-hidden />
-          </button>
-          <div className="relative z-10 w-full max-w-5xl">
-            <h2 id={titleId} className="sr-only">
-              {title}
-            </h2>
-            <CoverArt
-              accent={accent}
-              title={title}
-              lead
-              className="aspect-video h-auto w-full rounded-2xl"
-            />
-            <p
-              id={captionId}
-              className="mt-4 text-sm font-medium text-white md:text-base"
+      {mounted
+        ? createPortal(
+            <div
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby={titleId}
+              aria-describedby={captionId}
+              data-lightbox
+              data-open={open ? "true" : "false"}
+              className={`figure-lightbox fixed inset-0 z-[70] flex flex-col items-center justify-center bg-black/90 px-4 py-16 ${
+                open ? "opacity-100" : "opacity-0"
+              }`}
             >
-              {caption}
-            </p>
-          </div>
-        </div>
-      ) : null}
+              <button
+                type="button"
+                className="absolute inset-0"
+                aria-label="Close cover"
+                onClick={hide}
+              />
+              <button
+                type="button"
+                onClick={hide}
+                aria-label="Close"
+                data-lightbox-close
+                className="absolute top-4 right-4 z-10 inline-flex size-11 items-center justify-center rounded-full text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-white"
+              >
+                <X className="size-5" aria-hidden />
+              </button>
+              <div className="relative z-10 w-full max-w-5xl">
+                <h2 id={titleId} className="sr-only">
+                  {title}
+                </h2>
+                <CoverArt
+                  accent={accent}
+                  title={title}
+                  lead
+                  className="aspect-video h-auto w-full rounded-2xl"
+                />
+                <p
+                  id={captionId}
+                  className="mt-4 text-sm font-medium text-white md:text-base"
+                >
+                  {caption}
+                </p>
+              </div>
+            </div>,
+            document.body,
+          )
+        : null}
     </>
   );
 }
