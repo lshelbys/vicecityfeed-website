@@ -81,7 +81,7 @@ export function ArticleFigure({ accent, title, caption }: ArticleFigureProps) {
               aria-describedby={captionId}
               data-lightbox
               data-open={open ? "true" : "false"}
-              className={`figure-lightbox fixed inset-0 z-[70] flex flex-col items-center justify-center bg-black/90 px-4 py-16 ${
+              className={`figure-lightbox fixed inset-0 z-[70] flex flex-col items-center justify-center bg-ink px-4 py-16 ${
                 open ? "opacity-100" : "opacity-0"
               }`}
             >
