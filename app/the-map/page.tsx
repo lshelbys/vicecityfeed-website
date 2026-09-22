@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { ArticleCard } from "@/components/ArticleCard";
 import { PageHeader } from "@/components/PageHeader";
+import { SectionFeed } from "@/components/SectionFeed";
 import { getFeedArticles } from "@/lib/articles";
 
 export const metadata: Metadata = {
@@ -13,21 +13,13 @@ export default function TheMapPage() {
   const articles = getFeedArticles().filter((article) => article.section === "map");
 
   return (
-    <main id="main" className="mx-auto max-w-7xl px-4 py-10 md:px-6">
+    <main id="main" className="mx-auto max-w-7xl px-4 py-12 md:px-6">
       <PageHeader
-        kicker="Leonida"
+        kicker="Newswire"
         title="The Map"
-        description="Acreage, density, nightlife districts, and the quiet parts of the state the trailers skip."
+        description="Acreage, density, and the quiet parts of Leonida the trailers skip."
       />
-      <div className="reveal-stagger grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-        {articles.map((article) => (
-          <ArticleCard
-            key={article.slug}
-            article={article}
-            readingTimeMinutes={article.readingTimeMinutes}
-          />
-        ))}
-      </div>
+      <SectionFeed articles={articles} />
     </main>
   );
 }

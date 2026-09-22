@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { ArticleCard } from "@/components/ArticleCard";
 import { PageHeader } from "@/components/PageHeader";
+import { SectionFeed } from "@/components/SectionFeed";
 import { getFeedArticles } from "@/lib/articles";
 
 export const metadata: Metadata = {
@@ -15,21 +15,13 @@ export default function GarageModsPage() {
   );
 
   return (
-    <main id="main" className="mx-auto max-w-7xl px-4 py-10 md:px-6">
+    <main id="main" className="mx-auto max-w-7xl px-4 py-12 md:px-6">
       <PageHeader
-        kicker="Machines"
+        kicker="Newswire"
         title="Garage & Mods"
-        description="Liveries, stance, ammo types, and what the PC community should expect once the toolchain lands."
+        description="Liveries, ammo, marina garages, and the PC toolchain."
       />
-      <div className="reveal-stagger grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-        {articles.map((article) => (
-          <ArticleCard
-            key={article.slug}
-            article={article}
-            readingTimeMinutes={article.readingTimeMinutes}
-          />
-        ))}
-      </div>
+      <SectionFeed articles={articles} />
     </main>
   );
 }

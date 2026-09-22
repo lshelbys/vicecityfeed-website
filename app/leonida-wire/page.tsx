@@ -11,11 +11,11 @@ export const metadata: Metadata = {
 
 export default function LeonidaWirePage() {
   return (
-    <main id="main" className="mx-auto max-w-7xl px-4 py-10 md:px-6">
+    <main id="main" className="mx-auto max-w-7xl px-4 py-12 md:px-6">
       <PageHeader
-        kicker="News desk"
+        kicker="Newswire"
         title="Leonida Wire"
-        description="Filter the feed. Leaks stay labeled. Lore stays sourced. If it cannot survive the editorial guidelines, it does not ship."
+        description="Leaks, lore, and garage notes from the Leonida desk."
       />
       <WireFeed articles={getFeedArticles()} syncWithUrl />
     </main>

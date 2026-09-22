@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { ArticleCard } from "@/components/ArticleCard";
 import { PageHeader } from "@/components/PageHeader";
+import { SectionFeed } from "@/components/SectionFeed";
 import { getFeedArticles } from "@/lib/articles";
 
 export const metadata: Metadata = {
@@ -15,21 +15,13 @@ export default function ReviewsPage() {
   );
 
   return (
-    <main id="main" className="mx-auto max-w-7xl px-4 py-10 md:px-6">
+    <main id="main" className="mx-auto max-w-7xl px-4 py-12 md:px-6">
       <PageHeader
-        kicker="Verdicts"
+        kicker="Newswire"
         title="Reviews"
-        description="Character studies, radio, and the night economy — scored like a desk, not a hype cycle."
+        description="Character studies, radio, and the night economy — scored like a desk."
       />
-      <div className="reveal-stagger grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-        {articles.map((article) => (
-          <ArticleCard
-            key={article.slug}
-            article={article}
-            readingTimeMinutes={article.readingTimeMinutes}
-          />
-        ))}
-      </div>
+      <SectionFeed articles={articles} />
     </main>
   );
 }

@@ -4,6 +4,7 @@ import { Suspense, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { ArticleCard } from "@/components/ArticleCard";
 import { CategoryFilter } from "@/components/CategoryFilter";
+import { ctaPillClass } from "@/components/pills";
 import { filterArticlesByCategory } from "@/lib/filters";
 import type { CategorySlug, FeedArticle } from "@/lib/types";
 
@@ -70,7 +71,18 @@ function WireFeedInner({
     <div className="min-w-0 space-y-8">
       <CategoryFilter active={category} onSelect={selectCategory} />
       {filtered.length === 0 ? (
-        <p className="text-sm text-white">No stories in this lane yet.</p>
+        <div className="py-6">
+          <p className="text-lg font-bold text-white">
+            No stories in this lane yet.
+          </p>
+          <button
+            type="button"
+            className={ctaPillClass("white", "mt-5")}
+            onClick={() => selectCategory("all")}
+          >
+            Back to All
+          </button>
+        </div>
       ) : (
         <div
           className="feed-fade grid items-start gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"

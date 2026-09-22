@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ArticleBody } from "@/components/ArticleBody";
 import { ArticleCard } from "@/components/ArticleCard";
+import { CopyLink } from "@/components/CopyLink";
 import { CoverArt } from "@/components/CoverArt";
 import { ReadingProgress } from "@/components/ReadingProgress";
 import {
@@ -137,6 +138,7 @@ export default async function PostPage({ params }: PostPageProps) {
               {formatDate(article.publishedAt)}
             </time>
             <ReadingProgress minutes={article.readingTimeMinutes} />
+            <CopyLink url={`${SITE.url}/posts/${article.slug}`} />
           </div>
         </header>
         <div className="group relative mt-10 overflow-hidden rounded-2xl">

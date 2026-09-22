@@ -88,7 +88,7 @@ export const SLUG_TO_CATEGORY: Record<
   guides: "Guides",
 };
 
-export const HARDWARE_TAGS = ["pc", "hardware", "ammo", "guns"] as const;
+export const HARDWARE_TAGS = ["hardware"] as const;
 
 export function isNavActive(pathname: string, href: string): boolean {
   if (href === "/") {
