@@ -39,7 +39,7 @@ export function NewsletterCTA() {
           </p>
           <form
             onSubmit={onSubmit}
-            className="mt-4 flex items-center rounded-full bg-raised p-1"
+            className="newsletter-field mt-4 flex items-center rounded-full bg-raised p-1"
           >
             <label className="sr-only" htmlFor="newsletter-email">
               Email address

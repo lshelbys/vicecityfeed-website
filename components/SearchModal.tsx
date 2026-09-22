@@ -94,7 +94,7 @@ export function SearchModal({ open, onClose, articles }: SearchModalProps) {
         <label htmlFor="site-search" className="sr-only">
           Search Vice City Feed
         </label>
-        <div className="flex items-center gap-2 rounded-full bg-raised px-4">
+        <div className="search-field flex items-center gap-2 rounded-full bg-raised px-4">
           <Search className="size-4 text-white" aria-hidden />
           <input
             id="site-search"

@@ -83,6 +83,19 @@ export function getRelatedArticles(article: ArticleMeta): ArticleMeta[] {
     .filter((item): item is ArticleMeta => Boolean(item));
 }
 
+export function getAdjacentArticles(slug: string): {
+  previous?: ArticleMeta;
+  next?: ArticleMeta;
+} {
+  const list = getArticleMeta();
+  const index = list.findIndex((item) => item.slug === slug);
+  if (index < 0) return {};
+  return {
+    previous: index > 0 ? list[index - 1] : undefined,
+    next: index < list.length - 1 ? list[index + 1] : undefined,
+  };
+}
+
 export function searchArticles(query: string): ArticleMeta[] {
   return searchArticleMeta(getArticleMeta(), query);
 }

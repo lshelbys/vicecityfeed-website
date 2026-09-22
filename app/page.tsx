@@ -1,7 +1,31 @@
+import type { Metadata } from "next";
 import { Hero } from "@/components/Hero";
 import { WireFeed } from "@/components/WireFeed";
 import { getFeedArticles, getHeroArticles } from "@/lib/articles";
 import { SITE } from "@/lib/site";
+
+export const metadata: Metadata = {
+  description: SITE.description,
+  openGraph: {
+    title: SITE.name,
+    description: SITE.description,
+    url: SITE.url,
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: SITE.name,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE.name,
+    description: SITE.description,
+    images: ["/opengraph-image"],
+  },
+};
 
 export default function HomePage() {
   const [lead] = getHeroArticles();

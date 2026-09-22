@@ -5,7 +5,9 @@ import { ArticleCard } from "@/components/ArticleCard";
 import { CopyLink } from "@/components/CopyLink";
 import { CoverArt } from "@/components/CoverArt";
 import { ReadingProgress } from "@/components/ReadingProgress";
+import { AdjacentStories } from "@/components/AdjacentStories";
 import {
+  getAdjacentArticles,
   getAllSlugs,
   getArticle,
   getRelatedArticles,
@@ -35,6 +37,12 @@ export async function generateMetadata({
   if (!article) return { title: "Not found" };
 
   const url = `${SITE.url}/posts/${article.slug}`;
+  const image = {
+    url: `/posts/${article.slug}/opengraph-image`,
+    width: 1200,
+    height: 630,
+    alt: article.title,
+  };
   return {
     title: article.title,
     description: article.excerpt,
@@ -50,11 +58,13 @@ export async function generateMetadata({
       authors: [article.author.name],
       section: article.category,
       tags: article.tags,
+      images: [image],
     },
     twitter: {
       card: "summary_large_image",
       title: article.title,
       description: article.excerpt,
+      images: [image.url],
     },
   };
 }
@@ -65,6 +75,7 @@ export default async function PostPage({ params }: PostPageProps) {
   if (!article) notFound();
 
   const related = getRelatedArticles(article);
+  const adjacent = getAdjacentArticles(article.slug);
   const section = CATEGORY_SECTION[article.category];
   const categoryLabel = CATEGORY_SHORT[article.category];
   const categoryHref = `/leonida-wire?cat=${CATEGORY_TO_SLUG[article.category]}`;
@@ -174,6 +185,7 @@ export default async function PostPage({ params }: PostPageProps) {
           </div>
         </section>
       ) : null}
+      <AdjacentStories previous={adjacent.previous} next={adjacent.next} />
     </main>
   );
 }

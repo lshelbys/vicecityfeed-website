@@ -48,7 +48,7 @@ export function NavPills() {
             key={`${item.href}-${item.label}`}
             href={item.href}
             data-nav-active={active ? "true" : "false"}
-            className={`relative z-10 inline-flex min-h-11 shrink-0 items-center justify-center rounded-full px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors duration-300 ease-out ${
+            className={`relative z-10 inline-flex min-h-11 shrink-0 items-center justify-center rounded-full px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors duration-300 ease-out focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-white ${
               active ? "text-ink" : "text-white hover:bg-white/8"
             }`}
           >

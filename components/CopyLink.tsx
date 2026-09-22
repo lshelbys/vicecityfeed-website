@@ -33,7 +33,7 @@ export function CopyLink({ url }: CopyLinkProps) {
       type="button"
       onClick={onCopy}
       aria-live="polite"
-      className="text-sm font-semibold tracking-wide text-white"
+      className="rounded-sm text-sm font-semibold tracking-wide text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-white"
     >
       {copied ? "Copied" : "Copy link"}
     </button>

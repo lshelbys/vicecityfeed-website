@@ -57,8 +57,14 @@ body {
 }
 
 :focus-visible {
-  outline: 2px solid var(--teal);
-  outline-offset: 2px;
+  outline: 2px solid #ffffff;
+  outline-offset: 3px;
+}
+
+.search-field:focus-within,
+.newsletter-field:focus-within {
+  outline: 2px solid #ffffff;
+  outline-offset: 3px;
 }
 
 .no-scrollbar {
@@ -213,7 +219,9 @@ body {
 }
 
 .search-panel input:focus,
-.search-panel input:focus-visible {
+.search-panel input:focus-visible,
+.newsletter-field input:focus,
+.newsletter-field input:focus-visible {
   outline: none;
 }
 

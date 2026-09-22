@@ -27,8 +27,8 @@ export default function OpenGraphImage() {
       >
         <img
           src={logoSrc}
-          width={320}
-          height={190}
+          width={240}
+          height={141}
           alt=""
           style={{ objectFit: "contain", objectPosition: "left" }}
         />
@@ -43,7 +43,9 @@ export default function OpenGraphImage() {
           >
             VICE CITY FEED
           </div>
-          <div style={{ fontSize: 28, color: "#8E8E93" }}>{SITE.tagline}</div>
+          <div style={{ fontSize: 28, color: "#FFFFFF", fontWeight: 700 }}>
+            {SITE.tagline}
+          </div>
         </div>
         <div style={{ fontSize: 22, color: "#3BB8B3", fontWeight: 700 }}>
           Newswire
