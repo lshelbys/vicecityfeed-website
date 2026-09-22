@@ -10,9 +10,9 @@ type BrandMarkProps = {
 
 const sizeClass: Record<BrandMarkSize, string> = {
   header:
-    "h-11 w-auto shrink-0 object-contain object-left md:h-14",
+    "h-[66px] w-auto shrink-0 object-contain object-left md:h-[84px]",
   footer:
-    "h-14 w-auto shrink-0 object-contain object-left md:h-16",
+    "h-[84px] w-auto shrink-0 object-contain object-left md:h-[96px]",
 };
 
 export function BrandMark({

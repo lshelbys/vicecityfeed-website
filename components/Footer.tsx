@@ -14,7 +14,7 @@ export function Footer({ logoSrc = LOGO_PNG }: FooterProps) {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="mt-16 border-t border-white/5 bg-ink">
+    <footer className="mt-16 bg-ink">
       <div className="mx-auto flex max-w-7xl flex-col gap-10 px-4 py-12 md:flex-row md:items-start md:justify-between md:px-6">
         <div className="max-w-sm">
           <Link href="/" aria-label={SITE.name} className="inline-flex">
@@ -54,7 +54,7 @@ export function Footer({ logoSrc = LOGO_PNG }: FooterProps) {
         </nav>
         <NewsletterCTA />
       </div>
-      <div className="border-t border-white/5">
+      <div>
         <p className="mx-auto max-w-7xl px-4 py-4 text-xs text-muted md:px-6">
           © {year} {SITE.name} · {SITE.domain} · All original editorial
           copyright {SITE.name}. Grand Theft Auto and Vice City are trademarks

@@ -44,7 +44,7 @@ export function Navbar({ articles, logoSrc }: NavbarProps) {
 
   return (
     <header className="sticky top-0 z-50 bg-ink">
-      <div className="mx-auto flex max-w-7xl min-w-0 items-center gap-2 px-4 py-3 md:gap-3 md:px-6 md:py-3.5">
+      <div className="mx-auto flex max-w-7xl min-w-0 items-center gap-2 px-4 py-2 md:gap-3 md:px-6 md:py-2.5">
         <div className="flex min-w-0 flex-1 items-center">
           <SiteLogo src={logoSrc} />
         </div>
@@ -95,7 +95,7 @@ export function Navbar({ articles, logoSrc }: NavbarProps) {
           </div>
         </div>
       </div>
-      <nav aria-label="Secondary" className="border-t border-white/5">
+      <nav aria-label="Secondary">
         <div className="pill-scroll no-scrollbar mx-auto min-w-0 max-w-7xl overflow-x-auto">
           <div className="flex w-max gap-2 px-4 py-2.5 md:px-6 md:py-3">
             {NAV_ITEMS.map((item) => {
