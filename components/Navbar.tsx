@@ -37,12 +37,12 @@ export function Navbar({ articles, logoSrc }: NavbarProps) {
 
   return (
     <header className="sticky top-0 z-50 bg-ink">
-      <div className="mx-auto flex max-w-7xl min-w-0 items-center gap-2 px-4 py-2 md:gap-3 md:px-6 md:py-2.5">
-        <div className="flex min-w-0 flex-1 items-center gap-2.5 md:gap-4">
-          <SiteLogo src={logoSrc} />
+      <div className="mx-auto grid max-w-7xl min-w-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 px-4 py-2 md:gap-3 md:px-6 md:py-2.5">
+        <div className="min-w-0 justify-self-start">
           <ReleaseCountdown />
         </div>
-        <div className="ml-auto flex shrink-0 items-center gap-1.5 md:gap-2">
+        <SiteLogo src={logoSrc} />
+        <div className="flex shrink-0 items-center justify-end gap-1.5 justify-self-end md:gap-2">
           <button
             type="button"
             onClick={() => setSearchOpen(true)}
