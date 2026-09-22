@@ -36,7 +36,7 @@ export function SocialLauncher() {
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
-        className={outlinePillClass("size-11")}
+        className={outlinePillClass("size-10 min-h-10 md:size-11 md:min-h-11")}
         aria-expanded={open}
         aria-haspopup="menu"
         aria-controls={menuId}

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { ArticleBody } from "@/components/ArticleBody";
 import { ArticleCard } from "@/components/ArticleCard";
 import { CoverArt } from "@/components/CoverArt";
+import { ReadingProgress } from "@/components/ReadingProgress";
 import {
   getAllSlugs,
   getArticle,
@@ -128,12 +129,15 @@ export default async function PostPage({ params }: PostPageProps) {
           <p className="reveal reveal-delay mt-7 text-xl leading-snug font-bold text-balance text-white md:text-2xl">
             {article.excerpt}
           </p>
-          <time
-            dateTime={article.publishedAt}
-            className="mt-8 block text-sm font-semibold tracking-wide text-white"
-          >
-            {formatDate(article.publishedAt)}
-          </time>
+          <div className="mt-8 flex flex-wrap items-baseline gap-x-4 gap-y-1">
+            <time
+              dateTime={article.publishedAt}
+              className="text-sm font-semibold tracking-wide text-white"
+            >
+              {formatDate(article.publishedAt)}
+            </time>
+            <ReadingProgress minutes={article.readingTimeMinutes} />
+          </div>
         </header>
         <div className="group relative mt-10 overflow-hidden rounded-2xl">
           <CoverArt

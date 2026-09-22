@@ -34,10 +34,10 @@ export function ReleaseCountdown() {
 
   return (
     <p className="min-w-0 leading-none text-white" aria-live="polite" aria-label={label}>
-      <span className="block text-[9px] font-semibold tracking-[0.16em] uppercase md:text-[10px]">
+      <span className="block text-[9px] font-semibold tracking-[0.12em] uppercase md:text-[10px] md:tracking-[0.16em]">
         GTA 6
       </span>
-      <span className="mt-1 block text-[13px] font-semibold tracking-tight tabular-nums md:text-sm">
+      <span className="mt-0.5 block text-[12px] font-semibold tracking-tight tabular-nums md:text-sm">
         {live ? (
           <>
             <TickValue value={String(remaining.days)} />
@@ -49,7 +49,7 @@ export function ReleaseCountdown() {
           "Out now"
         )}
       </span>
-      <span className="mt-1 block text-[9px] font-medium tracking-[0.1em] uppercase md:text-[10px]">
+      <span className="mt-0.5 block whitespace-nowrap text-[9px] font-medium tracking-[0.04em] uppercase md:text-[10px] md:tracking-[0.1em]">
         {live ? (
           <>
             until Nov 19
