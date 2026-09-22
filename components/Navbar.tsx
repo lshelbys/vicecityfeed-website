@@ -44,7 +44,9 @@ export function Navbar({ articles }: NavbarProps) {
   return (
     <header className="sticky top-0 z-50 bg-ink">
       <div className="mx-auto flex max-w-7xl min-w-0 items-center gap-2 px-4 py-2.5 md:gap-3 md:px-6 md:py-3">
-        <SiteLogo />
+        <div className="min-w-0 flex-1">
+          <SiteLogo />
+        </div>
         <div className="ml-auto flex shrink-0 items-center gap-1.5 md:gap-2">
           <button
             type="button"

@@ -5,7 +5,7 @@ export function SiteLogo() {
   return (
     <Link
       href="/"
-      className="flex min-w-0 flex-1 items-center gap-2 text-paper transition-colors duration-200 hover:text-teal"
+      className="inline-flex min-w-0 max-w-full items-center gap-2 text-paper transition-colors duration-200 hover:text-teal"
     >
       <span className="flex size-7 shrink-0 items-center justify-center rounded-md bg-gold md:size-8">
         <svg viewBox="0 0 24 24" className="size-3.5 md:size-4" aria-hidden>
