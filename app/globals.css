@@ -217,6 +217,18 @@ body {
   outline: none;
 }
 
+.feed-fade {
+  transition: opacity 200ms ease-out;
+}
+
+.feed-fade[data-phase="out"] {
+  opacity: 0;
+}
+
+.feed-fade[data-phase="in"] {
+  opacity: 1;
+}
+
 .link-draw {
   background-image: linear-gradient(currentColor, currentColor);
   background-position: 0 100%;
@@ -280,7 +292,8 @@ body {
   .link-draw,
   .tick-digit,
   .prose-vcf a,
-  .search-panel {
+  .search-panel,
+  .feed-fade {
     transition: none;
   }
 
@@ -359,10 +372,14 @@ body {
 }
 
 .prose-vcf blockquote {
-  margin: 1.5rem 0;
-  padding: 0.9rem 1.1rem 0.9rem 1.2rem;
-  border-left: 3px solid var(--teal);
-  background: var(--surface);
-  color: var(--paper);
-  font-style: italic;
+  margin: 2.2rem 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #ffffff;
+  font-size: clamp(1.35rem, 2.4vw, 1.85rem);
+  font-weight: 800;
+  font-style: normal;
+  line-height: 1.25;
+  letter-spacing: -0.03em;
 }

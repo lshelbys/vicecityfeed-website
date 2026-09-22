@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useMemo, useState } from "react";
+import { Suspense, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { ArticleCard } from "@/components/ArticleCard";
 import { CategoryFilter } from "@/components/CategoryFilter";
@@ -29,6 +29,10 @@ function categoryFromParam(value: string | null): CategorySlug | null {
   return null;
 }
 
+function prefersReducedMotion() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
 function WireFeedInner({
   articles,
   initialCategory = "all",
@@ -39,25 +43,50 @@ function WireFeedInner({
   const [category, setCategory] = useState<CategorySlug>(
     fromUrl ?? initialCategory,
   );
-
   const filtered = useMemo(
     () => filterArticlesByCategory(articles, category),
     [articles, category],
   );
+  const [phase, setPhase] = useState<"in" | "out">("in");
+  const fadeRef = useRef<number>(0);
+
+  function selectCategory(next: CategorySlug) {
+    if (next === category) return;
+    if (prefersReducedMotion()) {
+      setCategory(next);
+      return;
+    }
+    setPhase("out");
+    window.clearTimeout(fadeRef.current);
+    fadeRef.current = window.setTimeout(() => {
+      setCategory(next);
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => setPhase("in"));
+      });
+    }, 200);
+  }
 
   return (
     <div className="min-w-0 space-y-8">
-      <CategoryFilter active={category} onSelect={setCategory} />
+      <CategoryFilter active={category} onSelect={selectCategory} />
       {filtered.length === 0 ? (
-        <p className="text-sm text-muted">No stories in this lane yet.</p>
+        <p className="text-sm text-white">No stories in this lane yet.</p>
       ) : (
-        <div className="reveal-stagger grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {filtered.map((article) => (
-            <ArticleCard
+        <div
+          className="feed-fade grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+          data-phase={phase}
+        >
+          {filtered.map((article, index) => (
+            <div
               key={article.slug}
-              article={article}
-              readingTimeMinutes={article.readingTimeMinutes}
-            />
+              className={index === 0 ? "sm:col-span-2" : undefined}
+            >
+              <ArticleCard
+                article={article}
+                featured={index === 0}
+                readingTimeMinutes={article.readingTimeMinutes}
+              />
+            </div>
           ))}
         </div>
       )}
@@ -67,7 +96,7 @@ function WireFeedInner({
 
 export function WireFeed(props: WireFeedProps) {
   return (
-    <Suspense fallback={<p className="text-sm text-muted">Loading Newswire…</p>}>
+    <Suspense fallback={<p className="text-sm text-white">Loading Newswire…</p>}>
       <WireFeedInner {...props} />
     </Suspense>
   );
