@@ -18,7 +18,7 @@ export function Footer({ logoSrc = LOGO_PNG }: FooterProps) {
       <div className="mx-auto flex max-w-7xl flex-col gap-10 px-4 py-12 md:flex-row md:items-start md:justify-between md:px-6">
         <div className="max-w-sm">
           <Link href="/" aria-label={SITE.name} className="inline-flex">
-            <BrandMark src={logoSrc} />
+            <BrandMark src={logoSrc} size="footer" />
           </Link>
           <p className="mt-3 text-sm text-muted">
             Independent editorial coverage of Leonida. Not affiliated with

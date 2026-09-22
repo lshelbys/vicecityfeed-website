@@ -1,14 +1,25 @@
 import { LOGO_PNG, LOGO_SVG } from "@/lib/logo-paths";
 
+type BrandMarkSize = "header" | "footer";
+
 type BrandMarkProps = {
   src?: string;
+  size?: BrandMarkSize;
   className?: string;
 };
 
-const markClass =
-  "h-7 w-auto max-w-[9.5rem] object-contain object-left sm:max-w-[12rem] md:h-8 md:max-w-[14rem]";
+const sizeClass: Record<BrandMarkSize, string> = {
+  header:
+    "h-11 w-auto shrink-0 object-contain object-left md:h-14",
+  footer:
+    "h-14 w-auto shrink-0 object-contain object-left md:h-16",
+};
 
-export function BrandMark({ src = LOGO_PNG, className = markClass }: BrandMarkProps) {
+export function BrandMark({
+  src = LOGO_PNG,
+  size = "header",
+  className = sizeClass[size],
+}: BrandMarkProps) {
   if (src === LOGO_SVG) {
     return (
       <picture>

@@ -12,7 +12,7 @@ export function SiteLogo({ src = LOGO_PNG }: SiteLogoProps) {
     <Link
       href="/"
       aria-label={SITE.name}
-      className="inline-flex min-w-0 max-w-full items-center"
+      className="inline-flex shrink-0 items-center"
     >
       <BrandMark src={src} />
     </Link>
