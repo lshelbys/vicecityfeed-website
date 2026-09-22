@@ -1,0 +1,6 @@
+# Next static export. Keep underscore folders if Jekyll still runs.
+include:
+  - _next
+  - _not-found
+readme_index:
+  enabled: false

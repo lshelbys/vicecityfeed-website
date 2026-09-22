@@ -38,6 +38,7 @@ const PROTECTED = new Set([
   "eslint.config.mjs",
   "postcss.config.mjs",
   "README.md",
+  "_config.yml",
 ]);
 
 if (!existsSync(out)) {
@@ -46,7 +47,10 @@ if (!existsSync(out)) {
 }
 
 writeFileSync(join(out, "CNAME"), "vicecityfeed.com\n");
-writeFileSync(join(out, ".nojekyll"), "");
+writeFileSync(
+  join(out, ".nojekyll"),
+  "# Disable Jekyll so GitHub Pages publishes index.html and _next/ as-is.\n",
+);
 
 const logo = join(root, "public/images/logo.png");
 if (existsSync(logo)) {
