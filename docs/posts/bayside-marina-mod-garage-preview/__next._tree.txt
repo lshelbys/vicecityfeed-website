@@ -1,3 +1,4 @@
-:HL["/_next/static/chunks/0zbo5h449d1vm.css","style"]
+:HL["/_next/static/chunks/1uygdy8aibji9.css","style"]
 :HL["/_next/static/media/83afe278b6a6bb3c-s.p.2bn3s6zvc0dyp.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
-0:{"tree":{"name":"","param":null,"prefetchHints":4116,"slots":{"children":{"name":"posts","param":null,"prefetchHints":4160,"slots":{"children":{"name":"slug","param":{"type":"d","key":"bayside-marina-mod-garage-preview","siblings":[]},"prefetchHints":4192,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":4256,"slots":null}}}}}}},"staleTime":300,"buildId":"HEB5fMwGFBGAhwLN6Pr8o"}
+:HL["/images/logo.png","image"]
+0:{"tree":{"name":"","param":null,"prefetchHints":4116,"slots":{"children":{"name":"posts","param":null,"prefetchHints":4160,"slots":{"children":{"name":"slug","param":{"type":"d","key":"bayside-marina-mod-garage-preview","siblings":[]},"prefetchHints":4192,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":4256,"slots":null}}}}}}},"staleTime":300,"buildId":"iCVmOTEvz1s7CO6Y3U-Ws"}

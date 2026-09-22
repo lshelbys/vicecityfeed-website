@@ -1,4 +1,6 @@
+import { readFileSync } from "node:fs";
 import { ImageResponse } from "next/og";
+import { LOGO_FILE_PNG } from "@/lib/logo";
 import { SITE } from "@/lib/site";
 
 export const dynamic = "force-static";
@@ -7,6 +9,8 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 export default function OpenGraphImage() {
+  const logoSrc = `data:image/png;base64,${readFileSync(LOGO_FILE_PNG).toString("base64")}`;
+
   return new ImageResponse(
     (
       <div
@@ -21,22 +25,13 @@ export default function OpenGraphImage() {
           padding: 64,
         }}
       >
-        <div
-          style={{
-            width: 48,
-            height: 48,
-            background: "#FCAF17",
-            color: "#000",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: 18,
-            fontWeight: 800,
-            borderRadius: 8,
-          }}
-        >
-          VI
-        </div>
+        <img
+          src={logoSrc}
+          width={180}
+          height={72}
+          alt=""
+          style={{ objectFit: "contain", objectPosition: "left" }}
+        />
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           <div
             style={{
@@ -50,7 +45,7 @@ export default function OpenGraphImage() {
           </div>
           <div style={{ fontSize: 28, color: "#8E8E93" }}>{SITE.tagline}</div>
         </div>
-        <div style={{ fontSize: 22, color: "#FCAF17", fontWeight: 700 }}>
+        <div style={{ fontSize: 22, color: "#3BB8B3", fontWeight: 700 }}>
           Newswire
         </div>
       </div>

@@ -14,6 +14,11 @@ if (!existsSync(out)) {
 writeFileSync(join(out, "CNAME"), "vicecityfeed.com\n");
 writeFileSync(join(out, ".nojekyll"), "");
 
+const logo = join(root, "public/images/logo.png");
+if (existsSync(logo)) {
+  cpSync(logo, join(out, "favicon.ico"));
+}
+
 rmSync(docs, { recursive: true, force: true });
 cpSync(out, docs, { recursive: true });
 

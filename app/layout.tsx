@@ -6,6 +6,7 @@ export const dynamic = "force-static";
 import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
 import { getArticleMeta } from "@/lib/articles";
+import { getLogoSrc, hasLogoSvg, LOGO_PNG, LOGO_SVG } from "@/lib/logo";
 import { SITE } from "@/lib/site";
 import "./globals.css";
 
@@ -58,6 +59,16 @@ export const metadata: Metadata = {
       "application/rss+xml": `${SITE.url}/rss.xml`,
     },
   },
+  icons: {
+    icon: [
+      ...(hasLogoSvg()
+        ? [{ url: LOGO_SVG, type: "image/svg+xml" as const }]
+        : []),
+      { url: LOGO_PNG, type: "image/png" },
+    ],
+    shortcut: LOGO_PNG,
+    apple: [{ url: LOGO_PNG, sizes: "180x180", type: "image/png" }],
+  },
 };
 
 export const viewport: Viewport = {
@@ -81,9 +92,9 @@ export default function RootLayout({
         >
           Skip to content
         </a>
-        <Navbar articles={articles} />
+        <Navbar articles={articles} logoSrc={getLogoSrc()} />
         <div className="flex-1 min-w-0">{children}</div>
-        <Footer />
+        <Footer logoSrc={getLogoSrc()} />
       </body>
     </html>
   );

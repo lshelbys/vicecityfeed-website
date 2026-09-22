@@ -2,18 +2,24 @@ import Link from "next/link";
 import { NewsletterCTA } from "@/components/NewsletterCTA";
 import { SocialGlyph } from "@/components/SocialGlyph";
 import { outlinePillClass } from "@/components/pills";
+import { BrandMark } from "@/components/BrandMark";
+import { LOGO_PNG } from "@/lib/logo-paths";
 import { FOOTER_SITEMAP, SITE, SOCIAL_LINKS } from "@/lib/site";
 
-export function Footer() {
+type FooterProps = {
+  logoSrc?: string;
+};
+
+export function Footer({ logoSrc = LOGO_PNG }: FooterProps) {
   const year = new Date().getFullYear();
 
   return (
     <footer className="mt-16 border-t border-white/5 bg-ink">
       <div className="mx-auto flex max-w-7xl flex-col gap-10 px-4 py-12 md:flex-row md:items-start md:justify-between md:px-6">
         <div className="max-w-sm">
-          <p className="text-sm font-black tracking-[0.08em] text-paper uppercase">
-            {SITE.name}
-          </p>
+          <Link href="/" aria-label={SITE.name} className="inline-flex">
+            <BrandMark src={logoSrc} />
+          </Link>
           <p className="mt-3 text-sm text-muted">
             Independent editorial coverage of Leonida. Not affiliated with
             Rockstar Games or Take-Two Interactive.
