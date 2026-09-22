@@ -14,17 +14,17 @@ export function Footer({ logoSrc = LOGO_PNG }: FooterProps) {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="mt-16 bg-ink">
-      <div className="mx-auto flex max-w-7xl flex-col gap-10 px-4 py-12 md:flex-row md:items-start md:justify-between md:px-6">
+    <footer className="mt-20 bg-ink">
+      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 md:grid-cols-[minmax(0,1.15fr)_auto_minmax(0,1fr)] md:items-start md:gap-12 md:px-6">
         <div className="max-w-sm">
           <Link href="/" aria-label={SITE.name} className="site-logo-link inline-flex">
             <BrandMark src={logoSrc} size="footer" className="site-logo-mark" />
           </Link>
-          <p className="mt-3 text-sm text-muted">
+          <p className="mt-4 text-sm leading-relaxed text-white">
             Independent editorial coverage of Leonida. Not affiliated with
             Rockstar Games or Take-Two Interactive.
           </p>
-          <ul className="mt-5 flex gap-2">
+          <ul className="mt-6 flex gap-2">
             {SOCIAL_LINKS.map((link) => (
               <li key={link.href}>
                 <Link
@@ -42,7 +42,10 @@ export function Footer({ logoSrc = LOGO_PNG }: FooterProps) {
           </ul>
         </div>
         <nav aria-label="Sitemap" className="text-sm">
-          <ul className="flex flex-wrap gap-x-5 gap-y-2">
+          <p className="text-[10px] font-semibold tracking-[0.16em] text-white uppercase">
+            Site
+          </p>
+          <ul className="mt-4 flex flex-col gap-2.5">
             {FOOTER_SITEMAP.map((item) => (
               <li key={item.href}>
                 <Link href={item.href} className="link-draw text-white">
@@ -55,7 +58,7 @@ export function Footer({ logoSrc = LOGO_PNG }: FooterProps) {
         <NewsletterCTA />
       </div>
       <div>
-        <p className="mx-auto max-w-7xl px-4 py-4 text-xs text-muted md:px-6">
+        <p className="mx-auto max-w-7xl px-4 py-5 text-xs leading-relaxed text-white md:px-6">
           © {year} {SITE.name} · {SITE.domain} · All original editorial
           copyright {SITE.name}. Grand Theft Auto and Vice City are trademarks
           of their owners.

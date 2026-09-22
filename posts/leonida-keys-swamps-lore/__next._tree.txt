@@ -1,4 +1,4 @@
-:HL["/_next/static/chunks/33c2oiabnue98.css","style"]
+:HL["/_next/static/chunks/2ps42nugty7my.css","style"]
 :HL["/_next/static/media/83afe278b6a6bb3c-s.p.2bn3s6zvc0dyp.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
 :HL["/images/logo.png","image"]
-0:{"tree":{"name":"","param":null,"prefetchHints":4116,"slots":{"children":{"name":"posts","param":null,"prefetchHints":4160,"slots":{"children":{"name":"slug","param":{"type":"d","key":"leonida-keys-swamps-lore","siblings":[]},"prefetchHints":4192,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":4256,"slots":null}}}}}}},"staleTime":300,"buildId":"J7oooFUG_sUi_3TLTcUnP"}
+0:{"tree":{"name":"","param":null,"prefetchHints":4116,"slots":{"children":{"name":"posts","param":null,"prefetchHints":4160,"slots":{"children":{"name":"slug","param":{"type":"d","key":"leonida-keys-swamps-lore","siblings":[]},"prefetchHints":4192,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":4256,"slots":null}}}}}}},"staleTime":300,"buildId":"r1fcfYXY_TIokEXIBG6kb"}

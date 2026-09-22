@@ -30,11 +30,11 @@ export default function HomePage() {
       <section
         id="newswire"
         aria-labelledby="wire-heading"
-        className="mx-auto max-w-7xl px-4 py-10 md:px-6"
+        className="mx-auto max-w-7xl px-4 py-12 md:px-6"
       >
         <h2
           id="wire-heading"
-          className="reveal mb-6 text-2xl font-extrabold tracking-tight text-paper md:text-3xl"
+          className="reveal mb-8 text-2xl font-extrabold tracking-tight text-paper md:text-3xl"
         >
           Newswire
         </h2>

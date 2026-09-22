@@ -24,11 +24,11 @@ export function NewsletterCTA() {
     <section aria-labelledby="newsletter-heading" className="w-full max-w-md">
       <h2
         id="newsletter-heading"
-        className="text-sm font-extrabold tracking-tight text-paper"
+        className="text-[10px] font-semibold tracking-[0.16em] text-white uppercase"
       >
         Newsletter
       </h2>
-      <p className="mt-1 text-sm text-muted">
+      <p className="mt-3 text-sm leading-relaxed text-white">
         Map notes, mission timers, and garage drops. Unsubscribe anytime.
       </p>
       <form

@@ -21,14 +21,15 @@ export function Hero({ article }: HeroProps) {
               <CoverArt
                 accent={article.coverAccent}
                 title={article.title}
+                lead
                 className="h-full w-full origin-center transition-transform duration-500 group-hover:scale-110"
               />
             </div>
-            <div className="absolute inset-0 bg-linear-to-tr from-teal/20 via-transparent to-magenta/16" />
-            <div className="pointer-events-none absolute inset-0 hidden bg-linear-to-t from-black via-black/45 to-transparent md:block" />
+            <div className="absolute inset-0 bg-linear-to-tr from-black/25 via-transparent to-magenta/10" />
+            <div className="pointer-events-none absolute inset-0 hidden bg-linear-to-t from-black via-black/50 to-transparent md:block" />
           </div>
           <div className="relative z-10 flex flex-col items-start gap-3 bg-ink px-4 py-5 md:absolute md:inset-x-0 md:bottom-0 md:gap-4 md:bg-transparent md:p-8 lg:p-10">
-            <span className="reveal rounded-full bg-black/70 px-3 py-1 text-[11px] font-semibold tracking-wide text-white uppercase">
+            <span className="reveal rounded-full bg-black/70 px-2.5 py-1 text-[10px] font-semibold tracking-[0.14em] text-white uppercase">
               {CATEGORY_SHORT[article.category]}
             </span>
             <h1

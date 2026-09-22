@@ -168,6 +168,19 @@ body {
   animation: tick-in 320ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+@keyframes cover-haze {
+  from {
+    opacity: 0.72;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.cover-haze {
+  animation: cover-haze 4.8s ease-in-out infinite alternate;
+}
+
 .link-draw {
   background-image: linear-gradient(currentColor, currentColor);
   background-position: 0 100%;
@@ -217,7 +230,8 @@ body {
   .reveal,
   .reveal-stagger > *,
   .hero-settle,
-  .tick-digit {
+  .tick-digit,
+  .cover-haze {
     animation: none;
   }
 
@@ -247,7 +261,7 @@ body {
 }
 
 .prose-vcf p {
-  margin: 1.1em 0;
+  margin: 1.25em 0;
 }
 
 .prose-vcf aside p {
@@ -259,7 +273,7 @@ body {
   font-weight: 800;
   letter-spacing: -0.03em;
   color: var(--paper);
-  margin: 2rem 0 0.75rem;
+  margin: 2.4rem 0 0.85rem;
   scroll-margin-top: 8rem;
 }
 

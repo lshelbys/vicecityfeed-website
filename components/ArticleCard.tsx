@@ -21,30 +21,26 @@ export function ArticleCard({
   return (
     <article className="group transition-transform duration-300 ease-out hover:-translate-y-1">
       <Link href={href} className="block">
-        <div
-          className={`relative overflow-hidden rounded-2xl ${
-            featured ? "aspect-4/3" : "aspect-video"
-          }`}
-        >
+        <div className="relative aspect-video overflow-hidden rounded-2xl">
           <CoverArt
             accent={article.coverAccent}
             title={article.title}
             className="h-full w-full origin-center transition-transform duration-500 ease-out group-hover:scale-105"
           />
-          <div className="absolute inset-0 bg-linear-to-t from-black/35 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-          <span className="absolute top-3 left-3 rounded-full bg-black/70 px-3 py-1 text-[11px] font-semibold tracking-wide text-white uppercase transition-colors duration-300 ease-out group-hover:bg-teal group-hover:text-ink">
+          <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+          <span className="absolute top-3 left-3 rounded-full bg-black/70 px-2.5 py-1 text-[10px] font-semibold tracking-[0.14em] text-white uppercase transition-colors duration-300 ease-out group-hover:bg-teal group-hover:text-ink">
             {category}
           </span>
         </div>
-        <div className="mt-3">
+        <div className="mt-4">
           <h3
             className={`text-balance break-words font-extrabold tracking-tight text-white ${
-              featured ? "text-2xl md:text-3xl" : "text-lg md:text-xl"
+              featured ? "text-xl leading-snug md:text-2xl" : "text-base leading-snug md:text-lg"
             }`}
           >
             {article.title}
           </h3>
-          <p className="mt-1.5 text-sm text-white">
+          <p className="mt-2 text-xs font-medium tracking-wide text-white">
             <time dateTime={article.publishedAt}>
               {formatDate(article.publishedAt)}
             </time>

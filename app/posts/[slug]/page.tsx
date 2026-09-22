@@ -121,43 +121,47 @@ export default async function PostPage({ params }: PostPageProps) {
             </li>
           </ol>
         </nav>
-        <header className="mt-6">
+        <header className="mt-7">
           <h1 className="reveal text-[2.1rem] leading-[1.05] font-extrabold tracking-tight text-balance break-words text-white sm:text-5xl md:text-6xl lg:text-7xl">
             {article.title}
           </h1>
-          <p className="reveal reveal-delay mt-6 text-xl leading-snug font-bold text-balance text-white md:text-2xl">
+          <p className="reveal reveal-delay mt-7 text-xl leading-snug font-bold text-balance text-white md:text-2xl">
             {article.excerpt}
           </p>
           <time
             dateTime={article.publishedAt}
-            className="mt-6 block text-sm font-semibold text-white"
+            className="mt-8 block text-sm font-semibold tracking-wide text-white"
           >
             {formatDate(article.publishedAt)}
           </time>
         </header>
-        <div className="group relative mt-8 overflow-hidden rounded-2xl">
+        <div className="group relative mt-10 overflow-hidden rounded-2xl">
           <CoverArt
             accent={article.coverAccent}
             title={article.title}
+            lead
             className="aspect-video h-auto origin-center transition-transform duration-500 ease-out group-hover:scale-105"
           />
         </div>
-        <div className="mt-10">
+        <div className="mt-12">
           <ArticleBody markdown={article.content} />
         </div>
       </article>
       {related.length > 0 ? (
         <section
           aria-labelledby="related-heading"
-          className="mx-auto mt-16 max-w-7xl"
+          className="mx-auto mt-20 max-w-7xl"
         >
+          <p className="text-[10px] font-semibold tracking-[0.16em] text-white uppercase">
+            Newswire
+          </p>
           <h2
             id="related-heading"
-            className="mb-6 text-2xl font-extrabold tracking-tight text-white"
+            className="mt-2 mb-8 text-2xl font-extrabold tracking-tight text-white md:text-3xl"
           >
-            Related
+            More from the wire
           </h2>
-          <div className="reveal-stagger grid gap-6 md:grid-cols-3">
+          <div className="reveal-stagger grid gap-8 md:grid-cols-3">
             {related.map((item) => (
               <ArticleCard key={item.slug} article={item} />
             ))}
