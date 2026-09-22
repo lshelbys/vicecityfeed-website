@@ -56,7 +56,7 @@ export function NewsletterCTA() {
         </button>
       </form>
       {status === "done" ? (
-        <p className="mt-3 text-sm text-gold" role="status">
+        <p className="mt-3 text-sm text-white" role="status">
           You&apos;re on the wire.
         </p>
       ) : null}

@@ -10,8 +10,8 @@
   --magenta: #d9568a;
   --sunset: #f08a4a;
   --paper: #ffffff;
-  --muted: #8e8e93;
-  --muted-2: #a1a1aa;
+  --muted: #ffffff;
+  --muted-2: #ffffff;
   --line: rgb(255 255 255 / 0.1);
 }
 
@@ -161,9 +161,10 @@ body {
 }
 
 .prose-vcf {
-  color: rgb(255 255 255 / 0.86);
-  font-size: 1.0625rem;
-  line-height: 1.75;
+  color: #ffffff;
+  font-size: 1.125rem;
+  line-height: 1.8;
+  text-align: left;
 }
 
 .prose-vcf p {
@@ -201,13 +202,13 @@ body {
 }
 
 .prose-vcf a {
-  color: var(--teal);
+  color: #ffffff;
   text-decoration: underline;
   text-underline-offset: 3px;
 }
 
 .prose-vcf a:hover {
-  color: var(--magenta);
+  color: #ffffff;
 }
 
 .prose-vcf strong {

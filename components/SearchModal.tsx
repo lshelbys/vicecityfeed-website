@@ -58,7 +58,7 @@ export function SearchModal({ open, onClose, articles }: SearchModalProps) {
           Search ViceCityFeed
         </label>
         <div className="flex items-center gap-2 rounded-full border border-white/15 px-4 focus-within:border-teal">
-          <Search className="size-4 text-teal" aria-hidden />
+          <Search className="size-4 text-white" aria-hidden />
           <input
             id="site-search"
             ref={inputRef}
@@ -79,7 +79,7 @@ export function SearchModal({ open, onClose, articles }: SearchModalProps) {
                 onClick={close}
                 className="block rounded-xl px-3 py-3 hover:bg-raised"
               >
-                <p className="text-[11px] font-semibold tracking-wide text-teal uppercase">
+                <p className="text-[11px] font-semibold tracking-wide text-white uppercase">
                   {CATEGORY_SHORT[article.category]}
                 </p>
                 <p className="font-extrabold tracking-tight text-paper">

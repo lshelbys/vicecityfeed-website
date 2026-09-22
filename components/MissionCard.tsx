@@ -27,7 +27,7 @@ export function MissionCard({ mission }: MissionCardProps) {
         </span>
       </div>
       <h3 className="text-2xl font-extrabold tracking-tight text-paper">
-        <Link href={`/posts/${mission.articleSlug}`} className="transition-colors hover:text-teal">
+        <Link href={`/posts/${mission.articleSlug}`} className="text-white">
           {mission.title}
         </Link>
       </h3>

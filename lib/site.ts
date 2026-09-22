@@ -62,6 +62,14 @@ export const CATEGORY_SHORT: Record<Category, string> = {
   Guides: "Guides",
 };
 
+export const CATEGORY_SECTION: Record<Category, { href: string; label: string }> =
+  {
+    "Leaks & News": { href: "/leonida-wire", label: "Leonida Wire" },
+    "Map & Lore": { href: "/the-map", label: "The Map" },
+    "Vehicles & Guns": { href: "/garage-mods", label: "Garage & Mods" },
+    Guides: { href: "/mission-intel", label: "Mission Intel" },
+  };
+
 export const CATEGORY_TO_SLUG: Record<Category, Exclude<CategorySlug, "all" | "hardware">> =
   {
     "Leaks & News": "leaks-news",

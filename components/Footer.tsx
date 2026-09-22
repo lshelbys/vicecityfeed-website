@@ -45,7 +45,7 @@ export function Footer({ logoSrc = LOGO_PNG }: FooterProps) {
           <ul className="flex flex-wrap gap-x-5 gap-y-2">
             {FOOTER_SITEMAP.map((item) => (
               <li key={item.href}>
-                <Link href={item.href} className="text-muted transition-colors hover:text-teal">
+                <Link href={item.href} className="text-white underline-offset-4 hover:underline">
                   {item.label}
                 </Link>
               </li>

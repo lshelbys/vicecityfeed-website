@@ -38,13 +38,13 @@ export function ArticleCard({
         </div>
         <div className="mt-3">
           <h3
-            className={`text-balance break-words font-extrabold tracking-tight text-paper transition-colors duration-200 group-hover:text-teal ${
+            className={`text-balance break-words font-extrabold tracking-tight text-white ${
               featured ? "text-2xl md:text-3xl" : "text-lg md:text-xl"
             }`}
           >
             {article.title}
           </h3>
-          <p className="mt-1.5 text-sm text-muted transition-colors duration-200 group-hover:text-muted-2">
+          <p className="mt-1.5 text-sm text-white">
             <time dateTime={article.publishedAt}>
               {formatDate(article.publishedAt)}
             </time>

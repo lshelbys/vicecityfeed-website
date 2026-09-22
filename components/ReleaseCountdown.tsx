@@ -3,6 +3,10 @@
 import { useEffect, useState } from "react";
 import { remainingUntilRelease } from "@/lib/release";
 
+function pad(value: number) {
+  return String(value).padStart(2, "0");
+}
+
 export function ReleaseCountdown() {
   const [remaining, setRemaining] = useState(() => remainingUntilRelease());
 
@@ -20,27 +24,35 @@ export function ReleaseCountdown() {
 
   return (
     <p
-      className="min-w-0 shrink tabular-nums leading-tight text-paper"
+      className="flex shrink-0 items-end gap-2 text-white tabular-nums md:gap-2.5"
       aria-live="polite"
       aria-label={label}
     >
-      <span className="block text-[9px] font-semibold tracking-[0.16em] text-muted uppercase md:text-[10px]">
-        GTA 6
-      </span>
-      <span className="mt-0.5 block text-sm font-semibold tracking-tight md:text-[15px]">
-        {live ? (
-          <>
-            {remaining.days}
-            <span className="text-muted">d</span>
-            <span className="ml-1 hidden sm:inline">
-              {remaining.hours}
-              <span className="text-muted">h</span>
+      {live ? (
+        <>
+          <span className="flex flex-col items-start leading-none">
+            <span className="text-base font-semibold tracking-tight md:text-lg">
+              {remaining.days}
             </span>
-          </>
-        ) : (
-          "Out"
-        )}
-      </span>
+            <span className="mt-1 text-[8px] font-semibold tracking-[0.16em] uppercase md:text-[9px]">
+              Days
+            </span>
+          </span>
+          <span className="mb-2.5 text-xs font-light md:mb-3" aria-hidden>
+            :
+          </span>
+          <span className="flex flex-col items-start leading-none">
+            <span className="text-base font-semibold tracking-tight md:text-lg">
+              {pad(remaining.hours)}
+            </span>
+            <span className="mt-1 text-[8px] font-semibold tracking-[0.16em] uppercase md:text-[9px]">
+              Hrs
+            </span>
+          </span>
+        </>
+      ) : (
+        <span className="text-sm font-semibold tracking-tight">Out now</span>
+      )}
     </p>
   );
 }

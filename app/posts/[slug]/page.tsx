@@ -1,18 +1,20 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Clock, User } from "lucide-react";
 import { ArticleBody } from "@/components/ArticleBody";
 import { ArticleCard } from "@/components/ArticleCard";
 import { CoverArt } from "@/components/CoverArt";
-import { TableOfContents } from "@/components/TableOfContents";
 import {
   getAllSlugs,
   getArticle,
   getRelatedArticles,
 } from "@/lib/articles";
-import { extractHeadings } from "@/lib/content";
-import { formatDate, formatReadTime } from "@/lib/format";
-import { CATEGORY_SHORT, CATEGORY_TO_SLUG, SITE } from "@/lib/site";
+import { formatDate } from "@/lib/format";
+import {
+  CATEGORY_SECTION,
+  CATEGORY_SHORT,
+  CATEGORY_TO_SLUG,
+  SITE,
+} from "@/lib/site";
 import Link from "next/link";
 
 type PostPageProps = {
@@ -60,8 +62,10 @@ export default async function PostPage({ params }: PostPageProps) {
   const article = getArticle(slug);
   if (!article) notFound();
 
-  const headings = extractHeadings(article.content);
   const related = getRelatedArticles(article);
+  const section = CATEGORY_SECTION[article.category];
+  const categoryLabel = CATEGORY_SHORT[article.category];
+  const categoryHref = `/leonida-wire?cat=${CATEGORY_TO_SLUG[article.category]}`;
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
@@ -84,57 +88,72 @@ export default async function PostPage({ params }: PostPageProps) {
   };
 
   return (
-    <main id="main" className="mx-auto max-w-7xl px-4 py-8 md:px-6">
+    <main id="main" className="px-4 py-10 md:px-6 md:py-14">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <article>
-        <header className="reveal mx-auto max-w-3xl">
-          <Link
-            href={`/leonida-wire?cat=${CATEGORY_TO_SLUG[article.category]}`}
-            className="rounded-full bg-raised px-3 py-1 text-[11px] font-semibold tracking-wide text-white uppercase hover:bg-teal hover:text-ink"
-          >
-            {CATEGORY_SHORT[article.category]}
-          </Link>
-          <h1 className="mt-4 text-3xl leading-snug font-extrabold tracking-tight text-balance break-words text-paper md:text-6xl md:leading-tight">
+      <article className="mx-auto max-w-[720px]">
+        <nav aria-label="Breadcrumb" className="reveal">
+          <ol className="flex flex-wrap items-center gap-x-2 text-[11px] font-bold tracking-[0.14em] text-white uppercase md:text-xs">
+            <li>
+              <Link href="/" className="underline-offset-4 hover:underline">
+                Newswire
+              </Link>
+            </li>
+            <li aria-hidden>/</li>
+            <li>
+              <Link
+                href={section.href}
+                className="underline-offset-4 hover:underline"
+              >
+                {section.label}
+              </Link>
+            </li>
+            <li aria-hidden>/</li>
+            <li>
+              <Link
+                href={categoryHref}
+                className="underline-offset-4 hover:underline"
+              >
+                {categoryLabel}
+              </Link>
+            </li>
+          </ol>
+        </nav>
+        <header className="reveal mt-6">
+          <h1 className="text-[2.1rem] leading-[1.05] font-extrabold tracking-tight text-balance break-words text-white sm:text-5xl md:text-6xl lg:text-7xl">
             {article.title}
           </h1>
-          <p className="mt-4 text-base text-muted md:text-lg">{article.excerpt}</p>
-          <div className="mt-6 flex flex-wrap items-center gap-4 text-sm text-muted">
-            <span className="inline-flex items-center gap-1.5">
-              <User className="size-4" aria-hidden />
-              <span>
-                {article.author.name}
-                <span className="text-muted-2"> · {article.author.role}</span>
-              </span>
-            </span>
-            <time dateTime={article.publishedAt}>
-              {formatDate(article.publishedAt)}
-            </time>
-            <span className="inline-flex items-center gap-1.5">
-              <Clock className="size-4" aria-hidden />
-              {formatReadTime(article.readingTimeMinutes)}
-            </span>
-          </div>
+          <p className="mt-6 text-xl leading-snug font-bold text-balance text-white md:text-2xl">
+            {article.excerpt}
+          </p>
+          <time
+            dateTime={article.publishedAt}
+            className="mt-6 block text-sm font-semibold text-white"
+          >
+            {formatDate(article.publishedAt)}
+          </time>
         </header>
-        <div className="group relative mx-auto mt-8 max-w-4xl overflow-hidden rounded-2xl">
+        <div className="group relative mt-8 overflow-hidden rounded-2xl">
           <CoverArt
             accent={article.coverAccent}
             title={article.title}
             className="aspect-video h-auto origin-center transition-transform duration-500 group-hover:scale-110"
           />
         </div>
-        <div className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_14rem] xl:grid-cols-[minmax(0,1fr)_16rem]">
+        <div className="mt-10">
           <ArticleBody markdown={article.content} />
-          <TableOfContents headings={headings} />
         </div>
       </article>
       {related.length > 0 ? (
-        <section aria-labelledby="related-heading" className="mt-16">
+        <section
+          aria-labelledby="related-heading"
+          className="mx-auto mt-16 max-w-7xl"
+        >
           <h2
             id="related-heading"
-            className="mb-6 text-2xl font-extrabold tracking-tight text-paper"
+            className="mb-6 text-2xl font-extrabold tracking-tight text-white"
           >
             Related
           </h2>
