@@ -38,6 +38,7 @@ export function ReleaseCountdown() {
       aria-live="polite"
       aria-label={label}
       data-countdown={live ? `${remaining.days}d-${pad(remaining.hours)}h-${pad(remaining.minutes)}m` : "out"}
+      data-remaining-ms={String(remaining.totalMs)}
     >
       <span className="block text-[9px] font-semibold tracking-[0.12em] uppercase md:text-[10px] md:tracking-[0.16em]">
         GTA 6
