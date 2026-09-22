@@ -66,22 +66,39 @@ export function SocialLauncher() {
             : "pointer-events-none -translate-y-1.5 opacity-0"
         }`}
       >
-        {SOCIAL_LINKS.map((link) => (
-          <li key={link.href}>
-            <Link
-              href={link.href}
-              role="menuitem"
-              className="flex min-h-10 items-center gap-2.5 rounded-lg px-2.5 text-sm text-paper transition-colors duration-300 ease-out hover:bg-teal hover:text-ink"
-              onClick={() => setOpen(false)}
-              {...(link.external
-                ? { target: "_blank", rel: "noreferrer noopener" }
-                : {})}
-            >
-              <SocialGlyph label={link.label} />
-              {link.label}
-            </Link>
-          </li>
-        ))}
+        {SOCIAL_LINKS.map((link) => {
+          const isRss = link.href.endsWith("/rss.xml") || link.label === "RSS";
+          const itemClass =
+            "flex min-h-10 items-center gap-2.5 rounded-lg px-2.5 text-sm text-paper transition-colors duration-300 ease-out hover:bg-teal hover:text-ink";
+          return (
+            <li key={link.href}>
+              {isRss ? (
+                <a
+                  href="/rss.xml"
+                  role="menuitem"
+                  className={itemClass}
+                  onClick={() => setOpen(false)}
+                >
+                  <SocialGlyph label={link.label} />
+                  {link.label}
+                </a>
+              ) : (
+                <Link
+                  href={link.href}
+                  role="menuitem"
+                  className={itemClass}
+                  onClick={() => setOpen(false)}
+                  {...(link.external
+                    ? { target: "_blank", rel: "noreferrer noopener" }
+                    : {})}
+                >
+                  <SocialGlyph label={link.label} />
+                  {link.label}
+                </Link>
+              )}
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

@@ -40,10 +40,18 @@ export function ArticleCard({
           >
             {article.title}
           </h3>
+          {article.excerpt.trim() &&
+          article.excerpt.trim().toLowerCase() !== article.title.toLowerCase() ? (
+            <p className="mt-2 line-clamp-2 text-sm leading-snug text-white">
+              {article.excerpt}
+            </p>
+          ) : null}
           <p className="mt-2 text-xs font-medium tracking-wide text-white">
             <time dateTime={article.publishedAt}>
               {formatDate(article.publishedAt)}
             </time>
+            {" · "}
+            {article.author.name}
             {readingTimeMinutes ? (
               <>
                 {" · "}

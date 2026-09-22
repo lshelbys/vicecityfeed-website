@@ -141,21 +141,26 @@ export default async function PostPage({ params }: PostPageProps) {
           <p className="reveal reveal-delay mt-7 text-xl leading-snug font-bold text-balance text-white md:text-2xl">
             {article.excerpt}
           </p>
-          <div className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-2">
+          <div className="mt-8">
             <time
               dateTime={article.publishedAt}
               className="text-sm font-semibold tracking-wide text-white"
             >
               {formatDate(article.publishedAt)}
             </time>
-            <Link
-              href={categoryHref}
-              className="rounded-full bg-raised px-2.5 py-1 text-[10px] font-semibold tracking-[0.14em] text-white uppercase"
-            >
-              {categoryLabel}
-            </Link>
-            <ReadingProgress minutes={article.readingTimeMinutes} />
-            <CopyLink url={`${SITE.url}/posts/${article.slug}`} />
+            <p className="mt-1 text-sm font-semibold text-white">
+              {article.author.name}
+            </p>
+            <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
+              <Link
+                href={categoryHref}
+                className="rounded-full bg-raised px-2.5 py-1 text-[10px] font-semibold tracking-[0.14em] text-white uppercase"
+              >
+                {categoryLabel}
+              </Link>
+              <ReadingProgress minutes={article.readingTimeMinutes} />
+              <CopyLink url={`${SITE.url}/posts/${article.slug}`} />
+            </div>
           </div>
         </header>
         <div className="group relative mt-10 overflow-hidden rounded-2xl">
@@ -167,7 +172,14 @@ export default async function PostPage({ params }: PostPageProps) {
           />
         </div>
         <div className="mt-12">
-          <ArticleBody markdown={article.content} />
+          <ArticleBody
+            markdown={article.content}
+            figure={{
+              accent: article.coverAccent,
+              title: article.title,
+              caption: article.excerpt,
+            }}
+          />
         </div>
       </article>
       {related.length > 0 ? (

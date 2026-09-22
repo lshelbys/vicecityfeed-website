@@ -84,6 +84,17 @@ writeFileSync(
   join(root, ".nojekyll"),
   "# Disable Jekyll so GitHub Pages publishes index.html and _next/ as-is.\n",
 );
+
+const rssOut = join(out, "rss.xml");
+const rssRoot = join(root, "rss.xml");
+if (existsSync(rssOut) && !existsSync(rssRoot)) {
+  cpSync(rssOut, rssRoot, { recursive: true });
+}
+if (!existsSync(rssRoot)) {
+  console.error("rss.xml is missing from the root export");
+  process.exit(1);
+}
+
 rmSync(join(root, "docs"), { recursive: true, force: true });
 
 console.log(

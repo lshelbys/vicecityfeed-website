@@ -1,14 +1,27 @@
 import ReactMarkdown from "react-markdown";
 import type { Components } from "react-markdown";
+import { CoverArt } from "@/components/CoverArt";
 import { MediaWrapper } from "@/components/MediaWrapper";
 import { ProTip } from "@/components/ProTip";
 import { Spoiler } from "@/components/Spoiler";
 import { extractHeadings, splitContent } from "@/lib/content";
 import { slugify } from "@/lib/format";
+import type { CoverAccent } from "@/lib/types";
 
 type ArticleBodyProps = {
   markdown: string;
+  figure?: {
+    accent: CoverAccent;
+    title: string;
+    caption: string;
+  };
 };
+
+function splitFirstParagraph(text: string): [string, string] {
+  const match = text.match(/^([\s\S]+?)(\n\n[\s\S]*)$/);
+  if (!match) return [text, ""];
+  return [match[1], match[2]];
+}
 
 const markdownComponents: Components = {
   h2: ({ children }) => {
@@ -26,8 +39,11 @@ const markdownComponents: Components = {
   ),
 };
 
-export function ArticleBody({ markdown }: ArticleBodyProps) {
+export function ArticleBody({ markdown, figure }: ArticleBodyProps) {
   const blocks = splitContent(markdown);
+  const figureIndex = figure
+    ? blocks.findIndex((block) => block.type === "markdown")
+    : -1;
 
   return (
     <div className="prose-vcf">
@@ -59,6 +75,31 @@ export function ArticleBody({ markdown }: ArticleBodyProps) {
             />
           );
         }
+        if (figure && index === figureIndex) {
+          const [lead, rest] = splitFirstParagraph(block.text);
+          return (
+            <div key={index}>
+              <ReactMarkdown components={markdownComponents}>{lead}</ReactMarkdown>
+              <figure className="my-10">
+                <div className="overflow-hidden rounded-2xl">
+                  <CoverArt
+                    accent={figure.accent}
+                    title={figure.title}
+                    lead
+                    className="aspect-video h-auto w-full"
+                  />
+                </div>
+                <figcaption className="mt-3 line-clamp-1 text-sm font-medium text-white">
+                  {figure.caption}
+                </figcaption>
+              </figure>
+              {rest ? (
+                <ReactMarkdown components={markdownComponents}>{rest}</ReactMarkdown>
+              ) : null}
+            </div>
+          );
+        }
+
         return (
           <ReactMarkdown key={index} components={markdownComponents}>
             {block.text}

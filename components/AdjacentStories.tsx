@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CoverArt } from "@/components/CoverArt";
+import { formatDate } from "@/lib/format";
 import type { ArticleMeta } from "@/lib/types";
 
 type AdjacentStoriesProps = {
@@ -34,6 +35,19 @@ function AdjacentCard({
         <h3 className="mt-4 text-balance break-words text-lg font-extrabold tracking-tight text-white md:text-xl">
           {article.title}
         </h3>
+        {article.excerpt.trim() &&
+        article.excerpt.trim().toLowerCase() !== article.title.toLowerCase() ? (
+          <p className="mt-2 line-clamp-2 text-sm leading-snug text-white">
+            {article.excerpt}
+          </p>
+        ) : null}
+        <p className="mt-2 text-xs font-medium tracking-wide text-white">
+          <time dateTime={article.publishedAt}>
+            {formatDate(article.publishedAt)}
+          </time>
+          {" · "}
+          {article.author.name}
+        </p>
       </Link>
     </article>
   );
