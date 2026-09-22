@@ -15,7 +15,7 @@ type MissionCardProps = {
 
 export function MissionCard({ mission }: MissionCardProps) {
   return (
-    <article className="flex h-full flex-col gap-4 rounded-2xl bg-surface p-5 transition-colors duration-200 hover:bg-raised">
+    <article className="flex h-full flex-col gap-4 rounded-2xl bg-surface p-5 transition-[background-color,transform] duration-200 ease-out hover:-translate-y-0.5 hover:bg-raised">
       <div className="flex items-center justify-between gap-3">
         <span className={pillClass(DIFFICULTY_ACTIVE[mission.difficulty], "text-xs")}>
           {mission.difficulty}

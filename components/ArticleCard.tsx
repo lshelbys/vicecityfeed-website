@@ -19,7 +19,7 @@ export function ArticleCard({
   const category = CATEGORY_SHORT[article.category];
 
   return (
-    <article className="group">
+    <article className="group transition-transform duration-200 ease-out hover:-translate-y-0.5">
       <Link href={href} className="block">
         <div
           className={`relative overflow-hidden rounded-2xl ${
