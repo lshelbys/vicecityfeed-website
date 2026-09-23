@@ -31,7 +31,7 @@ export function NavPills() {
   }, [pathname]);
 
   return (
-    <div ref={rowRef} className="relative flex w-max gap-2 px-4 md:px-6">
+    <div ref={rowRef} className="nav-pills relative mx-auto flex w-max gap-2 px-4 md:px-6">
       <span
         aria-hidden
         className="nav-pill-indicator pointer-events-none absolute top-1/2 left-0 z-0 h-11 rounded-full bg-teal"

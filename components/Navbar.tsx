@@ -92,9 +92,9 @@ export function Navbar({ articles, logoSrc }: NavbarProps) {
           <SocialLauncher />
         </div>
       </div>
-      <nav aria-label="Secondary">
+      <nav aria-label="Secondary" className="header-nav-wrap flex justify-center">
         <FadeScroll
-          className={`header-nav mx-auto min-w-0 max-w-7xl ${
+          className={`header-nav mx-auto min-w-0 w-max max-w-full ${
             compact ? "py-1.5 md:py-2" : "py-2.5 md:py-3"
           }`}
         >

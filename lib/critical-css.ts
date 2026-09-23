@@ -16,6 +16,6 @@ header.header-bar [role="menu"].pointer-events-none,
 header.header-bar>[aria-hidden="true"],
 .search-panel-closed{display:none!important}
 header.header-bar svg,footer svg{width:16px;height:16px;max-width:16px;max-height:16px}
-header.header-bar nav{overflow:hidden;max-height:3.5rem}
-header.header-bar nav .relative,header.header-bar .header-nav{display:flex;flex-wrap:nowrap;overflow:hidden;max-width:100%}
+header.header-bar nav{display:flex;justify-content:center;overflow-x:auto;overflow-y:hidden;max-height:3.5rem}
+header.header-bar .header-nav{display:flex;flex-wrap:nowrap;justify-content:center;width:max-content;max-width:100%;margin-inline:auto}
 `.replace(/\s+/g, " ").trim();
