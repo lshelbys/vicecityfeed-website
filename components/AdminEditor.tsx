@@ -333,7 +333,7 @@ export function AdminEditor({ slug }: AdminEditorProps) {
     <form
       data-admin-editor
       data-admin-dirty={dirty ? "true" : "false"}
-      className="space-y-8 pb-28"
+      className="space-y-8 pb-36"
       onSubmit={(event) => {
         event.preventDefault();
         void onSave(false);
@@ -568,10 +568,12 @@ export function AdminEditor({ slug }: AdminEditorProps) {
           ) : null}
         </div>
         {error ? (
-          <p className="mt-4 text-sm font-semibold text-magenta" role="alert">
+          <p className="mt-4 mb-20 text-sm font-semibold text-magenta" role="alert">
             {error}
           </p>
-        ) : null}
+        ) : (
+          <div className="mb-20" />
+        )}
       </div>
 
       <details className="rounded-2xl bg-surface px-5 py-4">
