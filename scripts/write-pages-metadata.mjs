@@ -47,7 +47,12 @@ if (!existsSync(out)) {
   process.exit(1);
 }
 
-writeFileSync(join(out, "CNAME"), "vicecityfeed.com\n");
+const existingCname = existsSync(join(root, "CNAME"))
+  ? readFileSync(join(root, "CNAME"), "utf8").trim()
+  : "vicecityfeed.com";
+const cname = `${existingCname || "vicecityfeed.com"}\n`;
+
+writeFileSync(join(out, "CNAME"), cname);
 writeFileSync(
   join(out, ".nojekyll"),
   "# Disable Jekyll so GitHub Pages publishes index.html and _next/ as-is.\n",
@@ -81,7 +86,7 @@ for (const name of readdirSync(out)) {
 }
 
 writeFileSync(manifestPath, `${JSON.stringify(published.sort(), null, 2)}\n`);
-writeFileSync(join(root, "CNAME"), "vicecityfeed.com\n");
+writeFileSync(join(root, "CNAME"), cname);
 writeFileSync(
   join(root, ".nojekyll"),
   "# Disable Jekyll so GitHub Pages publishes index.html and _next/ as-is.\n",
