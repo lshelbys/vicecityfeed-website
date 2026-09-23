@@ -283,7 +283,9 @@ export async function fetchAdminArticle(
   return (data as ArticleRow | null) ?? null;
 }
 
-export async function saveArticle(draft: ArticleDraft): Promise<string> {
+export type SaveResult = { slug: string; id: string };
+
+export async function saveArticle(draft: ArticleDraft): Promise<SaveResult> {
   const supabase = getSupabase();
   if (!supabase) throw new Error("You are not signed in.");
   const {
@@ -314,12 +316,16 @@ export async function saveArticle(draft: ArticleDraft): Promise<string> {
       .update(next)
       .eq("id", draft.id);
     if (error) throw new Error(describeAdminError(error));
-    return String(payload.slug);
+    return { slug: String(payload.slug), id: draft.id };
   }
 
-  const { error } = await supabase.from(ARTICLES_TABLE).insert(payload);
-  if (error) throw new Error(describeAdminError(error));
-  return String(payload.slug);
+  const { data, error } = await supabase
+    .from(ARTICLES_TABLE)
+    .insert(payload)
+    .select("id, slug")
+    .single();
+  if (error || !data) throw new Error(describeAdminError(error ?? new Error("Save failed.")));
+  return { slug: String(data.slug), id: String(data.id) };
 }
 
 export async function setPublished(

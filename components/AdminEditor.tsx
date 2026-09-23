@@ -1,13 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { AdminFormatBar } from "@/components/AdminFormatBar";
 import { ArticleBody } from "@/components/ArticleBody";
 import { CoverArt } from "@/components/CoverArt";
 import { ctaPillClass, outlinePillClass } from "@/components/pills";
 import { describeAdminError } from "@/lib/admin-errors";
-import { slugify } from "@/lib/format";
+import { formatReadTime, readingTimeFromMarkdown, slugify } from "@/lib/format";
+import { prefixSelectedLines, wrapSelection } from "@/lib/markdown-insert";
 import {
   categoryToAccent,
   categoryToSection,
@@ -18,6 +20,7 @@ import {
   uploadCoverImage,
   type ArticleDraft,
 } from "@/lib/remote-articles";
+import { getSupabase } from "@/lib/supabase";
 import { CATEGORY_SECTION, coverKind } from "@/lib/site";
 import {
   CATEGORIES,
@@ -46,15 +49,34 @@ type Notice = {
   title: string;
 };
 
+type SaveState = "saved" | "saving" | "unsaved" | "idle";
+
+function liveReadMinutes(markdown: string): number {
+  const { wordCount, readingTimeMinutes } = readingTimeFromMarkdown(markdown);
+  return wordCount ? readingTimeMinutes : 0;
+}
+
 export function AdminEditor({ slug }: AdminEditorProps) {
   const router = useRouter();
+  const bodyRef = useRef<HTMLTextAreaElement>(null);
+  const draftRef = useRef<ArticleDraft>(emptyDraft());
+  const editGen = useRef(0);
+  const dragDepth = useRef(0);
+  const persistLock = useRef(false);
   const [draft, setDraft] = useState<ArticleDraft>(emptyDraft);
   const [slugTouched, setSlugTouched] = useState(Boolean(slug));
   const [loading, setLoading] = useState(Boolean(slug));
   const [saving, setSaving] = useState<"draft" | "publish" | null>(null);
+  const [saveState, setSaveState] = useState<SaveState>("idle");
+  const [dirty, setDirty] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [dropActive, setDropActive] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<Notice | null>(null);
+
+  useLayoutEffect(() => {
+    draftRef.current = draft;
+  }, [draft]);
 
   useEffect(() => {
     if (!slug) return;
@@ -67,8 +89,12 @@ export function AdminEditor({ slug }: AdminEditorProps) {
           setLoading(false);
           return;
         }
-        setDraft(rowToDraft(row));
+        const next = rowToDraft(row);
+        setDraft(next);
+        draftRef.current = next;
         setSlugTouched(true);
+        setDirty(false);
+        setSaveState("saved");
         setLoading(false);
       })
       .catch((err: unknown) => {
@@ -81,8 +107,15 @@ export function AdminEditor({ slug }: AdminEditorProps) {
     };
   }, [slug]);
 
+  function markDirty() {
+    editGen.current += 1;
+    setDirty(true);
+    setSaveState("unsaved");
+  }
+
   function patch(partial: Partial<ArticleDraft>) {
     setDraft((current) => ({ ...current, ...partial }));
+    markDirty();
   }
 
   function onTitle(title: string) {
@@ -91,6 +124,7 @@ export function AdminEditor({ slug }: AdminEditorProps) {
       title,
       slug: slugTouched ? current.slug : slugify(title),
     }));
+    markDirty();
   }
 
   function onCategory(category: Category) {
@@ -102,6 +136,35 @@ export function AdminEditor({ slug }: AdminEditorProps) {
         : categoryToSection(category),
       coverAccent: categoryToAccent(category),
     }));
+    markDirty();
+  }
+
+  function applyFormat(
+    action: "heading" | "bold" | "italic" | "link" | "quote" | "list",
+  ) {
+    const field = bodyRef.current;
+    const caret = {
+      start: field?.selectionStart ?? draft.content.length,
+      end: field?.selectionEnd ?? draft.content.length,
+    };
+    let next = { value: draft.content, caret };
+    if (action === "bold") next = wrapSelection(draft.content, caret, "**", "**", "bold");
+    if (action === "italic") next = wrapSelection(draft.content, caret, "*", "*", "italic");
+    if (action === "link") {
+      const href = window.prompt("Link URL", "https://");
+      if (!href) return;
+      next = wrapSelection(draft.content, caret, "[", `](${href.trim()})`, "link");
+    }
+    if (action === "heading") next = prefixSelectedLines(draft.content, caret, "## ");
+    if (action === "quote") next = prefixSelectedLines(draft.content, caret, "> ");
+    if (action === "list") next = prefixSelectedLines(draft.content, caret, "- ");
+    patch({ content: next.value });
+    requestAnimationFrame(() => {
+      const el = bodyRef.current;
+      if (!el) return;
+      el.focus();
+      el.setSelectionRange(next.caret.start, next.caret.end);
+    });
   }
 
   async function onUpload(file: File | undefined) {
@@ -110,7 +173,8 @@ export function AdminEditor({ slug }: AdminEditorProps) {
     setUploading(true);
     try {
       const url = await uploadCoverImage(draft.slug || draft.title || "story", file);
-      patch({ coverImageUrl: url });
+      setDraft((current) => ({ ...current, coverImageUrl: url }));
+      markDirty();
     } catch (err) {
       setError(describeAdminError(err));
     } finally {
@@ -118,32 +182,65 @@ export function AdminEditor({ slug }: AdminEditorProps) {
     }
   }
 
-  async function onSave(publish: boolean) {
-    if (!draft.title.trim()) {
-      setError("Add a title before saving.");
-      return;
+  const persist = useCallback(async (publish: boolean, silent: boolean) => {
+    if (silent && persistLock.current) return null;
+    const current = draftRef.current;
+    if (!current.title.trim()) {
+      if (!silent) setError("Add a title before saving.");
+      return null;
     }
-    if (publish && !draft.authorName.trim()) {
+    if (publish && !current.authorName.trim()) {
       setError("Add an author name before publishing.");
-      return;
+      return null;
     }
+    const next: ArticleDraft = {
+      ...current,
+      published: publish ? true : Boolean(current.id && current.published && silent),
+    };
+    if (!publish && !silent) next.published = false;
+    if (publish) next.published = true;
+    if (!next.sectionManual) next.section = categoryToSection(next.category);
+    persistLock.current = true;
+    const token = editGen.current;
+    try {
+      const result = await saveArticle(next);
+      setDraft((existing) => ({
+        ...existing,
+        ...(token === editGen.current ? next : {}),
+        id: result.id,
+        slug: result.slug,
+      }));
+      setSlugTouched(true);
+      if (token === editGen.current) {
+        setDirty(false);
+        setSaveState("saved");
+      }
+      if (!silent) {
+        setNotice({
+          kind: publish ? "published" : "draft",
+          slug: result.slug,
+          title: next.title.trim(),
+        });
+        router.replace(`/admin/write/?slug=${encodeURIComponent(result.slug)}`);
+      } else if (typeof window !== "undefined") {
+        const url = new URL(window.location.href);
+        if (url.searchParams.get("slug") !== result.slug) {
+          url.searchParams.set("slug", result.slug);
+          window.history.replaceState(window.history.state, "", `${url.pathname}${url.search}`);
+        }
+      }
+      return result;
+    } finally {
+      persistLock.current = false;
+    }
+  }, [router]);
+
+  async function onSave(publish: boolean) {
     setSaving(publish ? "publish" : "draft");
     setError(null);
     setNotice(null);
     try {
-      const next = { ...draft, published: publish };
-      if (!next.sectionManual) {
-        next.section = categoryToSection(next.category);
-      }
-      const nextSlug = await saveArticle(next);
-      setDraft((current) => ({ ...current, ...next, slug: nextSlug }));
-      setSlugTouched(true);
-      setNotice({
-        kind: publish ? "published" : "draft",
-        slug: nextSlug,
-        title: next.title.trim(),
-      });
-      router.replace(`/admin/write/?slug=${encodeURIComponent(nextSlug)}`);
+      await persist(publish, false);
     } catch (err) {
       setError(describeAdminError(err));
     } finally {
@@ -151,8 +248,59 @@ export function AdminEditor({ slug }: AdminEditorProps) {
     }
   }
 
+  useEffect(() => {
+    if (!dirty || loading) return;
+    if (!draft.title.trim()) return;
+    const timer = window.setTimeout(() => {
+      void (async () => {
+        const supabase = getSupabase();
+        if (!supabase) return;
+        const { data } = await supabase.auth.getSession();
+        if (!data.session) return;
+        setSaveState("saving");
+        try {
+          await persist(false, true);
+        } catch (err) {
+          const message = describeAdminError(err);
+          setSaveState("unsaved");
+          if (message !== "You are not signed in.") setError(message);
+        }
+      })();
+    }, 2800);
+    return () => window.clearTimeout(timer);
+  }, [draft, dirty, loading, persist]);
+
+  useEffect(() => {
+    function onBeforeUnload(event: BeforeUnloadEvent) {
+      if (!dirty) return;
+      event.preventDefault();
+      event.returnValue = "";
+    }
+    function onClick(event: MouseEvent) {
+      if (!dirty) return;
+      const link = (event.target as HTMLElement | null)?.closest("a");
+      if (!link || link.target === "_blank") return;
+      const href = link.getAttribute("href");
+      if (!href || href.startsWith("#")) return;
+      const ok = window.confirm(
+        "Leave without saving? Your last edits are not saved yet.",
+      );
+      if (!ok) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    }
+    window.addEventListener("beforeunload", onBeforeUnload);
+    document.addEventListener("click", onClick, true);
+    return () => {
+      window.removeEventListener("beforeunload", onBeforeUnload);
+      document.removeEventListener("click", onClick, true);
+    };
+  }, [dirty]);
+
   const busy = Boolean(saving) || uploading;
   const desk = CATEGORY_SECTION[draft.category];
+  const readMinutes = liveReadMinutes(draft.content);
 
   if (loading) {
     return (
@@ -168,6 +316,7 @@ export function AdminEditor({ slug }: AdminEditorProps) {
   return (
     <form
       data-admin-editor
+      data-admin-dirty={dirty ? "true" : "false"}
       className="space-y-8 pb-28"
       onSubmit={(event) => {
         event.preventDefault();
@@ -205,9 +354,23 @@ export function AdminEditor({ slug }: AdminEditorProps) {
       ) : null}
 
       <div>
-        <label className={labelClass} htmlFor="admin-title">
-          Title
-        </label>
+        <div className="mb-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+          <label className="text-[10px] font-semibold tracking-[0.16em] text-white uppercase" htmlFor="admin-title">
+            Title
+          </label>
+          <p data-admin-read-time className="text-xs font-medium text-white/70">
+            {formatReadTime(readMinutes)}
+          </p>
+          <p data-admin-save-state={saveState} className="text-xs font-medium text-white/70">
+            {saveState === "saving"
+              ? "Saving…"
+              : saveState === "saved"
+                ? "Saved"
+                : saveState === "unsaved"
+                  ? "Unsaved"
+                  : ""}
+          </p>
+        </div>
         <input
           id="admin-title"
           className="w-full bg-transparent font-display text-[1.8rem] leading-[1.1] font-extrabold tracking-tight text-white placeholder:text-white/35 md:text-4xl"
@@ -240,13 +403,19 @@ export function AdminEditor({ slug }: AdminEditorProps) {
           <label className={labelClass} htmlFor="admin-body">
             Body
           </label>
-          <textarea
-            id="admin-body"
-            className={`${fieldClass} min-h-80 font-mono text-sm md:min-h-[28rem]`}
-            value={draft.content}
-            onChange={(event) => patch({ content: event.target.value })}
-            placeholder="Write in markdown. The preview updates as you type."
-          />
+          <div className="overflow-hidden rounded-xl bg-raised">
+            <div className="px-3 pt-3">
+              <AdminFormatBar onFormat={applyFormat} />
+            </div>
+            <textarea
+              id="admin-body"
+              ref={bodyRef}
+              className="w-full min-h-80 bg-transparent px-4 pb-4 font-mono text-sm text-white placeholder:text-white/40 md:min-h-[28rem]"
+              value={draft.content}
+              onChange={(event) => patch({ content: event.target.value })}
+              placeholder="Write, or use the bar above. The preview updates as you type."
+            />
+          </div>
         </div>
         <div>
           <p className={labelClass}>Preview</p>
@@ -311,7 +480,34 @@ export function AdminEditor({ slug }: AdminEditorProps) {
         <label className={labelClass} htmlFor="admin-cover-file">
           Cover
         </label>
-        <div className="overflow-hidden rounded-2xl bg-surface">
+        <div
+          data-admin-cover-drop
+          data-admin-cover-has-image={draft.coverImageUrl ? "true" : "false"}
+          data-drop-active={dropActive ? "true" : "false"}
+          onDragOver={(event) => {
+            event.preventDefault();
+            event.dataTransfer.dropEffect = "copy";
+            setDropActive(true);
+          }}
+          onDragEnter={(event) => {
+            event.preventDefault();
+            dragDepth.current += 1;
+            setDropActive(true);
+          }}
+          onDragLeave={() => {
+            dragDepth.current = Math.max(0, dragDepth.current - 1);
+            if (dragDepth.current === 0) setDropActive(false);
+          }}
+          onDrop={(event) => {
+            event.preventDefault();
+            dragDepth.current = 0;
+            setDropActive(false);
+            void onUpload(event.dataTransfer.files?.[0]);
+          }}
+          className={`overflow-hidden rounded-2xl bg-surface ${
+            dropActive ? "ring-2 ring-teal" : ""
+          }`}
+        >
           <CoverArt
             accent={draft.coverAccent}
             scene={draft.coverScene}
@@ -319,6 +515,13 @@ export function AdminEditor({ slug }: AdminEditorProps) {
             imageUrl={draft.coverImageUrl || undefined}
             className="aspect-video"
           />
+          <p className="px-5 py-3 text-xs font-medium text-white">
+            {uploading
+              ? "Uploading…"
+              : dropActive
+                ? "Drop the image"
+                : "Drop an image here, or upload."}
+          </p>
         </div>
         <div className="mt-4 flex flex-wrap items-center gap-3">
           <label className={ctaPillClass("white", "cursor-pointer")}>
@@ -338,7 +541,7 @@ export function AdminEditor({ slug }: AdminEditorProps) {
               className={outlinePillClass("px-5")}
               onClick={() => patch({ coverImageUrl: "" })}
             >
-              Use scene art
+              Remove
             </button>
           ) : null}
         </div>
