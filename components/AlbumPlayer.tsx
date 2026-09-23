@@ -120,7 +120,9 @@ export function AlbumPlayer() {
                 selectTrack(indexRef.current + 1, true);
               }
             },
-            onError: () => setFailed(true),
+            onError: () => {
+              if (!cancelled) setFailed(true);
+            },
           },
         });
       })
@@ -230,11 +232,9 @@ function NowPlaying({
           alt=""
           className="absolute inset-0 size-full object-cover"
         />
-        <div
-          ref={hostRef}
-          id="vcf-yt-player"
-          className="absolute inset-0 size-full"
-        />
+      </div>
+      <div className="relative mt-3 aspect-video overflow-hidden rounded-xl bg-raised">
+        <div ref={hostRef} id="vcf-yt-player" className="absolute inset-0 size-full" />
       </div>
       <p className="mt-5 text-[10px] font-semibold tracking-[0.16em] text-white uppercase">
         Now playing
