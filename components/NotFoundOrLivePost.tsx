@@ -63,7 +63,7 @@ export function NotFoundOrLivePost() {
     };
   }, [slug, configured]);
 
-  if (knownMissing || failedSlug === slug) {
+  if (knownMissing || (slug && failedSlug === slug)) {
     return <NotFoundScreen />;
   }
 
