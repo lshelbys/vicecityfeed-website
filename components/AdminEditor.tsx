@@ -168,7 +168,7 @@ export function AdminEditor({ slug }: AdminEditorProps) {
   return (
     <form
       data-admin-editor
-      className="space-y-8"
+      className="space-y-8 pb-28"
       onSubmit={(event) => {
         event.preventDefault();
         void onSave(false);
