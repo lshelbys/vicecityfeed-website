@@ -36,7 +36,7 @@ export function NotFoundOrLivePost() {
   const slug =
     postSlugFromPathname(browserPath) ?? postSlugFromPathname(pathname);
   const configured = isSupabaseConfigured();
-  const pathReady = Boolean(browserPath) || pathname !== "/";
+  const pathReady = Boolean(browserPath);
   const knownMissing = pathReady && (!slug || !configured);
 
   const [found, setFound] = useState<FoundPost | null>(null);
