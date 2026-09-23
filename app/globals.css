@@ -165,6 +165,23 @@ body {
   text-align: left;
 }
 
+@media (max-width: 639px) {
+  .nav-pills {
+    gap: 0.15rem;
+    padding-inline: 0.2rem;
+  }
+
+  .nav-pills > a {
+    min-height: 1.85rem;
+    padding: 0.28rem 0.42rem;
+    font-size: 0.68rem;
+  }
+
+  .nav-pills > .nav-pill-indicator {
+    height: 1.85rem;
+  }
+}
+
 .site-logo-mark {
   transform-origin: center;
   transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
