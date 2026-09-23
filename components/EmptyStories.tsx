@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ctaPillClass, outlinePillClass } from "@/components/pills";
+import { outlinePillClass, pillClass } from "@/components/pills";
 import { ALBUM } from "@/lib/album";
 import { SITE } from "@/lib/site";
 
@@ -46,7 +46,7 @@ export function EmptyWireDesk() {
         The desk is open. Copy lands here the moment we file.
       </p>
       <div className="mt-8 flex flex-wrap gap-2">
-        <Link href="/album" className={ctaPillClass("white")}>
+        <Link href="/album" className={pillClass(true)}>
           The Album
         </Link>
         <Link href="/leonida-wire" className={outlinePillClass()}>
