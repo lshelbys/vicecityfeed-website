@@ -149,14 +149,20 @@ body {
 }
 
 .header-nav-wrap {
-  display: flex;
-  justify-content: safe center;
+  display: block;
+  width: 100%;
+  text-align: center;
 }
 
 .header-nav {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  justify-content: center;
   width: max-content;
   max-width: 100%;
   margin-inline: auto;
+  vertical-align: top;
+  text-align: left;
 }
 
 .site-logo-mark {
