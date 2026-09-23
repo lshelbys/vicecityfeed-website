@@ -35,7 +35,7 @@ export function ReleaseCountdown() {
     : "Time until GTA 6 release on 19 November 2026.";
 
   return (
-    <p
+    <div
       className="min-w-0 leading-none text-white"
       aria-live="polite"
       aria-label={label}
@@ -49,10 +49,10 @@ export function ReleaseCountdown() {
       data-remaining-ms={remaining ? String(remaining.totalMs) : ""}
       suppressHydrationWarning
     >
-      <span className="block text-[9px] font-semibold tracking-[0.12em] uppercase md:text-[10px] md:tracking-[0.16em]">
+      <div className="text-[9px] font-semibold tracking-[0.12em] uppercase md:text-[10px] md:tracking-[0.16em]">
         GTA 6
-      </span>
-      <span className="mt-0.5 block text-[12px] font-semibold tracking-tight tabular-nums md:text-sm">
+      </div>
+      <div className="mt-0.5 text-[12px] font-semibold tracking-tight tabular-nums md:text-sm">
         {remaining ? (
           live ? (
             <>
@@ -74,8 +74,8 @@ export function ReleaseCountdown() {
             00d 00h
           </span>
         )}
-      </span>
-      <span className="mt-0.5 block whitespace-nowrap text-[9px] font-medium tracking-[0.04em] uppercase md:text-[10px] md:tracking-[0.1em]">
+      </div>
+      <div className="mt-0.5 whitespace-nowrap text-[9px] font-medium tracking-[0.04em] uppercase md:text-[10px] md:tracking-[0.1em]">
         {remaining && !live ? (
           "in stores"
         ) : (
@@ -84,7 +84,7 @@ export function ReleaseCountdown() {
             <span className="hidden sm:inline">, 2026</span>
           </>
         )}
-      </span>
-    </p>
+      </div>
+    </div>
   );
 }
