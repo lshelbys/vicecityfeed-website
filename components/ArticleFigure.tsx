@@ -4,10 +4,11 @@ import { useCallback, useEffect, useId, useState } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import { CoverArt } from "@/components/CoverArt";
-import type { CoverAccent } from "@/lib/types";
+import type { CoverAccent, CoverScene } from "@/lib/types";
 
 type ArticleFigureProps = {
   accent: CoverAccent;
+  scene?: CoverScene;
   title: string;
   caption: string;
   kind?: string;
@@ -19,6 +20,7 @@ function prefersReducedMotion() {
 
 export function ArticleFigure({
   accent,
+  scene,
   title,
   caption,
   kind,
@@ -69,6 +71,7 @@ export function ArticleFigure({
         >
           <CoverArt
             accent={accent}
+            scene={scene}
             title={title}
             kind={kind}
             lead
@@ -113,6 +116,7 @@ export function ArticleFigure({
                 </h2>
                 <CoverArt
                   accent={accent}
+                  scene={scene}
                   title={title}
                   kind={kind}
                   lead

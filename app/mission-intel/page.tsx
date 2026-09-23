@@ -29,13 +29,15 @@ export default function MissionIntelPage() {
               mission={lead}
               article={articles.get(lead.articleSlug)}
               featured
+              index={0}
             />
           </div>
-          {rest.map((mission) => (
+          {rest.map((mission, index) => (
             <MissionCard
               key={mission.slug}
               mission={mission}
               article={articles.get(mission.articleSlug)}
+              index={index + 1}
             />
           ))}
         </div>

@@ -21,7 +21,7 @@ export function MoreFromWriter({ name, articles }: MoreFromWriterProps) {
       </p>
       <h2
         id="writer-heading"
-        className="mt-2 mb-8 text-2xl font-extrabold tracking-tight text-white md:text-3xl"
+        className="font-display mt-2 mb-8 text-2xl font-extrabold tracking-tight text-white md:text-3xl"
       >
         More from {name}
       </h2>

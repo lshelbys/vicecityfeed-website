@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
-import { Inter } from "next/font/google";
+import { Inter, Outfit } from "next/font/google";
 
 export const dynamic = "force-static";
 import { Footer } from "@/components/Footer";
@@ -13,6 +13,12 @@ import "./globals.css";
 const body = Inter({
   subsets: ["latin"],
   variable: "--font-body",
+  display: "swap",
+});
+
+const display = Outfit({
+  subsets: ["latin"],
+  variable: "--font-headline",
   display: "swap",
 });
 
@@ -93,7 +99,7 @@ export default function RootLayout({
   const articles = getArticleMeta();
 
   return (
-    <html lang="en" className={`${body.variable} h-full antialiased`}>
+    <html lang="en" className={`${body.variable} ${display.variable} h-full antialiased`}>
       <body className={`${body.className} min-h-full flex flex-col bg-ink text-paper`}>
         <a
           href="#main"

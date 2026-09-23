@@ -62,7 +62,11 @@ export function Navbar({ articles, logoSrc }: NavbarProps) {
   }, []);
 
   return (
-    <header className="header-bar sticky top-0 z-50 bg-ink" data-compact={compact ? "true" : "false"}>
+    <header
+      className="header-bar sticky top-0 z-50 bg-ink"
+      data-compact={compact ? "true" : "false"}
+      style={{ viewTransitionName: "site-header" }}
+    >
       <div
         className={`header-primary mx-auto grid max-w-7xl min-w-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-1 px-3 md:gap-3 md:px-6 ${
           compact ? "py-1 md:py-1.5" : "py-2 md:py-2.5"

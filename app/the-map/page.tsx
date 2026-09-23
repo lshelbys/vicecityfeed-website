@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
+import { MapIndex } from "@/components/MapIndex";
 import { PageHeader } from "@/components/PageHeader";
-import { SectionFeed } from "@/components/SectionFeed";
-import { getFeedArticles } from "@/lib/articles";
 
 export const metadata: Metadata = {
   title: "The Map",
@@ -10,16 +9,14 @@ export const metadata: Metadata = {
 };
 
 export default function TheMapPage() {
-  const articles = getFeedArticles().filter((article) => article.section === "map");
-
   return (
     <main id="main" className="mx-auto max-w-7xl px-4 py-12 md:px-6">
       <PageHeader
-        kicker="Newswire"
+        kicker="Location index"
         title="The Map"
-        description="Acreage, density, and the quiet parts of Leonida the trailers skip."
+        description="Named places, the region they sit in, and the story that opens the door."
       />
-      <SectionFeed articles={articles} />
+      <MapIndex />
     </main>
   );
 }

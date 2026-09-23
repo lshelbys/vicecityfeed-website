@@ -5,7 +5,7 @@ import { ArticleCard } from "@/components/ArticleCard";
 import { CopyLink } from "@/components/CopyLink";
 import { SaveControl } from "@/components/SaveControl";
 import { ShareLink } from "@/components/ShareLink";
-import { CoverArt } from "@/components/CoverArt";
+import { StoryCover } from "@/components/StoryCover";
 import { ReadingProgress } from "@/components/ReadingProgress";
 import { AdjacentStories } from "@/components/AdjacentStories";
 import { MoreFromWriter } from "@/components/MoreFromWriter";
@@ -144,7 +144,7 @@ export default async function PostPage({ params }: PostPageProps) {
           </ol>
         </nav>
         <header className="mt-7">
-          <h1 className="reveal text-[2.1rem] leading-[1.05] font-extrabold tracking-tight text-balance break-words text-white sm:text-5xl md:text-6xl lg:text-7xl">
+          <h1 className="reveal font-display text-[2.1rem] leading-[1.05] font-extrabold tracking-tight text-balance break-words text-white sm:text-5xl md:text-6xl lg:text-7xl">
             {article.title}
           </h1>
           <p className="reveal reveal-delay mt-7 text-xl leading-snug font-bold text-balance text-white md:text-2xl">
@@ -187,10 +187,8 @@ export default async function PostPage({ params }: PostPageProps) {
           </div>
         </header>
         <div className="group relative mt-10 overflow-hidden rounded-2xl">
-          <CoverArt
-            accent={article.coverAccent}
-            title={article.title}
-            kind={coverKind(article.category)}
+          <StoryCover
+            article={article}
             lead
             className="aspect-video h-auto origin-center transition-transform duration-500 ease-out group-hover:scale-105"
           />
@@ -200,6 +198,7 @@ export default async function PostPage({ params }: PostPageProps) {
             markdown={article.content}
             figure={{
               accent: article.coverAccent,
+              scene: article.coverScene,
               title: article.title,
               caption: article.excerpt,
               kind: coverKind(article.category),
@@ -217,7 +216,7 @@ export default async function PostPage({ params }: PostPageProps) {
           </p>
           <h2
             id="related-heading"
-            className="mt-2 mb-8 text-2xl font-extrabold tracking-tight text-white md:text-3xl"
+            className="font-display mt-2 mb-8 text-2xl font-extrabold tracking-tight text-white md:text-3xl"
           >
             More from the wire
           </h2>

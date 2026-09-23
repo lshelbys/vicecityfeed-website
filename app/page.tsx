@@ -63,6 +63,7 @@ export default function HomePage() {
           heading="Newswire"
           headingId="wire-heading"
           syncWithUrl
+          shareLeadCover={false}
         />
       </section>
     </main>

@@ -1,35 +1,39 @@
 import Link from "next/link";
-import { CoverArt } from "@/components/CoverArt";
+import { StoryCover } from "@/components/StoryCover";
 import { SaveControl } from "@/components/SaveControl";
 import { ReadingMark } from "@/components/ReadingMark";
 import { formatReadTime, formatRelativeTime } from "@/lib/format";
 import { authorHref } from "@/lib/authors";
-import { CATEGORY_SHORT, coverKind } from "@/lib/site";
+import { CATEGORY_SHORT } from "@/lib/site";
 import type { ArticleMeta } from "@/lib/types";
 
 type ArticleCardProps = {
   article: ArticleMeta;
   featured?: boolean;
   readingTimeMinutes?: number;
+  shareCover?: boolean;
 };
 
 export function ArticleCard({
   article,
   featured = false,
   readingTimeMinutes,
+  shareCover = true,
 }: ArticleCardProps) {
   const href = `/posts/${article.slug}`;
   const category = CATEGORY_SHORT[article.category];
 
   return (
-    <article className="group transition-transform duration-300 ease-out hover:-translate-y-1">
+    <article
+      data-card-surface
+      className="group rounded-2xl bg-surface p-4 transition-transform duration-300 ease-out hover:-translate-y-1 md:p-5"
+    >
       <div className="relative">
         <Link href={href} className="block">
-          <div className="relative aspect-video overflow-hidden rounded-2xl">
-            <CoverArt
-              accent={article.coverAccent}
-              title={article.title}
-              kind={coverKind(article.category)}
+          <div className="relative aspect-video overflow-hidden rounded-xl">
+            <StoryCover
+              article={article}
+              share={shareCover}
               className="h-full w-full origin-center transition-transform duration-500 ease-out group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
@@ -42,7 +46,7 @@ export function ArticleCard({
       </div>
       <Link href={href} className="mt-4 block">
         <h3
-          className={`text-balance break-words font-extrabold tracking-tight text-white ${
+          className={`font-display text-balance break-words font-extrabold tracking-tight text-white ${
             featured ? "text-xl leading-snug md:text-2xl" : "text-base leading-snug md:text-lg"
           }`}
         >

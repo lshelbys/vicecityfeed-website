@@ -10,7 +10,7 @@ export function PageHeader({ kicker, title, description }: PageHeaderProps) {
       <p className="text-[10px] font-semibold tracking-[0.16em] text-white uppercase">
         {kicker}
       </p>
-      <h1 className="mt-3 text-[2.1rem] leading-[1.05] font-extrabold tracking-tight text-balance break-words text-white md:text-5xl lg:text-6xl">
+      <h1 className="font-display mt-3 text-[2.1rem] leading-[1.05] font-extrabold tracking-tight text-balance break-words text-white md:text-5xl lg:text-6xl">
         {title}
       </h1>
       <p className="mt-4 max-w-2xl text-lg leading-snug font-bold text-white md:text-xl">

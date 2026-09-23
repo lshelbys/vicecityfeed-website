@@ -30,6 +30,25 @@ export type SectionSlug = (typeof SECTION_SLUGS)[number];
 
 export type CoverAccent = "cyan" | "magenta" | "sunset";
 
+export const COVER_SCENES = [
+  "coast",
+  "city",
+  "car",
+  "map",
+  "gun",
+  "interior",
+  "swamp",
+  "port",
+  "marina",
+  "street",
+  "club",
+  "workshop",
+  "portrait",
+  "desk",
+] as const;
+
+export type CoverScene = (typeof COVER_SCENES)[number];
+
 export type Author = {
   name: string;
   role: string;
@@ -49,6 +68,7 @@ export type ArticleMeta = {
   featured: boolean;
   heroRank?: 1 | 2 | 3;
   coverAccent: CoverAccent;
+  coverScene: CoverScene;
   relatedSlugs: string[];
   breaking?: boolean;
 };

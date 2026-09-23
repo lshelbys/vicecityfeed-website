@@ -29,6 +29,7 @@
   --color-muted-2: var(--muted-2);
   --color-line: var(--line);
   --font-sans: var(--font-body);
+  --font-display: var(--font-headline), ui-sans-serif, system-ui, sans-serif;
 }
 
 * {
@@ -205,11 +206,40 @@ body {
 @keyframes page-enter {
   from {
     opacity: 0;
-    transform: translateY(10px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+  }
+}
+
+::view-transition {
+  pointer-events: none;
+}
+
+::view-transition-group(site-header) {
+  animation: none;
+  z-index: 100;
+}
+
+::view-transition-old(site-header) {
+  display: none;
+}
+
+::view-transition-new(site-header) {
+  animation: none;
+}
+
+::view-transition-group(.cover-share) {
+  animation-duration: 380ms;
+}
+
+::view-transition-image-pair(.cover-share) {
+  animation-name: cover-carry;
+}
+
+@keyframes cover-carry {
+  30% {
+    filter: blur(2px);
   }
 }
 
@@ -312,6 +342,13 @@ body {
     animation: none;
   }
 
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+
   .header-primary,
   .header-nav,
   .site-logo-mark,
@@ -353,6 +390,7 @@ body {
 }
 
 .prose-vcf h2 {
+  font-family: var(--font-display);
   font-size: clamp(2rem, 4.4vw, 3.35rem);
   font-weight: 800;
   letter-spacing: -0.045em;
@@ -409,6 +447,7 @@ body {
   border: 0;
   background: transparent;
   color: #ffffff;
+  font-family: var(--font-display);
   font-size: clamp(1.35rem, 2.4vw, 1.85rem);
   font-weight: 800;
   font-style: normal;

@@ -1,10 +1,9 @@
 import Link from "next/link";
-import { CoverArt } from "@/components/CoverArt";
+import { StoryCover } from "@/components/StoryCover";
 import { SaveControl } from "@/components/SaveControl";
 import { ReadingMark } from "@/components/ReadingMark";
 import { authorHref } from "@/lib/authors";
 import { formatRelativeTime } from "@/lib/format";
-import { coverKind } from "@/lib/site";
 import type { ArticleMeta } from "@/lib/types";
 
 type AdjacentStoriesProps = {
@@ -23,18 +22,17 @@ function AdjacentCard({
 }) {
   return (
     <article
-      className={`group ${align === "end" ? "sm:justify-self-end sm:text-right" : ""}`}
+      data-card-surface
+      className={`group rounded-2xl bg-surface p-4 md:p-5 ${align === "end" ? "sm:justify-self-end sm:text-right" : ""}`}
     >
       <p className="text-[10px] font-semibold tracking-[0.16em] text-white uppercase">
         {label}
       </p>
       <div className="relative mt-3">
         <Link href={`/posts/${article.slug}`} className="block">
-          <div className="aspect-video overflow-hidden rounded-2xl">
-            <CoverArt
-              accent={article.coverAccent}
-              title={article.title}
-              kind={coverKind(article.category)}
+          <div className="aspect-video overflow-hidden rounded-xl">
+            <StoryCover
+              article={article}
               className="h-full w-full origin-center transition-transform duration-500 ease-out group-hover:scale-105"
             />
           </div>
@@ -42,7 +40,7 @@ function AdjacentCard({
         <SaveControl slug={article.slug} />
       </div>
       <Link href={`/posts/${article.slug}`} className="block">
-        <h3 className="mt-4 text-balance break-words text-lg font-extrabold tracking-tight text-white md:text-xl">
+        <h3 className="font-display mt-4 text-balance break-words text-lg font-extrabold tracking-tight text-white md:text-xl">
           {article.title}
         </h3>
         {article.excerpt.trim() &&

@@ -6,12 +6,13 @@ import { ProTip } from "@/components/ProTip";
 import { Spoiler } from "@/components/Spoiler";
 import { extractHeadings, splitContent } from "@/lib/content";
 import { slugify } from "@/lib/format";
-import type { CoverAccent } from "@/lib/types";
+import type { CoverAccent, CoverScene } from "@/lib/types";
 
 type ArticleBodyProps = {
   markdown: string;
   figure?: {
     accent: CoverAccent;
+    scene?: CoverScene;
     title: string;
     caption: string;
     kind?: string;
@@ -83,6 +84,7 @@ export function ArticleBody({ markdown, figure }: ArticleBodyProps) {
               <ReactMarkdown components={markdownComponents}>{lead}</ReactMarkdown>
               <ArticleFigure
                 accent={figure.accent}
+                scene={figure.scene}
                 title={figure.title}
                 caption={figure.caption}
                 kind={figure.kind}

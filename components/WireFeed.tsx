@@ -23,6 +23,7 @@ type WireFeedProps = {
   syncWithUrl?: boolean;
   heading?: string;
   headingId?: string;
+  shareLeadCover?: boolean;
 };
 
 function categoryFromParam(value: string | null): CategorySlug | null {
@@ -46,6 +47,7 @@ function WireFeedInner({
   syncWithUrl = false,
   heading,
   headingId = "wire-heading",
+  shareLeadCover = true,
 }: WireFeedProps) {
   const searchParams = useSearchParams();
   const fromUrl = syncWithUrl ? categoryFromParam(searchParams.get("cat")) : null;
@@ -81,7 +83,7 @@ function WireFeedInner({
         <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
           <h2
             id={headingId}
-            className="reveal text-2xl font-extrabold tracking-tight text-white md:text-3xl"
+            className="reveal font-display text-2xl font-extrabold tracking-tight text-white md:text-3xl"
           >
             {heading}
           </h2>
@@ -122,6 +124,7 @@ function WireFeedInner({
                 article={article}
                 featured={index === 0}
                 readingTimeMinutes={article.readingTimeMinutes}
+                shareCover={index === 0 ? shareLeadCover : true}
               />
             </div>
           ))}

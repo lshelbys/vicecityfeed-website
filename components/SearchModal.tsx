@@ -126,7 +126,7 @@ export function SearchModal({ open, onClose, articles }: SearchModalProps) {
                     <p className="text-[11px] font-semibold tracking-wide text-white uppercase">
                       {CATEGORY_SHORT[article.category]}
                     </p>
-                    <p className="font-extrabold tracking-tight text-white">
+                    <p className="font-display font-extrabold tracking-tight text-white">
                       <Highlight text={article.title} query={trimmed} />
                     </p>
                     <p className="line-clamp-1 text-sm text-white">

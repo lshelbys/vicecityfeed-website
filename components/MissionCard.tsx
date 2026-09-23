@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Clock, MapPin, Users } from "lucide-react";
-import { CoverArt } from "@/components/CoverArt";
-import { coverKind } from "@/lib/site";
+import { StoryCover } from "@/components/StoryCover";
 import type { ArticleMeta, Difficulty, Mission } from "@/lib/types";
 
 const DIFFICULTY_TONE: Record<Difficulty, string> = {
@@ -14,24 +13,28 @@ type MissionCardProps = {
   mission: Mission;
   article?: ArticleMeta;
   featured?: boolean;
+  index?: number;
 };
 
 export function MissionCard({
   mission,
   article,
   featured = false,
+  index = 0,
 }: MissionCardProps) {
   const href = `/posts/${mission.articleSlug}`;
+  const job = String(index + 1).padStart(2, "0");
 
   return (
-    <article className="group h-full transition-transform duration-300 ease-out hover:-translate-y-1">
+    <article
+      data-mission-card
+      className="group h-full rounded-2xl bg-surface p-4 transition-transform duration-300 ease-out hover:-translate-y-1 md:p-5"
+    >
       <Link href={href} className="block">
         {article ? (
-          <div className="relative aspect-video overflow-hidden rounded-2xl">
-            <CoverArt
-              accent={article.coverAccent}
-              title={mission.title}
-              kind={coverKind(article.category)}
+          <div className="relative aspect-video overflow-hidden rounded-xl">
+            <StoryCover
+              article={{ ...article, title: mission.title }}
               className="h-full w-full origin-center transition-transform duration-500 ease-out group-hover:scale-105"
             />
             <span
@@ -39,7 +42,10 @@ export function MissionCard({
             >
               {mission.difficulty}
             </span>
-            <span className="absolute top-3 right-3 inline-flex items-center gap-1.5 rounded-full bg-black/70 px-2.5 py-1 text-[10px] font-semibold tracking-wide text-white uppercase">
+            <span
+              data-mission-timer
+              className="absolute top-3 right-3 inline-flex items-center gap-1.5 rounded-full bg-black/70 px-2.5 py-1 text-[10px] font-semibold tracking-wide text-white uppercase"
+            >
               <Clock className="size-3" aria-hidden />
               <span className="sr-only">Estimated timer</span>
               {mission.durationLabel}
@@ -47,8 +53,11 @@ export function MissionCard({
           </div>
         ) : null}
         <div className="mt-4">
+          <p className="text-[10px] font-semibold tracking-[0.16em] text-white uppercase">
+            Job {job}
+          </p>
           <h3
-            className={`text-balance break-words font-extrabold tracking-tight text-white ${
+            className={`font-display text-balance break-words font-extrabold tracking-tight text-white ${
               featured ? "text-xl leading-snug md:text-2xl" : "text-base leading-snug md:text-lg"
             }`}
           >
