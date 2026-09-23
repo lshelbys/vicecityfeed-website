@@ -25,6 +25,14 @@ function splitFirstParagraph(text: string): [string, string] {
   return [match[1], match[2]];
 }
 
+function Markdown({ children }: { children: string }) {
+  return (
+    <ReactMarkdown components={markdownComponents} urlTransform={(url) => url}>
+      {children}
+    </ReactMarkdown>
+  );
+}
+
 const markdownComponents: Components = {
   h2: ({ children }) => {
     const text = String(children);
@@ -59,18 +67,14 @@ export function ArticleBody({ markdown, figure }: ArticleBodyProps) {
         if (block.type === "protip") {
           return (
             <ProTip key={index}>
-              <ReactMarkdown components={markdownComponents}>
-                {block.text}
-              </ReactMarkdown>
+              <Markdown>{block.text}</Markdown>
             </ProTip>
           );
         }
         if (block.type === "spoiler") {
           return (
             <Spoiler key={index}>
-              <ReactMarkdown components={markdownComponents}>
-                {block.text}
-              </ReactMarkdown>
+              <Markdown>{block.text}</Markdown>
             </Spoiler>
           );
         }
@@ -87,7 +91,7 @@ export function ArticleBody({ markdown, figure }: ArticleBodyProps) {
           const [lead, rest] = splitFirstParagraph(block.text);
           return (
             <div key={index}>
-              <ReactMarkdown components={markdownComponents}>{lead}</ReactMarkdown>
+              <Markdown>{lead}</Markdown>
               <ArticleFigure
                 accent={figure.accent}
                 scene={figure.scene}
@@ -95,17 +99,13 @@ export function ArticleBody({ markdown, figure }: ArticleBodyProps) {
                 caption={figure.caption}
                 kind={figure.kind}
               />
-              {rest ? (
-                <ReactMarkdown components={markdownComponents}>{rest}</ReactMarkdown>
-              ) : null}
+              {rest ? <Markdown>{rest}</Markdown> : null}
             </div>
           );
         }
 
         return (
-          <ReactMarkdown key={index} components={markdownComponents}>
-            {block.text}
-          </ReactMarkdown>
+          <Markdown key={index}>{block.text}</Markdown>
         );
       })}
     </div>
