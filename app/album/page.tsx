@@ -15,12 +15,11 @@ export default function AlbumPage() {
       <PageHeader
         kicker="Official singles"
         title="The Album"
-        description={`${ALBUM.title} — ${ALBUM.singlesOut} singles out now, played here through Atlantic Records’ official YouTube player. The remaining ${ALBUM.trackCountAnnounced - ALBUM.singlesOut} tracks are not released yet.`}
+        description={`${ALBUM.singlesOut} singles out now from ${ALBUM.title}. Played in-page via Atlantic Records’ official YouTube player. ${ALBUM.trackCountAnnounced - ALBUM.singlesOut} tracks are still unreleased.`}
       />
       <p className="mb-8 max-w-2xl text-sm leading-relaxed text-white">
-        Atlantic and Rockstar announced a {ALBUM.trackCountAnnounced}-track
-        album for {ALBUM.fullAlbumOn}. We only list what they have actually
-        published. No ripped files, no lyrics, no unofficial reuploads.
+        Full album {ALBUM.fullAlbumOn}. We only list what Atlantic and Rockstar
+        have published. No ripped files, no lyrics, no unofficial reuploads.
       </p>
       <AlbumPlayer />
     </main>
