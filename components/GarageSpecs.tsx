@@ -1,7 +1,12 @@
 import Link from "next/link";
+import { EmptyStories } from "@/components/EmptyStories";
 import { GARAGE_SPECS } from "@/lib/desks";
 
 export function GarageSpecs() {
+  if (GARAGE_SPECS.length === 0) {
+    return <EmptyStories />;
+  }
+
   return (
     <div data-garage-specs className="overflow-hidden rounded-2xl bg-surface">
       <div className="hidden grid-cols-[1.4fr_0.8fr_0.8fr] px-5 py-3 text-[10px] font-semibold tracking-[0.16em] text-white uppercase sm:grid">

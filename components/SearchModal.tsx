@@ -108,7 +108,9 @@ export function SearchModal({ open, onClose, articles }: SearchModalProps) {
         <div className="mt-4 max-h-80 overflow-y-auto">
           {!trimmed ? (
             <p className="px-1 py-8 text-center text-sm text-white">
-              Type a name, leak, or district.
+              {articles.length === 0
+                ? "No stories yet"
+                : "Type a name, leak, or district."}
             </p>
           ) : results.length === 0 ? (
             <p className="px-1 py-8 text-center text-sm text-white">

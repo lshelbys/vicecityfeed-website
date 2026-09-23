@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { EmptyStories } from "@/components/EmptyStories";
 import { MissionCard } from "@/components/MissionCard";
 import { PageHeader } from "@/components/PageHeader";
 import { getArticleMeta } from "@/lib/articles";
@@ -42,7 +43,7 @@ export default function MissionIntelPage() {
           ))}
         </div>
       ) : (
-        <p className="text-sm text-white">No stories in this lane yet.</p>
+        <EmptyStories />
       )}
     </main>
   );

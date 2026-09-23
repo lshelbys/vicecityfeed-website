@@ -4,6 +4,7 @@ import { Suspense, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { ArticleCard } from "@/components/ArticleCard";
 import { CategoryFilter } from "@/components/CategoryFilter";
+import { EmptyStories } from "@/components/EmptyStories";
 import { ctaPillClass } from "@/components/pills";
 import { filterArticlesByCategory } from "@/lib/filters";
 import type { CategorySlug, FeedArticle } from "@/lib/types";
@@ -99,16 +100,16 @@ function WireFeedInner({
       <CategoryFilter active={category} onSelect={selectCategory} />
       {filtered.length === 0 ? (
         <div className="py-6">
-          <p className="text-lg font-bold text-white">
-            No stories in this lane yet.
-          </p>
-          <button
-            type="button"
-            className={ctaPillClass("white", "mt-5")}
-            onClick={() => selectCategory("all")}
-          >
-            Back to All
-          </button>
+          <EmptyStories />
+          {articles.length > 0 && category !== "all" ? (
+            <button
+              type="button"
+              className={ctaPillClass("white", "mt-5")}
+              onClick={() => selectCategory("all")}
+            >
+              Back to All
+            </button>
+          ) : null}
         </div>
       ) : (
         <div

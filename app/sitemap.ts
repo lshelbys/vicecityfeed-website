@@ -13,6 +13,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/garage-mods",
     "/reviews",
     "/editorial-guidelines",
+    "/authors",
   ];
 
   const pages: MetadataRoute.Sitemap = staticRoutes.map((path) => ({

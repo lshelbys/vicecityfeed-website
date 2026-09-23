@@ -1,7 +1,12 @@
 import Link from "next/link";
+import { EmptyStories } from "@/components/EmptyStories";
 import { MAP_PLACES } from "@/lib/desks";
 
 export function MapIndex() {
+  if (MAP_PLACES.length === 0) {
+    return <EmptyStories />;
+  }
+
   return (
     <ol data-map-index className="space-y-3">
       {MAP_PLACES.map((place) => (

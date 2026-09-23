@@ -1,4 +1,5 @@
 import { ArticleCard } from "@/components/ArticleCard";
+import { EmptyStories } from "@/components/EmptyStories";
 import type { FeedArticle } from "@/lib/types";
 
 type SectionFeedProps = {
@@ -9,7 +10,7 @@ export function SectionFeed({ articles }: SectionFeedProps) {
   const [lead, ...rest] = articles;
 
   if (!lead) {
-    return <p className="text-sm text-white">No stories in this lane yet.</p>;
+    return <EmptyStories />;
   }
 
   return (

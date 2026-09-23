@@ -27,6 +27,7 @@ export function getArticleMeta(): ArticleMeta[] {
 
 export function getArticleContent(slug: string): string {
   const file = path.join(POSTS_DIR, `${slug}.md`);
+  if (!fs.existsSync(file)) return "";
   return fs.readFileSync(file, "utf8");
 }
 
@@ -55,16 +56,11 @@ export function getArticles(): Article[] {
   });
 }
 
-export function getHeroArticles(): [ArticleMeta, ArticleMeta, ArticleMeta] {
-  const ranked = getArticleMeta()
+export function getHeroArticles(): ArticleMeta[] {
+  return getArticleMeta()
     .filter((article) => article.heroRank)
-    .sort((a, b) => (a.heroRank ?? 99) - (b.heroRank ?? 99));
-
-  if (ranked.length < 3) {
-    throw new Error("Hero grid requires three ranked articles.");
-  }
-
-  return [ranked[0], ranked[1], ranked[2]];
+    .sort((a, b) => (a.heroRank ?? 99) - (b.heroRank ?? 99))
+    .slice(0, 3);
 }
 
 export function getArticlesByCategory(
