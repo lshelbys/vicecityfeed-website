@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Pause, Play, SkipBack, SkipForward } from "lucide-react";
+import { Lock, Pause, Play, SkipBack, SkipForward } from "lucide-react";
 import {
   ALBUM,
   ALBUM_SINGLES,
@@ -226,17 +226,22 @@ function NowPlaying({
 }) {
   return (
     <section className="rounded-2xl bg-surface p-4 md:p-5">
-      <div className="relative aspect-square overflow-hidden rounded-xl bg-raised">
+      <div className="relative mx-auto aspect-square w-full max-w-[22rem] overflow-hidden rounded-xl bg-raised sm:max-w-none">
         <img
+          key={track.youtubeId}
           src={youtubeThumb(track.youtubeId)}
           alt=""
-          className="absolute inset-0 size-full object-cover"
+          className="album-art-swap absolute inset-0 size-full object-cover"
         />
+        {playing ? (
+          <span className="album-eq pointer-events-none absolute right-3 bottom-3" aria-hidden>
+            <i />
+            <i />
+            <i />
+          </span>
+        ) : null}
       </div>
-      <div className="relative mt-3 aspect-video overflow-hidden rounded-xl bg-raised">
-        <div ref={hostRef} id="vcf-yt-player" className="absolute inset-0 size-full" />
-      </div>
-      <p className="mt-5 text-[10px] font-semibold tracking-[0.16em] text-white uppercase">
+      <p className="mt-4 text-[10px] font-semibold tracking-[0.16em] text-white uppercase">
         Now playing
       </p>
       <h2 className="font-display mt-2 text-2xl leading-tight font-extrabold tracking-tight text-white md:text-3xl">
@@ -245,7 +250,7 @@ function NowPlaying({
       <p className="mt-2 text-sm font-medium text-white">{track.artists}</p>
       <p className="mt-1 text-xs text-white/80">{track.sourceLabel}</p>
 
-      <div className="mt-5 flex items-center justify-center gap-3">
+      <div className="mt-4 flex items-center justify-center gap-3">
         <button
           type="button"
           onClick={onPrev}
@@ -278,7 +283,7 @@ function NowPlaying({
         </button>
       </div>
 
-      <label className="mt-5 block">
+      <label className="mt-4 block">
         <span className="sr-only">Seek in current single</span>
         <input
           type="range"
@@ -288,11 +293,19 @@ function NowPlaying({
           onChange={(event) => onSeek(Number(event.target.value) / 1000)}
           data-album-progress
           className="album-seek w-full"
+          style={{ ["--album-progress" as string]: `${Math.round(progress * 100)}%` }}
         />
       </label>
       <div className="mt-2 flex justify-between text-xs tabular-nums text-white">
         <span>{formatClock(elapsed)}</span>
         <span>{formatClock(duration)}</span>
+      </div>
+
+      <p className="mt-5 text-[10px] font-semibold tracking-[0.16em] text-white uppercase">
+        Official video
+      </p>
+      <div className="relative mt-2 aspect-video overflow-hidden rounded-xl bg-raised">
+        <div ref={hostRef} id="vcf-yt-player" className="absolute inset-0 size-full" />
       </div>
 
       {failed ? (
@@ -333,13 +346,15 @@ function TrackList({
                   active ? "bg-raised" : "hover:bg-raised/70"
                 }`}
               >
-                <span className="w-6 text-center text-sm tabular-nums text-white">
+                <span className="flex w-6 justify-center text-center text-sm tabular-nums text-white">
                   {active && playing ? (
-                    <span className="text-teal" aria-hidden>
-                      ▶
+                    <span className="album-eq album-eq-inline" aria-hidden>
+                      <i />
+                      <i />
+                      <i />
                     </span>
                   ) : (
-                    i + 1
+                    <span className={active ? "text-teal" : undefined}>{i + 1}</span>
                   )}
                 </span>
                 <img
@@ -350,7 +365,11 @@ function TrackList({
                   className="size-10 shrink-0 rounded-md object-cover"
                 />
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate font-semibold text-white">
+                  <span
+                    className={`block truncate font-semibold ${
+                      active ? "text-teal" : "text-white"
+                    }`}
+                  >
                     {song.title}
                   </span>
                   <span className="mt-0.5 block truncate text-sm text-white/80">
@@ -365,13 +384,20 @@ function TrackList({
           );
         })}
       </ol>
-      <p className="px-3 py-4 text-sm leading-relaxed text-white">
-        {ALBUM.honesty}{" "}
-        <a href={ALBUM.officialPage} className="text-teal underline">
-          Rockstar’s music page
-        </a>
-        .
-      </p>
+      <div className="mt-1 flex items-start gap-3 rounded-xl px-3 py-4 text-white">
+        <Lock className="mt-0.5 size-4 shrink-0 text-white/70" aria-hidden />
+        <p className="text-sm leading-relaxed">
+          <span className="font-semibold">
+            {ALBUM.trackCountAnnounced - ALBUM.singlesOut} tracks locked
+          </span>
+          {" until "}
+          {ALBUM.fullAlbumOn}. Only the six official singles are listed.{" "}
+          <a href={ALBUM.officialPage} className="text-teal underline">
+            Rockstar’s music page
+          </a>
+          .
+        </p>
+      </div>
     </section>
   );
 }

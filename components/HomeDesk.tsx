@@ -1,7 +1,7 @@
 "use client";
 
 import { ContinueReading } from "@/components/ContinueReading";
-import { EmptyStories } from "@/components/EmptyStories";
+import { EmptyWireDesk } from "@/components/EmptyStories";
 import { Hero } from "@/components/Hero";
 import { WireFeed } from "@/components/WireFeed";
 import { usePublishedArticles } from "@/lib/use-published-articles";
@@ -25,18 +25,9 @@ export function HomeDesk({ lead, articles }: HomeDeskProps) {
       <section
         id="newswire"
         aria-labelledby="hero-heading"
-        className="mx-auto max-w-7xl px-4 py-16 md:px-6"
+        className="mx-auto max-w-7xl px-4 py-10 md:px-6 md:py-16"
       >
-        <p className="text-[10px] font-semibold tracking-[0.16em] text-white uppercase">
-          Newswire
-        </p>
-        <h1
-          id="hero-heading"
-          className="font-display mt-3 text-[2.1rem] leading-[1.05] font-extrabold tracking-tight text-white md:text-5xl"
-        >
-          Vice City Feed
-        </h1>
-        <EmptyStories className="mt-6" />
+        <EmptyWireDesk />
       </section>
     );
   }
