@@ -23,11 +23,24 @@ const ACTIONS: Array<{ id: FormatAction; label: string }> = [
   { id: "image", label: "Image" },
 ];
 
+const chipClass =
+  "inline-flex min-h-11 items-center rounded-full bg-ink px-3 text-xs font-bold text-white hover:bg-teal hover:text-ink disabled:pointer-events-none disabled:opacity-40";
+
 type AdminFormatBarProps = {
   onFormat: (action: FormatAction) => void;
+  canUndo?: boolean;
+  canRedo?: boolean;
+  onUndo?: () => void;
+  onRedo?: () => void;
 };
 
-export function AdminFormatBar({ onFormat }: AdminFormatBarProps) {
+export function AdminFormatBar({
+  onFormat,
+  canUndo = false,
+  canRedo = false,
+  onUndo,
+  onRedo,
+}: AdminFormatBarProps) {
   return (
     <div
       data-admin-format-bar
@@ -35,12 +48,30 @@ export function AdminFormatBar({ onFormat }: AdminFormatBarProps) {
       role="toolbar"
       aria-label="Formatting"
     >
+      <button
+        type="button"
+        data-format="undo"
+        className={chipClass}
+        disabled={!canUndo}
+        onClick={onUndo}
+      >
+        Undo
+      </button>
+      <button
+        type="button"
+        data-format="redo"
+        className={chipClass}
+        disabled={!canRedo}
+        onClick={onRedo}
+      >
+        Redo
+      </button>
       {ACTIONS.map((action) => (
         <button
           key={action.id}
           type="button"
           data-format={action.id}
-          className="inline-flex min-h-11 items-center rounded-full bg-ink px-3 text-xs font-bold text-white hover:bg-teal hover:text-ink"
+          className={chipClass}
           onClick={() => onFormat(action.id)}
         >
           {action.label}

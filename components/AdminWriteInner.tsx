@@ -16,7 +16,7 @@ export function AdminWriteInner() {
       wide
       unlocked={unlocked}
     >
-      <AdminEditor slug={slug} />
+      <AdminEditor slug={slug} preview={unlocked} />
     </AdminShell>
   );
 }

@@ -11,8 +11,14 @@ import { describeAdminError } from "@/lib/admin-errors";
 import { formatReadTime, readingTimeFromMarkdown, slugify } from "@/lib/format";
 import { insertBlock, prefixSelectedLines, wrapFence, wrapSelection } from "@/lib/markdown-insert";
 import {
+  forgetCreatedStory,
+  rememberCreatedStory,
+  wasCreatedThisSession,
+} from "@/lib/admin-created";
+import {
   categoryToAccent,
   categoryToSection,
+  deleteArticle,
   emptyDraft,
   fetchAdminArticle,
   rowToDraft,
@@ -42,13 +48,25 @@ const labelClass =
 
 type AdminEditorProps = {
   slug?: string;
+  preview?: boolean;
 };
 
 type Notice = {
   kind: "draft" | "published";
   slug: string;
   title: string;
+  id: string;
+  created: boolean;
 };
+
+type FieldSnapshot = {
+  title: string;
+  excerpt: string;
+  content: string;
+};
+
+const HISTORY_LIMIT = 30;
+const COALESCE_MS = 400;
 
 type SaveState = "saved" | "saving" | "unsaved" | "idle";
 
@@ -57,7 +75,7 @@ function liveReadMinutes(markdown: string): number {
   return wordCount ? readingTimeMinutes : 0;
 }
 
-export function AdminEditor({ slug }: AdminEditorProps) {
+export function AdminEditor({ slug, preview = false }: AdminEditorProps) {
   const router = useRouter();
   const bodyRef = useRef<HTMLTextAreaElement>(null);
   const bodyImageRef = useRef<HTMLInputElement>(null);
@@ -66,6 +84,12 @@ export function AdminEditor({ slug }: AdminEditorProps) {
   const dragDepth = useRef(0);
   const bodyDragDepth = useRef(0);
   const persistLock = useRef(false);
+  const historyRef = useRef<FieldSnapshot[]>([]);
+  const futureRef = useRef<FieldSnapshot[]>([]);
+  const applyingHistory = useRef(false);
+  const lastHistoryAt = useRef(0);
+  const undoEditRef = useRef<() => void>(() => {});
+  const redoEditRef = useRef<() => void>(() => {});
   const [draft, setDraft] = useState<ArticleDraft>(emptyDraft);
   const [slugTouched, setSlugTouched] = useState(Boolean(slug));
   const [loading, setLoading] = useState(Boolean(slug));
@@ -79,10 +103,18 @@ export function AdminEditor({ slug }: AdminEditorProps) {
   const [coverPreview, setCoverPreview] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<Notice | null>(null);
+  const [undoingAdd, setUndoingAdd] = useState(false);
+  const [canUndo, setCanUndo] = useState(false);
+  const [canRedo, setCanRedo] = useState(false);
 
   useLayoutEffect(() => {
     draftRef.current = draft;
   }, [draft]);
+
+  useLayoutEffect(() => {
+    undoEditRef.current = undoEdit;
+    redoEditRef.current = redoEdit;
+  });
 
   useEffect(() => {
     if (!slug) return;
@@ -102,6 +134,10 @@ export function AdminEditor({ slug }: AdminEditorProps) {
         setSlugTouched(true);
         setDirty(false);
         setSaveState("saved");
+        historyRef.current = [];
+        futureRef.current = [];
+        setCanUndo(false);
+        setCanRedo(false);
         setLoading(false);
       })
       .catch((err: unknown) => {
@@ -114,6 +150,69 @@ export function AdminEditor({ slug }: AdminEditorProps) {
     };
   }, [slug]);
 
+  function fieldsOf(item: ArticleDraft): FieldSnapshot {
+    return { title: item.title, excerpt: item.excerpt, content: item.content };
+  }
+
+  function syncHistoryButtons() {
+    setCanUndo(historyRef.current.length > 0);
+    setCanRedo(futureRef.current.length > 0);
+  }
+
+  function recordHistory() {
+    if (applyingHistory.current) return;
+    const now = Date.now();
+    if (historyRef.current.length && now - lastHistoryAt.current < COALESCE_MS) {
+      lastHistoryAt.current = now;
+      return;
+    }
+    const snap = fieldsOf(draftRef.current);
+    const last = historyRef.current[historyRef.current.length - 1];
+    if (
+      last &&
+      last.title === snap.title &&
+      last.excerpt === snap.excerpt &&
+      last.content === snap.content
+    ) {
+      return;
+    }
+    historyRef.current = [...historyRef.current, snap].slice(-HISTORY_LIMIT);
+    futureRef.current = [];
+    lastHistoryAt.current = now;
+    syncHistoryButtons();
+  }
+
+  function applySnapshot(snap: FieldSnapshot) {
+    applyingHistory.current = true;
+    setDraft((current) => ({ ...current, ...snap }));
+    markDirty();
+    requestAnimationFrame(() => {
+      applyingHistory.current = false;
+    });
+  }
+
+  function undoEdit() {
+    const prev = historyRef.current[historyRef.current.length - 1];
+    if (!prev) return;
+    historyRef.current = historyRef.current.slice(0, -1);
+    futureRef.current = [...futureRef.current, fieldsOf(draftRef.current)].slice(
+      -HISTORY_LIMIT,
+    );
+    applySnapshot(prev);
+    syncHistoryButtons();
+  }
+
+  function redoEdit() {
+    const next = futureRef.current[futureRef.current.length - 1];
+    if (!next) return;
+    futureRef.current = futureRef.current.slice(0, -1);
+    historyRef.current = [...historyRef.current, fieldsOf(draftRef.current)].slice(
+      -HISTORY_LIMIT,
+    );
+    applySnapshot(next);
+    syncHistoryButtons();
+  }
+
   function markDirty() {
     editGen.current += 1;
     setDirty(true);
@@ -121,11 +220,13 @@ export function AdminEditor({ slug }: AdminEditorProps) {
   }
 
   function patch(partial: Partial<ArticleDraft>) {
+    recordHistory();
     setDraft((current) => ({ ...current, ...partial }));
     markDirty();
   }
 
   function onTitle(title: string) {
+    recordHistory();
     setDraft((current) => ({
       ...current,
       title,
@@ -263,6 +364,7 @@ export function AdminEditor({ slug }: AdminEditorProps) {
     if (!next.sectionManual) next.section = categoryToSection(next.category);
     persistLock.current = true;
     const token = editGen.current;
+    const wasNew = !current.id;
     try {
       const result = await saveArticle(next);
       setDraft((existing) => ({
@@ -276,11 +378,21 @@ export function AdminEditor({ slug }: AdminEditorProps) {
         setDirty(false);
         setSaveState("saved");
       }
+      if (wasNew) {
+        rememberCreatedStory({
+          id: result.id,
+          slug: result.slug,
+          title: next.title.trim(),
+          at: Date.now(),
+        });
+      }
       if (!silent) {
         setNotice({
           kind: publish ? "published" : "draft",
           slug: result.slug,
           title: next.title.trim(),
+          id: result.id,
+          created: wasNew || wasCreatedThisSession(result.id),
         });
         router.replace(`/admin/write/?slug=${encodeURIComponent(result.slug)}`);
       } else if (typeof window !== "undefined") {
@@ -303,9 +415,56 @@ export function AdminEditor({ slug }: AdminEditorProps) {
     try {
       await persist(publish, false);
     } catch (err) {
-      setError(describeAdminError(err));
+      const message = describeAdminError(err);
+      if (preview && !draftRef.current.id && message === "You are not signed in.") {
+        const title = draftRef.current.title.trim() || "Untitled";
+        const nextSlug = draftRef.current.slug || slugify(title) || "preview";
+        rememberCreatedStory({
+          id: "preview-new",
+          slug: nextSlug,
+          title,
+          at: Date.now(),
+        });
+        setNotice({
+          kind: publish ? "published" : "draft",
+          slug: nextSlug,
+          title,
+          id: "preview-new",
+          created: true,
+        });
+      } else {
+        setError(message);
+      }
     } finally {
       setSaving(null);
+    }
+  }
+
+  async function undoAdd() {
+    if (!notice?.created) return;
+    setUndoingAdd(true);
+    setError(null);
+    try {
+      if (notice.id && !notice.id.startsWith("preview")) {
+        await deleteArticle(notice.id);
+      }
+      forgetCreatedStory(notice.id);
+      setNotice(null);
+      const blank = emptyDraft();
+      setDraft(blank);
+      draftRef.current = blank;
+      historyRef.current = [];
+      futureRef.current = [];
+      setCanUndo(false);
+      setCanRedo(false);
+      setDirty(false);
+      setSaveState("idle");
+      setSlugTouched(false);
+      router.replace(preview ? "/admin/write/?preview=layout" : "/admin/write/");
+    } catch (err) {
+      setError(describeAdminError(err));
+    } finally {
+      setUndoingAdd(false);
     }
   }
 
@@ -351,15 +510,27 @@ export function AdminEditor({ slug }: AdminEditorProps) {
         event.stopPropagation();
       }
     }
+    function onKeyDown(event: KeyboardEvent) {
+      if (!(event.metaKey || event.ctrlKey) || event.key.toLowerCase() !== "z") {
+        return;
+      }
+      const target = event.target as HTMLElement | null;
+      if (!target?.closest("[data-admin-editor]")) return;
+      event.preventDefault();
+      if (event.shiftKey) redoEditRef.current();
+      else undoEditRef.current();
+    }
     window.addEventListener("beforeunload", onBeforeUnload);
     document.addEventListener("click", onClick, true);
+    window.addEventListener("keydown", onKeyDown);
     return () => {
       window.removeEventListener("beforeunload", onBeforeUnload);
       document.removeEventListener("click", onClick, true);
+      window.removeEventListener("keydown", onKeyDown);
     };
   }, [dirty]);
 
-  const busy = Boolean(saving) || uploading || bodyUploading;
+  const busy = Boolean(saving) || uploading || bodyUploading || undoingAdd;
   const desk = CATEGORY_SECTION[draft.category];
   const readMinutes = liveReadMinutes(draft.content);
   const coverSrc = coverPreview || draft.coverImageUrl;
@@ -392,7 +563,7 @@ export function AdminEditor({ slug }: AdminEditorProps) {
           role="status"
         >
           <p className="text-[10px] font-semibold tracking-[0.16em] text-white uppercase">
-            {notice.kind === "published" ? "On the wire" : "Desk"}
+            {notice.kind === "published" ? "On the wire" : "Article added"}
           </p>
           <p className="font-display mt-2 text-2xl font-extrabold tracking-tight text-white">
             {notice.kind === "published"
@@ -400,10 +571,21 @@ export function AdminEditor({ slug }: AdminEditorProps) {
               : `${notice.title} is saved as a draft.`}
           </p>
           <div className="mt-4 flex flex-wrap gap-3">
+            {notice.created ? (
+              <button
+                type="button"
+                data-admin-undo-add
+                className={ctaPillClass("white")}
+                disabled={undoingAdd}
+                onClick={() => void undoAdd()}
+              >
+                {undoingAdd ? "Undoing…" : "Undo"}
+              </button>
+            ) : null}
             {notice.kind === "published" ? (
               <Link
                 href={`/posts/${notice.slug}/`}
-                className={ctaPillClass("white")}
+                className={outlinePillClass("px-5")}
               >
                 View story
               </Link>
@@ -502,7 +684,13 @@ export function AdminEditor({ slug }: AdminEditorProps) {
             }}
           >
             <div className="px-3 pt-3">
-              <AdminFormatBar onFormat={applyFormat} />
+              <AdminFormatBar
+                onFormat={applyFormat}
+                canUndo={canUndo}
+                canRedo={canRedo}
+                onUndo={undoEdit}
+                onRedo={redoEdit}
+              />
             </div>
             <textarea
               id="admin-body"

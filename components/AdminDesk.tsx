@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { ctaPillClass, outlinePillClass } from "@/components/pills";
+import { forgetCreatedStory, listCreatedStories } from "@/lib/admin-created";
 import { describeAdminError } from "@/lib/admin-errors";
 import { formatRelativeTime } from "@/lib/format";
 import {
@@ -96,6 +97,7 @@ export function AdminDesk({ preview = false }: AdminDeskProps) {
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<StatusFilter>("all");
   const [layoutOnly, setLayoutOnly] = useState(false);
+  const [createdIds, setCreatedIds] = useState<string[]>([]);
 
   useEffect(() => {
     let cancelled = false;
@@ -112,6 +114,7 @@ export function AdminDesk({ preview = false }: AdminDeskProps) {
           setRows([]);
           setLayoutOnly(false);
         }
+        setCreatedIds(listCreatedStories().map((item) => item.id));
         setLoading(false);
       })
       .catch((err: unknown) => {
@@ -119,6 +122,7 @@ export function AdminDesk({ preview = false }: AdminDeskProps) {
         if (preview) {
           setRows(LAYOUT_ROWS);
           setLayoutOnly(true);
+          setCreatedIds(listCreatedStories().map((item) => item.id));
           setLoading(false);
           return;
         }
@@ -129,6 +133,12 @@ export function AdminDesk({ preview = false }: AdminDeskProps) {
       cancelled = true;
     };
   }, [preview]);
+
+  const undoRowId = useMemo(() => {
+    const match = rows.find((row) => createdIds.includes(row.id));
+    if (match) return match.id;
+    return layoutOnly ? rows[0]?.id : undefined;
+  }, [rows, createdIds, layoutOnly]);
 
   const visible = useMemo(() => {
     const needle = query.trim().toLowerCase();
@@ -152,6 +162,24 @@ export function AdminDesk({ preview = false }: AdminDeskProps) {
           item.id === row.id ? { ...item, published: false } : item,
         ),
       );
+    } catch (err) {
+      setError(describeAdminError(err));
+    } finally {
+      setPendingId(null);
+    }
+  }
+
+  async function onUndoAdd(row: ArticleRow) {
+    setPendingId(row.id);
+    setError(null);
+    try {
+      if (!layoutLocked) {
+        await deleteArticle(row.id);
+      }
+      forgetCreatedStory(row.id);
+      forgetCreatedStory("preview-new");
+      setCreatedIds(listCreatedStories().map((item) => item.id));
+      setRows((current) => current.filter((item) => item.id !== row.id));
     } catch (err) {
       setError(describeAdminError(err));
     } finally {
@@ -283,6 +311,17 @@ export function AdminDesk({ preview = false }: AdminDeskProps) {
                       </p>
                     </div>
                     <div className="flex flex-wrap gap-2">
+                      {row.id === undoRowId ? (
+                        <button
+                          type="button"
+                          data-admin-undo-add
+                          className={ctaPillClass("white")}
+                          disabled={pendingId === row.id}
+                          onClick={() => void onUndoAdd(row)}
+                        >
+                          {pendingId === row.id ? "Undoing…" : "Undo"}
+                        </button>
+                      ) : null}
                       <Link
                         href={`/admin/write/?slug=${encodeURIComponent(row.slug)}`}
                         className={outlinePillClass("px-4")}
