@@ -167,19 +167,51 @@ body {
 
 @media (max-width: 639px) {
   .nav-pills {
-    gap: 0.15rem;
-    padding-inline: 0.2rem;
+    gap: 0.12rem;
+    padding-inline: 0.15rem;
   }
 
   .nav-pills > a {
     min-height: 1.85rem;
-    padding: 0.28rem 0.42rem;
-    font-size: 0.68rem;
+    padding: 0.28rem 0.36rem;
+    font-size: 0.64rem;
   }
 
   .nav-pills > .nav-pill-indicator {
     height: 1.85rem;
   }
+}
+
+.album-seek {
+  appearance: none;
+  height: 4px;
+  border-radius: 999px;
+  background: #1f1f1f;
+}
+.album-seek::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 999px;
+  background: #1f1f1f;
+}
+.album-seek::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  margin-top: -5px;
+  border-radius: 999px;
+  background: #3bb8b3;
+}
+.album-seek::-moz-range-track {
+  height: 4px;
+  border-radius: 999px;
+  background: #1f1f1f;
+}
+.album-seek::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border: 0;
+  border-radius: 999px;
+  background: #3bb8b3;
 }
 
 .site-logo-mark {

@@ -19,6 +19,7 @@ export const NAV_ITEMS: NavItem[] = [
   { href: "/mission-intel", label: "Guides" },
   { href: "/garage-mods", label: "Vehicles" },
   { href: "/reviews", label: "Media" },
+  { href: "/album", label: "Album" },
 ];
 
 export const SOCIAL_LINKS: SocialLink[] = [
@@ -42,6 +43,7 @@ export const FOOTER_SITEMAP: NavItem[] = [
   { href: "/the-map", label: "The Map" },
   { href: "/garage-mods", label: "Garage & Mods" },
   { href: "/reviews", label: "Reviews" },
+  { href: "/album", label: "The Album" },
   { href: "/editorial-guidelines", label: "Editorial Guidelines" },
   { href: "/rss.xml", label: "RSS Feed" },
 ];

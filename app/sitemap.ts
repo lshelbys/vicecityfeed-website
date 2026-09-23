@@ -12,6 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/the-map",
     "/garage-mods",
     "/reviews",
+    "/album",
     "/editorial-guidelines",
     "/authors",
   ];
