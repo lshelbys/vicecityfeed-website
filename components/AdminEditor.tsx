@@ -567,6 +567,11 @@ export function AdminEditor({ slug }: AdminEditorProps) {
             </button>
           ) : null}
         </div>
+        {error ? (
+          <p className="mt-4 text-sm font-semibold text-magenta" role="alert">
+            {error}
+          </p>
+        ) : null}
       </div>
 
       <details className="rounded-2xl bg-surface px-5 py-4">
@@ -687,7 +692,7 @@ export function AdminEditor({ slug }: AdminEditorProps) {
         </div>
       </details>
 
-      {error ? (
+      {error && !coverSrc ? (
         <p className="text-sm font-semibold text-magenta" role="alert">
           {error}
         </p>
