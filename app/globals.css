@@ -182,6 +182,15 @@ body {
   }
 }
 
+.social-close,
+.social-close:hover,
+.social-close:focus,
+.social-close:focus-visible {
+  border: 0;
+  outline: none;
+  box-shadow: none;
+}
+
 .album-seek {
   appearance: none;
   height: 4px;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Ellipsis, X } from "lucide-react";
 import { SocialGlyph } from "@/components/SocialGlyph";
@@ -9,6 +9,7 @@ import { isLiveSocialHref, SOCIAL_LINKS } from "@/lib/site";
 
 export function SocialLauncher() {
   const [open, setOpen] = useState(false);
+  const [box, setBox] = useState({ top: 0, right: 12 });
   const rootRef = useRef<HTMLDivElement>(null);
   const menuId = useId();
 
@@ -31,12 +32,42 @@ export function SocialLauncher() {
     return () => document.removeEventListener("pointerdown", onPointer);
   }, [open]);
 
+  useLayoutEffect(() => {
+    if (!open) return;
+    function place() {
+      const root = rootRef.current;
+      if (!root) return;
+      const header = root.closest("header");
+      const button = root.querySelector("button");
+      const headerBottom = header?.getBoundingClientRect().bottom ?? 0;
+      const buttonRight = button?.getBoundingClientRect().right ?? window.innerWidth - 12;
+      setBox({
+        top: Math.round(headerBottom + 8),
+        right: Math.round(Math.max(12, window.innerWidth - buttonRight)),
+      });
+    }
+    place();
+    window.addEventListener("resize", place);
+    window.addEventListener("scroll", place, true);
+    return () => {
+      window.removeEventListener("resize", place);
+      window.removeEventListener("scroll", place, true);
+    };
+  }, [open]);
+
+  const itemClass =
+    "flex w-full min-h-10 items-center gap-2.5 rounded-lg px-3 text-left text-sm text-white transition-colors duration-300 ease-out hover:bg-teal hover:text-ink";
+
   return (
-    <div className="relative" ref={rootRef}>
+    <div className="relative" ref={rootRef} data-social-open={open ? "true" : "false"}>
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
-        className={outlinePillClass("size-10 min-h-10 md:size-11 md:min-h-11")}
+        className={
+          open
+            ? "social-close inline-flex size-10 min-h-10 items-center justify-center rounded-full bg-teal text-ink md:size-11 md:min-h-11"
+            : outlinePillClass("size-10 min-h-10 md:size-11 md:min-h-11")
+        }
         aria-expanded={open}
         aria-haspopup="menu"
         aria-controls={menuId}
@@ -60,17 +91,17 @@ export function SocialLauncher() {
       <ul
         id={menuId}
         role="menu"
-        className={`absolute right-0 z-20 mt-2 w-40 rounded-xl bg-surface p-1.5 shadow-[0_12px_40px_rgb(0_0_0/0.45)] transition duration-300 ease-out ${
+        data-social-menu="true"
+        style={open ? { top: box.top, right: box.right } : undefined}
+        className={`z-[60] w-44 rounded-xl bg-surface p-1.5 shadow-[0_12px_40px_rgb(0_0_0/0.45)] ${
           open
-            ? "pointer-events-auto translate-y-0 opacity-100"
-            : "pointer-events-none -translate-y-1.5 opacity-0"
+            ? "pointer-events-auto fixed opacity-100"
+            : "pointer-events-none absolute right-0 mt-2 -translate-y-1.5 opacity-0"
         }`}
       >
         {SOCIAL_LINKS.map((link) => {
           const isRss = link.href.endsWith("/rss.xml") || link.label === "RSS";
           const live = isRss || isLiveSocialHref(link.href);
-          const itemClass =
-            "flex min-h-10 items-center gap-2.5 rounded-lg px-2.5 text-sm text-paper transition-colors duration-300 ease-out hover:bg-teal hover:text-ink";
           return (
             <li key={link.label}>
               {isRss ? (
@@ -81,7 +112,7 @@ export function SocialLauncher() {
                   onClick={() => setOpen(false)}
                 >
                   <SocialGlyph label={link.label} />
-                  {link.label}
+                  <span>{link.label}</span>
                 </a>
               ) : live ? (
                 <Link
@@ -94,18 +125,18 @@ export function SocialLauncher() {
                     : {})}
                 >
                   <SocialGlyph label={link.label} />
-                  {link.label}
+                  <span>{link.label}</span>
                 </Link>
               ) : (
                 <button
                   type="button"
                   role="menuitem"
-                  className={`${itemClass} w-full cursor-default`}
+                  className={`${itemClass} cursor-default`}
                   onClick={() => setOpen(false)}
                   aria-label={`${link.label}, soon`}
                 >
                   <SocialGlyph label={link.label} />
-                  {link.label}
+                  <span>{link.label}</span>
                   <span className="ml-auto text-[10px] font-semibold tracking-[0.12em] uppercase">
                     Soon
                   </span>
