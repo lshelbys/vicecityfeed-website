@@ -71,6 +71,7 @@ export function AdminEditor({ slug }: AdminEditorProps) {
   const [dirty, setDirty] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [dropActive, setDropActive] = useState(false);
+  const [coverPreview, setCoverPreview] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<Notice | null>(null);
 
@@ -92,6 +93,7 @@ export function AdminEditor({ slug }: AdminEditorProps) {
         const next = rowToDraft(row);
         setDraft(next);
         draftRef.current = next;
+        setCoverPreview("");
         setSlugTouched(true);
         setDirty(false);
         setSaveState("saved");
@@ -169,12 +171,25 @@ export function AdminEditor({ slug }: AdminEditorProps) {
 
   async function onUpload(file: File | undefined) {
     if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      setError("Cover upload failed. Use a JPG, PNG, or WebP image.");
+      return;
+    }
     setError(null);
+    const localUrl = URL.createObjectURL(file);
+    setCoverPreview((current) => {
+      if (current.startsWith("blob:")) URL.revokeObjectURL(current);
+      return localUrl;
+    });
     setUploading(true);
     try {
       const url = await uploadCoverImage(draft.slug || draft.title || "story", file);
       setDraft((current) => ({ ...current, coverImageUrl: url }));
       markDirty();
+      setCoverPreview((current) => {
+        if (current.startsWith("blob:")) URL.revokeObjectURL(current);
+        return "";
+      });
     } catch (err) {
       setError(describeAdminError(err));
     } finally {
@@ -301,6 +316,7 @@ export function AdminEditor({ slug }: AdminEditorProps) {
   const busy = Boolean(saving) || uploading;
   const desk = CATEGORY_SECTION[draft.category];
   const readMinutes = liveReadMinutes(draft.content);
+  const coverSrc = coverPreview || draft.coverImageUrl;
 
   if (loading) {
     return (
@@ -482,7 +498,7 @@ export function AdminEditor({ slug }: AdminEditorProps) {
         </label>
         <div
           data-admin-cover-drop
-          data-admin-cover-has-image={draft.coverImageUrl ? "true" : "false"}
+          data-admin-cover-has-image={coverSrc ? "true" : "false"}
           data-drop-active={dropActive ? "true" : "false"}
           onDragOver={(event) => {
             event.preventDefault();
@@ -512,7 +528,7 @@ export function AdminEditor({ slug }: AdminEditorProps) {
             accent={draft.coverAccent}
             scene={draft.coverScene}
             title={draft.title || "Cover"}
-            imageUrl={draft.coverImageUrl || undefined}
+            imageUrl={coverSrc || undefined}
             className="aspect-video"
           />
           <p className="px-5 py-3 text-xs font-medium text-white">
@@ -525,7 +541,7 @@ export function AdminEditor({ slug }: AdminEditorProps) {
         </div>
         <div className="mt-4 flex flex-wrap items-center gap-3">
           <label className={ctaPillClass("white", "cursor-pointer")}>
-            {uploading ? "Uploading…" : draft.coverImageUrl ? "Replace image" : "Upload image"}
+            {uploading ? "Uploading…" : coverSrc ? "Replace image" : "Upload image"}
             <input
               id="admin-cover-file"
               type="file"
@@ -535,11 +551,17 @@ export function AdminEditor({ slug }: AdminEditorProps) {
               onChange={(event) => void onUpload(event.target.files?.[0])}
             />
           </label>
-          {draft.coverImageUrl ? (
+          {coverSrc ? (
             <button
               type="button"
               className={outlinePillClass("px-5")}
-              onClick={() => patch({ coverImageUrl: "" })}
+              onClick={() => {
+                if (coverPreview.startsWith("blob:")) {
+                  URL.revokeObjectURL(coverPreview);
+                }
+                setCoverPreview("");
+                patch({ coverImageUrl: "" });
+              }}
             >
               Remove
             </button>
