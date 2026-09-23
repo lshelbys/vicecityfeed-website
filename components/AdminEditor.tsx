@@ -90,6 +90,7 @@ export function AdminEditor({ slug, preview = false }: AdminEditorProps) {
   const lastHistoryAt = useRef(0);
   const undoEditRef = useRef<() => void>(() => {});
   const redoEditRef = useRef<() => void>(() => {});
+  const skipLeave = useRef(false);
   const [draft, setDraft] = useState<ArticleDraft>(emptyDraft);
   const [slugTouched, setSlugTouched] = useState(Boolean(slug));
   const [loading, setLoading] = useState(Boolean(slug));
@@ -425,6 +426,7 @@ export function AdminEditor({ slug, preview = false }: AdminEditorProps) {
           title,
           at: Date.now(),
         });
+        setDirty(false);
         setNotice({
           kind: publish ? "published" : "draft",
           slug: nextSlug,
@@ -449,6 +451,7 @@ export function AdminEditor({ slug, preview = false }: AdminEditorProps) {
         await deleteArticle(notice.id);
       }
       forgetCreatedStory(notice.id);
+      skipLeave.current = true;
       setNotice(null);
       const blank = emptyDraft();
       setDraft(blank);
@@ -492,12 +495,12 @@ export function AdminEditor({ slug, preview = false }: AdminEditorProps) {
 
   useEffect(() => {
     function onBeforeUnload(event: BeforeUnloadEvent) {
-      if (!dirty) return;
+      if (!dirty || skipLeave.current) return;
       event.preventDefault();
       event.returnValue = "";
     }
     function onClick(event: MouseEvent) {
-      if (!dirty) return;
+      if (!dirty || skipLeave.current) return;
       const link = (event.target as HTMLElement | null)?.closest("a");
       if (!link || link.target === "_blank") return;
       const href = link.getAttribute("href");
