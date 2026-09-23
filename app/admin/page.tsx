@@ -3,16 +3,16 @@ import { AdminDesk } from "@/components/AdminDesk";
 import { AdminShell } from "@/components/AdminShell";
 
 export const metadata: Metadata = {
-  title: "Admin",
-  description: "Write and publish Vice City Feed stories.",
+  title: "Desk",
+  description: "Draft and publish Vice City Feed stories.",
   robots: { index: false, follow: false },
 };
 
 export default function AdminPage() {
   return (
     <AdminShell
-      title="Admin"
-      description="Sign in to draft and publish stories. The public site only reads published rows."
+      title="Desk"
+      description="Drafts stay private. Published stories hit the Newswire."
     >
       <AdminDesk />
     </AdminShell>

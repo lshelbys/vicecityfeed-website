@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { AdminShell } from "@/components/AdminShell";
 import { AdminWriteInner } from "@/components/AdminWriteInner";
 
 export const metadata: Metadata = {
@@ -11,13 +10,8 @@ export const metadata: Metadata = {
 
 export default function AdminWritePage() {
   return (
-    <AdminShell
-      title="Write"
-      description="Title, excerpt, markdown, desk, and cover — then publish."
-    >
-      <Suspense fallback={<p className="text-sm text-white">Loading editor…</p>}>
-        <AdminWriteInner />
-      </Suspense>
-    </AdminShell>
+    <Suspense fallback={<p className="mx-auto max-w-6xl px-4 py-12 text-sm text-white">Loading editor…</p>}>
+      <AdminWriteInner />
+    </Suspense>
   );
 }

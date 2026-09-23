@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ctaPillClass } from "@/components/pills";
+import { describeAdminError } from "@/lib/admin-errors";
 import { getSupabase } from "@/lib/supabase";
 
 const fieldClass =
@@ -17,7 +18,7 @@ export function AdminSignIn() {
     event.preventDefault();
     const supabase = getSupabase();
     if (!supabase) {
-      setError("Supabase is not configured.");
+      setError("You are not signed in.");
       return;
     }
     setBusy(true);
@@ -28,12 +29,19 @@ export function AdminSignIn() {
     });
     setBusy(false);
     if (nextError) {
-      setError(nextError.message);
+      setError(describeAdminError(nextError));
     }
   }
 
   return (
-    <form data-admin-signin className="max-w-md space-y-5" onSubmit={(event) => void onSubmit(event)}>
+    <form
+      data-admin-signin
+      className="max-w-md space-y-5"
+      onSubmit={(event) => void onSubmit(event)}
+    >
+      <p className="text-sm text-white">
+        Sign in with the desk account you created in Supabase Auth.
+      </p>
       <div>
         <label
           className="mb-2 block text-[10px] font-semibold tracking-[0.16em] text-white uppercase"

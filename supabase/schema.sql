@@ -169,3 +169,7 @@ create policy "Authenticated can delete covers"
   for delete
   to authenticated
   using (bucket_id = 'covers');
+
+-- Additive no-ops if the create-table block above already ran.
+alter table public.articles add column if not exists cover_image_url text;
+alter table public.articles add column if not exists published boolean not null default false;

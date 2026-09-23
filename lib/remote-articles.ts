@@ -1,3 +1,4 @@
+import { describeAdminError } from "./admin-errors";
 import { getAuthorSlug } from "./authors";
 import { readingTimeFromMarkdown, slugify } from "./format";
 import { getSupabase } from "./supabase";
@@ -60,6 +61,7 @@ export type ArticleDraft = {
   coverImageUrl: string;
   featured: boolean;
   published: boolean;
+  sectionManual?: boolean;
 };
 
 const CATEGORY_SET = new Set<string>(CATEGORIES);
@@ -128,6 +130,7 @@ export function emptyDraft(): ArticleDraft {
     coverImageUrl: "",
     featured: false,
     published: false,
+    sectionManual: false,
   };
 }
 
@@ -184,6 +187,7 @@ export function rowToDraft(row: ArticleRow): ArticleDraft {
     coverImageUrl: row.cover_image_url ?? "",
     featured: Boolean(row.featured),
     published: Boolean(row.published),
+    sectionManual: asSection(row.section) !== categoryToSection(asCategory(row.category)),
   };
 }
 
@@ -208,7 +212,9 @@ export function draftToRow(
     excerpt: draft.excerpt.trim(),
     content: draft.content,
     category: draft.category,
-    section: draft.section,
+    section: draft.sectionManual
+      ? draft.section
+      : categoryToSection(draft.category),
     author_name: authorName,
     author_role: draft.authorRole.trim() || "Desk",
     author_handle: handle,
@@ -259,7 +265,7 @@ export async function fetchAdminArticles(): Promise<ArticleRow[]> {
     .from(ARTICLES_TABLE)
     .select("*")
     .order("updated_at", { ascending: false });
-  if (error || !data) throw error ?? new Error("Could not load stories.");
+  if (error || !data) throw new Error(describeAdminError(error ?? new Error("Could not load stories.")));
   return data as ArticleRow[];
 }
 
@@ -273,16 +279,23 @@ export async function fetchAdminArticle(
     .select("*")
     .eq("slug", slug)
     .maybeSingle();
-  if (error || !data) return null;
-  return data as ArticleRow;
+  if (error) throw new Error(describeAdminError(error));
+  return (data as ArticleRow | null) ?? null;
 }
 
 export async function saveArticle(draft: ArticleDraft): Promise<string> {
   const supabase = getSupabase();
-  if (!supabase) throw new Error("Supabase is not configured.");
+  if (!supabase) throw new Error("You are not signed in.");
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  if (!session) throw new Error("You are not signed in.");
   const title = draft.title.trim();
-  if (!title) throw new Error("Title is required.");
-  const payload = draftToRow(draft, draft.published ? new Date().toISOString() : undefined);
+  if (!title) throw new Error("Add a title before saving.");
+  const payload = draftToRow(
+    draft,
+    draft.published ? new Date().toISOString() : undefined,
+  );
 
   if (draft.id) {
     const next = { ...payload };
@@ -300,20 +313,37 @@ export async function saveArticle(draft: ArticleDraft): Promise<string> {
       .from(ARTICLES_TABLE)
       .update(next)
       .eq("id", draft.id);
-    if (error) throw error;
+    if (error) throw new Error(describeAdminError(error));
     return String(payload.slug);
   }
 
   const { error } = await supabase.from(ARTICLES_TABLE).insert(payload);
-  if (error) throw error;
+  if (error) throw new Error(describeAdminError(error));
   return String(payload.slug);
+}
+
+export async function setPublished(
+  id: string,
+  published: boolean,
+): Promise<void> {
+  const supabase = getSupabase();
+  if (!supabase) throw new Error("You are not signed in.");
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  if (!session) throw new Error("You are not signed in.");
+  const { error } = await supabase
+    .from(ARTICLES_TABLE)
+    .update({ published })
+    .eq("id", id);
+  if (error) throw new Error(describeAdminError(error));
 }
 
 export async function deleteArticle(id: string): Promise<void> {
   const supabase = getSupabase();
-  if (!supabase) throw new Error("Supabase is not configured.");
+  if (!supabase) throw new Error("You are not signed in.");
   const { error } = await supabase.from(ARTICLES_TABLE).delete().eq("id", id);
-  if (error) throw error;
+  if (error) throw new Error(describeAdminError(error));
 }
 
 export async function uploadCoverImage(
@@ -321,7 +351,13 @@ export async function uploadCoverImage(
   file: File,
 ): Promise<string> {
   const supabase = getSupabase();
-  if (!supabase) throw new Error("Supabase is not configured.");
+  if (!supabase) throw new Error("You are not signed in.");
+  if (!file.type.startsWith("image/")) {
+    throw new Error("Cover upload failed. Use a JPG, PNG, or WebP image.");
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    throw new Error("Cover upload failed. Use an image under 5 MB.");
+  }
   const safeSlug = slugify(slug) || "story";
   const ext = file.name.split(".").pop()?.toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
   const path = `${safeSlug}/${Date.now()}.${ext}`;
@@ -329,7 +365,7 @@ export async function uploadCoverImage(
     upsert: true,
     contentType: file.type || undefined,
   });
-  if (error) throw error;
+  if (error) throw new Error(describeAdminError(error));
   const { data } = supabase.storage.from(COVERS_BUCKET).getPublicUrl(path);
   return data.publicUrl;
 }
