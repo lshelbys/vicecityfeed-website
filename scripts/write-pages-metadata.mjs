@@ -95,6 +95,14 @@ if (!existsSync(rssRoot)) {
   process.exit(1);
 }
 
+for (const name of ["sitemap.xml", "robots.txt"]) {
+  const dest = join(root, name);
+  if (!existsSync(dest)) {
+    console.error(`${name} is missing from the root export`);
+    process.exit(1);
+  }
+}
+
 rmSync(join(root, "docs"), { recursive: true, force: true });
 
 console.log(

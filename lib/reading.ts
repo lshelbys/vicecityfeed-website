@@ -5,43 +5,107 @@ import { useSyncExternalStore } from "react";
 export const READING_STORAGE_KEY = "vcf-reading-progress";
 export const READING_CHANGE_EVENT = "vcf:reading";
 
-type ProgressMap = Record<string, number>;
+type ProgressEntry = {
+  percent: number;
+  updatedAt: number;
+};
 
-const EMPTY: ProgressMap = {};
-let snapshot: ProgressMap = EMPTY;
+type ProgressMap = Record<string, ProgressEntry>;
+type PercentMap = Record<string, number>;
 
-export function readReadingProgress(): ProgressMap {
-  if (typeof window === "undefined") return EMPTY;
+const EMPTY_PERCENT: PercentMap = {};
+let percentSnapshot: PercentMap = EMPTY_PERCENT;
+let latestSnapshot: { slug: string; percent: number } | null = null;
+
+function normalizeEntry(value: unknown): ProgressEntry | null {
+  if (typeof value === "number" && value >= 1 && value <= 100) {
+    return { percent: Math.round(value), updatedAt: 0 };
+  }
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const record = value as { percent?: unknown; updatedAt?: unknown };
+  if (typeof record.percent !== "number" || record.percent < 1 || record.percent > 100) {
+    return null;
+  }
+  return {
+    percent: Math.round(record.percent),
+    updatedAt:
+      typeof record.updatedAt === "number" && record.updatedAt > 0
+        ? record.updatedAt
+        : 0,
+  };
+}
+
+export function readReadingEntries(): ProgressMap {
+  if (typeof window === "undefined") return {};
   try {
     const raw = window.localStorage.getItem(READING_STORAGE_KEY);
-    if (!raw) return EMPTY;
+    if (!raw) return {};
     const parsed = JSON.parse(raw) as unknown;
     if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
-      return EMPTY;
+      return {};
     }
     const next: ProgressMap = {};
     for (const [key, value] of Object.entries(parsed)) {
-      if (typeof value === "number" && value >= 1 && value <= 100) {
-        next[key] = Math.round(value);
-      }
+      const entry = normalizeEntry(value);
+      if (entry) next[key] = entry;
     }
     return next;
   } catch {
-    return EMPTY;
+    return {};
   }
 }
 
-function sameMap(a: ProgressMap, b: ProgressMap) {
+export function readReadingProgress(): PercentMap {
+  const entries = readReadingEntries();
+  const next: PercentMap = {};
+  for (const [slug, entry] of Object.entries(entries)) {
+    next[slug] = entry.percent;
+  }
+  return next;
+}
+
+function samePercentMap(a: PercentMap, b: PercentMap) {
   const keys = Object.keys(a);
   if (keys.length !== Object.keys(b).length) return false;
   return keys.every((key) => a[key] === b[key]);
 }
 
-function getSnapshot() {
+function getPercentSnapshot() {
   const next = readReadingProgress();
-  if (sameMap(next, snapshot)) return snapshot;
-  snapshot = next;
-  return snapshot;
+  if (samePercentMap(next, percentSnapshot)) return percentSnapshot;
+  percentSnapshot = next;
+  return percentSnapshot;
+}
+
+export function getLatestInProgress(): { slug: string; percent: number } | null {
+  const entries = readReadingEntries();
+  let best: { slug: string; percent: number; updatedAt: number } | null = null;
+  for (const [slug, entry] of Object.entries(entries)) {
+    if (entry.percent < 1 || entry.percent >= 100) continue;
+    if (
+      !best ||
+      entry.updatedAt > best.updatedAt ||
+      (entry.updatedAt === best.updatedAt && entry.percent >= best.percent)
+    ) {
+      best = { slug, percent: entry.percent, updatedAt: entry.updatedAt };
+    }
+  }
+  return best ? { slug: best.slug, percent: best.percent } : null;
+}
+
+function getLatestSnapshot() {
+  const next = getLatestInProgress();
+  if (
+    latestSnapshot &&
+    next &&
+    latestSnapshot.slug === next.slug &&
+    latestSnapshot.percent === next.percent
+  ) {
+    return latestSnapshot;
+  }
+  if (!latestSnapshot && !next) return null;
+  latestSnapshot = next;
+  return latestSnapshot;
 }
 
 function subscribe(callback: () => void) {
@@ -56,7 +120,7 @@ function subscribe(callback: () => void) {
 export function writeReadingPercent(slug: string, percent: number) {
   if (typeof window === "undefined") return;
   const clamped = Math.round(Math.min(100, Math.max(0, percent)));
-  const current = readReadingProgress();
+  const current = readReadingEntries();
   if (clamped < 1) {
     if (!(slug in current)) return;
     const next = { ...current };
@@ -65,15 +129,27 @@ export function writeReadingPercent(slug: string, percent: number) {
     window.dispatchEvent(new Event(READING_CHANGE_EVENT));
     return;
   }
-  if (current[slug] === clamped) return;
+  const previous = current[slug];
+  if (previous?.percent === clamped) {
+    current[slug] = { percent: clamped, updatedAt: Date.now() };
+    window.localStorage.setItem(READING_STORAGE_KEY, JSON.stringify(current));
+    return;
+  }
   window.localStorage.setItem(
     READING_STORAGE_KEY,
-    JSON.stringify({ ...current, [slug]: clamped }),
+    JSON.stringify({
+      ...current,
+      [slug]: { percent: clamped, updatedAt: Date.now() },
+    }),
   );
   window.dispatchEvent(new Event(READING_CHANGE_EVENT));
 }
 
 export function useReadingPercent(slug: string): number | null {
-  const map = useSyncExternalStore(subscribe, getSnapshot, () => EMPTY);
+  const map = useSyncExternalStore(subscribe, getPercentSnapshot, () => EMPTY_PERCENT);
   return map[slug] ?? null;
+}
+
+export function useLatestInProgress() {
+  return useSyncExternalStore(subscribe, getLatestSnapshot, () => null);
 }

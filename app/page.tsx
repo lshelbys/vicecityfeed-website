@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ContinueReading } from "@/components/ContinueReading";
 import { Hero } from "@/components/Hero";
 import { WireFeed } from "@/components/WireFeed";
 import { getFeedArticles, getHeroArticles } from "@/lib/articles";
@@ -49,6 +50,7 @@ export default function HomePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      <ContinueReading articles={articles} />
       <Hero article={lead} />
 
       <section

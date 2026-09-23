@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { getArticleMeta } from "@/lib/articles";
+import { getAllAuthorSlugs, getArticleMeta } from "@/lib/articles";
 import { SITE } from "@/lib/site";
 
 export const dynamic = "force-static";
@@ -29,5 +29,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }));
 
-  return [...pages, ...posts];
+  const authors: MetadataRoute.Sitemap = getAllAuthorSlugs().map((slug) => ({
+    url: `${SITE.url}/authors/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly",
+    priority: 0.6,
+  }));
+
+  return [...pages, ...posts, ...authors];
 }

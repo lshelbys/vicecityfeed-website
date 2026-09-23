@@ -8,13 +8,15 @@ import { ShareLink } from "@/components/ShareLink";
 import { CoverArt } from "@/components/CoverArt";
 import { ReadingProgress } from "@/components/ReadingProgress";
 import { AdjacentStories } from "@/components/AdjacentStories";
+import { MoreFromWriter } from "@/components/MoreFromWriter";
 import {
   getAdjacentArticles,
   getAllSlugs,
   getArticle,
+  getFeedArticlesByAuthor,
   getRelatedArticles,
 } from "@/lib/articles";
-import { authorHref } from "@/lib/authors";
+import { authorHref, getAuthorSlug } from "@/lib/authors";
 import { formatDate } from "@/lib/format";
 import {
   CATEGORY_SECTION,
@@ -80,6 +82,9 @@ export default async function PostPage({ params }: PostPageProps) {
 
   const related = getRelatedArticles(article);
   const adjacent = getAdjacentArticles(article.slug);
+  const moreFromWriter = getFeedArticlesByAuthor(
+    getAuthorSlug(article.author),
+  ).filter((item) => item.slug !== article.slug);
   const section = CATEGORY_SECTION[article.category];
   const categoryLabel = CATEGORY_SHORT[article.category];
   const categoryHref = newswireFilterHref(article.category);
@@ -223,6 +228,7 @@ export default async function PostPage({ params }: PostPageProps) {
           </div>
         </section>
       ) : null}
+      <MoreFromWriter name={article.author.name} articles={moreFromWriter} />
       <AdjacentStories previous={adjacent.previous} next={adjacent.next} />
     </main>
   );
