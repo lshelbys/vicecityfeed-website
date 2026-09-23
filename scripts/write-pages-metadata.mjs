@@ -86,9 +86,9 @@ writeFileSync(
   "# Disable Jekyll so GitHub Pages publishes index.html and _next/ as-is.\n",
 );
 
-const logo = join(root, "public/images/logo.png");
-if (existsSync(logo)) {
-  cpSync(logo, join(out, "favicon.ico"));
+const favicon = join(root, "public/favicon.ico");
+if (existsSync(favicon)) {
+  cpSync(favicon, join(out, "favicon.ico"));
 }
 
 walkHtml(out, (file) => {
