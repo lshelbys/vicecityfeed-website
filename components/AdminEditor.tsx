@@ -532,7 +532,7 @@ export function AdminEditor({ slug }: AdminEditorProps) {
           <p className={labelClass}>Preview</p>
           <div
             data-admin-preview
-            className="min-h-80 rounded-2xl bg-surface px-5 py-6 md:min-h-[28rem]"
+            className="min-h-80 rounded-2xl bg-ink px-5 py-6 md:min-h-[28rem]"
           >
             {draft.content.trim() ? (
               <ArticleBody
