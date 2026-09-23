@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
-import { ContinueReading } from "@/components/ContinueReading";
-import { Hero } from "@/components/Hero";
-import { WireFeed } from "@/components/WireFeed";
+import { HomeDesk } from "@/components/HomeDesk";
 import { getFeedArticles, getHeroArticles } from "@/lib/articles";
 import { SITE } from "@/lib/site";
 
@@ -50,22 +48,7 @@ export default function HomePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <ContinueReading articles={articles} />
-      <Hero article={lead} />
-
-      <section
-        id="newswire"
-        aria-labelledby="wire-heading"
-        className="mx-auto max-w-7xl px-4 py-12 md:px-6"
-      >
-        <WireFeed
-          articles={articles}
-          heading="Newswire"
-          headingId="wire-heading"
-          syncWithUrl
-          shareLeadCover={false}
-        />
-      </section>
+      <HomeDesk lead={lead} articles={articles} />
     </main>
   );
 }

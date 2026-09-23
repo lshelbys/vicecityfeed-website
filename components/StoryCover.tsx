@@ -6,7 +6,12 @@ import type { ArticleMeta } from "@/lib/types";
 type StoryCoverProps = {
   article: Pick<
     ArticleMeta,
-    "slug" | "title" | "coverAccent" | "coverScene" | "category"
+    | "slug"
+    | "title"
+    | "coverAccent"
+    | "coverScene"
+    | "category"
+    | "coverImageUrl"
   >;
   className?: string;
   lead?: boolean;
@@ -30,6 +35,7 @@ export function StoryCover({
         title={article.title}
         kind={word}
         lead={lead}
+        imageUrl={article.coverImageUrl}
         className={className}
       />
     </CoverTransition>

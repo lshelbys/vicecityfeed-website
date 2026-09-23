@@ -1,0 +1,379 @@
+import { getAuthorSlug } from "./authors";
+import { readingTimeFromMarkdown, slugify } from "./format";
+import { getSupabase } from "./supabase";
+import type {
+  Article,
+  ArticleMeta,
+  Category,
+  CoverAccent,
+  CoverScene,
+  FeedArticle,
+  SectionSlug,
+} from "./types";
+import {
+  CATEGORIES,
+  COVER_SCENES,
+  SECTION_SLUGS,
+} from "./types";
+
+export const ARTICLES_TABLE = "articles";
+export const COVERS_BUCKET = "covers";
+
+export type ArticleRow = {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  category: string;
+  section: string;
+  author_name: string;
+  author_role: string;
+  author_handle: string;
+  tags: string[] | null;
+  cover_accent: string;
+  cover_scene: string;
+  cover_image_url: string | null;
+  featured: boolean;
+  hero_rank: number | null;
+  breaking: boolean;
+  related_slugs: string[] | null;
+  published: boolean;
+  published_at: string;
+  updated_at: string;
+};
+
+export type ArticleDraft = {
+  id?: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  category: Category;
+  section: SectionSlug;
+  authorName: string;
+  authorRole: string;
+  authorHandle: string;
+  tags: string;
+  coverAccent: CoverAccent;
+  coverScene: CoverScene;
+  coverImageUrl: string;
+  featured: boolean;
+  published: boolean;
+};
+
+const CATEGORY_SET = new Set<string>(CATEGORIES);
+const SECTION_SET = new Set<string>(SECTION_SLUGS);
+const ACCENT_SET = new Set<string>(["cyan", "magenta", "sunset"]);
+const SCENE_SET = new Set<string>(COVER_SCENES);
+
+function asCategory(value: string): Category {
+  return CATEGORY_SET.has(value) ? (value as Category) : "Leaks & News";
+}
+
+function asSection(value: string): SectionSlug {
+  return SECTION_SET.has(value) ? (value as SectionSlug) : "wire";
+}
+
+function asAccent(value: string): CoverAccent {
+  return ACCENT_SET.has(value) ? (value as CoverAccent) : "cyan";
+}
+
+function asScene(value: string): CoverScene {
+  return SCENE_SET.has(value) ? (value as CoverScene) : "coast";
+}
+
+function asStringArray(value: string[] | null | undefined): string[] {
+  return Array.isArray(value) ? value.filter(Boolean) : [];
+}
+
+export function categoryToSection(category: Category): SectionSlug {
+  switch (category) {
+    case "Map & Lore":
+      return "map";
+    case "Vehicles & Guns":
+      return "garage";
+    case "Guides":
+      return "intel";
+    default:
+      return "wire";
+  }
+}
+
+export function categoryToAccent(category: Category): CoverAccent {
+  switch (category) {
+    case "Leaks & News":
+      return "magenta";
+    case "Vehicles & Guns":
+      return "sunset";
+    default:
+      return "cyan";
+  }
+}
+
+export function emptyDraft(): ArticleDraft {
+  return {
+    slug: "",
+    title: "",
+    excerpt: "",
+    content: "",
+    category: "Leaks & News",
+    section: "wire",
+    authorName: "",
+    authorRole: "Desk",
+    authorHandle: "",
+    tags: "",
+    coverAccent: "magenta",
+    coverScene: "coast",
+    coverImageUrl: "",
+    featured: false,
+    published: false,
+  };
+}
+
+export function rowToArticle(row: ArticleRow): Article {
+  const content = row.content ?? "";
+  const { wordCount, readingTimeMinutes } = readingTimeFromMarkdown(content);
+  const authorName = row.author_name.trim() || "Desk";
+  const handle = row.author_handle.trim() || slugify(authorName);
+  return {
+    slug: row.slug,
+    title: row.title,
+    excerpt: row.excerpt ?? "",
+    author: {
+      name: authorName,
+      role: row.author_role.trim() || "Desk",
+      handle,
+    },
+    publishedAt: row.published_at,
+    updatedAt: row.updated_at,
+    category: asCategory(row.category),
+    tags: asStringArray(row.tags),
+    section: asSection(row.section),
+    featured: Boolean(row.featured),
+    heroRank:
+      row.hero_rank === 1 || row.hero_rank === 2 || row.hero_rank === 3
+        ? row.hero_rank
+        : undefined,
+    coverAccent: asAccent(row.cover_accent),
+    coverScene: asScene(row.cover_scene),
+    coverImageUrl: row.cover_image_url ?? undefined,
+    relatedSlugs: asStringArray(row.related_slugs),
+    breaking: Boolean(row.breaking),
+    content,
+    wordCount,
+    readingTimeMinutes,
+  };
+}
+
+export function rowToDraft(row: ArticleRow): ArticleDraft {
+  return {
+    id: row.id,
+    slug: row.slug,
+    title: row.title,
+    excerpt: row.excerpt ?? "",
+    content: row.content ?? "",
+    category: asCategory(row.category),
+    section: asSection(row.section),
+    authorName: row.author_name,
+    authorRole: row.author_role,
+    authorHandle: row.author_handle,
+    tags: asStringArray(row.tags).join(", "),
+    coverAccent: asAccent(row.cover_accent),
+    coverScene: asScene(row.cover_scene),
+    coverImageUrl: row.cover_image_url ?? "",
+    featured: Boolean(row.featured),
+    published: Boolean(row.published),
+  };
+}
+
+function parseTags(value: string): string[] {
+  return value
+    .split(",")
+    .map((tag) => slugify(tag))
+    .filter(Boolean);
+}
+
+export function draftToRow(
+  draft: ArticleDraft,
+  publishedAt?: string,
+): Record<string, unknown> {
+  const title = draft.title.trim();
+  const slug = (draft.slug.trim() || slugify(title) || "story").slice(0, 80);
+  const authorName = draft.authorName.trim() || "Desk";
+  const handle = draft.authorHandle.trim() || slugify(authorName);
+  return {
+    slug,
+    title,
+    excerpt: draft.excerpt.trim(),
+    content: draft.content,
+    category: draft.category,
+    section: draft.section,
+    author_name: authorName,
+    author_role: draft.authorRole.trim() || "Desk",
+    author_handle: handle,
+    tags: parseTags(draft.tags),
+    cover_accent: draft.coverAccent,
+    cover_scene: draft.coverScene,
+    cover_image_url: draft.coverImageUrl.trim() || null,
+    featured: draft.featured,
+    hero_rank: draft.featured ? 1 : null,
+    breaking: false,
+    related_slugs: [],
+    published: draft.published,
+    published_at: publishedAt ?? new Date().toISOString(),
+  };
+}
+
+export async function fetchPublishedArticles(): Promise<Article[]> {
+  const supabase = getSupabase();
+  if (!supabase) return [];
+  const { data, error } = await supabase
+    .from(ARTICLES_TABLE)
+    .select("*")
+    .eq("published", true)
+    .order("published_at", { ascending: false });
+  if (error || !data) return [];
+  return (data as ArticleRow[]).map(rowToArticle);
+}
+
+export async function fetchPublishedArticle(
+  slug: string,
+): Promise<Article | null> {
+  const supabase = getSupabase();
+  if (!supabase || !slug) return null;
+  const { data, error } = await supabase
+    .from(ARTICLES_TABLE)
+    .select("*")
+    .eq("slug", slug)
+    .eq("published", true)
+    .maybeSingle();
+  if (error || !data) return null;
+  return rowToArticle(data as ArticleRow);
+}
+
+export async function fetchAdminArticles(): Promise<ArticleRow[]> {
+  const supabase = getSupabase();
+  if (!supabase) return [];
+  const { data, error } = await supabase
+    .from(ARTICLES_TABLE)
+    .select("*")
+    .order("updated_at", { ascending: false });
+  if (error || !data) throw error ?? new Error("Could not load stories.");
+  return data as ArticleRow[];
+}
+
+export async function fetchAdminArticle(
+  slug: string,
+): Promise<ArticleRow | null> {
+  const supabase = getSupabase();
+  if (!supabase || !slug) return null;
+  const { data, error } = await supabase
+    .from(ARTICLES_TABLE)
+    .select("*")
+    .eq("slug", slug)
+    .maybeSingle();
+  if (error || !data) return null;
+  return data as ArticleRow;
+}
+
+export async function saveArticle(draft: ArticleDraft): Promise<string> {
+  const supabase = getSupabase();
+  if (!supabase) throw new Error("Supabase is not configured.");
+  const title = draft.title.trim();
+  if (!title) throw new Error("Title is required.");
+  const payload = draftToRow(draft, draft.published ? new Date().toISOString() : undefined);
+
+  if (draft.id) {
+    const next = { ...payload };
+    const { data: existing } = await supabase
+      .from(ARTICLES_TABLE)
+      .select("published, published_at")
+      .eq("id", draft.id)
+      .maybeSingle();
+    if (!draft.published) {
+      delete next.published_at;
+    } else if (existing?.published && existing.published_at) {
+      next.published_at = existing.published_at;
+    }
+    const { error } = await supabase
+      .from(ARTICLES_TABLE)
+      .update(next)
+      .eq("id", draft.id);
+    if (error) throw error;
+    return String(payload.slug);
+  }
+
+  const { error } = await supabase.from(ARTICLES_TABLE).insert(payload);
+  if (error) throw error;
+  return String(payload.slug);
+}
+
+export async function deleteArticle(id: string): Promise<void> {
+  const supabase = getSupabase();
+  if (!supabase) throw new Error("Supabase is not configured.");
+  const { error } = await supabase.from(ARTICLES_TABLE).delete().eq("id", id);
+  if (error) throw error;
+}
+
+export async function uploadCoverImage(
+  slug: string,
+  file: File,
+): Promise<string> {
+  const supabase = getSupabase();
+  if (!supabase) throw new Error("Supabase is not configured.");
+  const safeSlug = slugify(slug) || "story";
+  const ext = file.name.split(".").pop()?.toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
+  const path = `${safeSlug}/${Date.now()}.${ext}`;
+  const { error } = await supabase.storage.from(COVERS_BUCKET).upload(path, file, {
+    upsert: true,
+    contentType: file.type || undefined,
+  });
+  if (error) throw error;
+  const { data } = supabase.storage.from(COVERS_BUCKET).getPublicUrl(path);
+  return data.publicUrl;
+}
+
+export function relatedFromList(
+  article: ArticleMeta,
+  list: ArticleMeta[],
+): ArticleMeta[] {
+  const bySlug = new Map(list.map((item) => [item.slug, item]));
+  return article.relatedSlugs
+    .map((slug) => bySlug.get(slug))
+    .filter((item): item is ArticleMeta => Boolean(item));
+}
+
+export function adjacentFromList(
+  slug: string,
+  list: ArticleMeta[],
+): { previous?: ArticleMeta; next?: ArticleMeta } {
+  const index = list.findIndex((item) => item.slug === slug);
+  if (index < 0) return {};
+  return {
+    previous: index > 0 ? list[index - 1] : undefined,
+    next: index < list.length - 1 ? list[index + 1] : undefined,
+  };
+}
+
+export function moreFromWriter(
+  article: ArticleMeta,
+  list: FeedArticle[],
+): FeedArticle[] {
+  const author = getAuthorSlug(article.author);
+  return list.filter(
+    (item) => item.slug !== article.slug && getAuthorSlug(item.author) === author,
+  );
+}
+
+export function postSlugFromPathname(pathname: string): string | null {
+  const match = pathname.match(/^\/posts\/([^/]+)\/?$/);
+  if (!match) return null;
+  try {
+    const slug = decodeURIComponent(match[1]).trim();
+    if (!slug || slug === "404") return null;
+    return slug;
+  } catch {
+    return null;
+  }
+}

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/PageHeader";
-import { SectionFeed } from "@/components/SectionFeed";
+import { LiveSectionFeed } from "@/components/LiveSectionFeed";
 import { getFeedArticles } from "@/lib/articles";
 
 export const metadata: Metadata = {
@@ -10,9 +10,7 @@ export const metadata: Metadata = {
 };
 
 export default function ReviewsPage() {
-  const articles = getFeedArticles().filter(
-    (article) => article.section === "reviews",
-  );
+  const articles = getFeedArticles();
 
   return (
     <main id="main" className="mx-auto max-w-7xl px-4 py-12 md:px-6">
@@ -21,7 +19,7 @@ export default function ReviewsPage() {
         title="Reviews"
         description="Character studies, radio, and the night economy — scored like a desk."
       />
-      <SectionFeed articles={articles} />
+      <LiveSectionFeed articles={articles} section="reviews" />
     </main>
   );
 }

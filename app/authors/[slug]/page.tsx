@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/PageHeader";
-import { SectionFeed } from "@/components/SectionFeed";
+import { LiveAuthorFeed } from "@/components/LiveAuthorFeed";
 import {
   getAllAuthorSlugs,
   getAuthor,
@@ -46,7 +46,7 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
         title={author.name}
         description={`Stories by ${author.name}.`}
       />
-      <SectionFeed articles={articles} />
+      <LiveAuthorFeed authorSlug={slug} articles={articles} />
     </main>
   );
 }

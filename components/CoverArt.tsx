@@ -59,6 +59,7 @@ type CoverArtProps = {
   className?: string;
   lead?: boolean;
   kind?: string;
+  imageUrl?: string;
 };
 
 function gradientId(accent: CoverAccent, scene: CoverScene, title: string) {
@@ -295,6 +296,7 @@ export function CoverArt({
   className = "",
   lead = false,
   kind,
+  imageUrl,
 }: CoverArtProps) {
   const palette = PALETTE[accent];
   const skyId = gradientId(accent, scene, title);
@@ -304,23 +306,34 @@ export function CoverArt({
       className={`film-grain @container relative overflow-hidden bg-ink ${className}`}
       aria-hidden="true"
       data-cover-scene={scene}
+      data-cover-image={imageUrl ? "true" : undefined}
     >
-      <svg
-        className="absolute inset-0 h-full w-full"
-        viewBox="0 0 1600 900"
-        preserveAspectRatio="xMidYMid slice"
-      >
-        <defs>
-          <linearGradient id={skyId} x1="0" y1="0" x2="0.3" y2="1">
-            <stop offset="0%" stopColor={palette.sky} />
-            <stop offset="52%" stopColor={palette.mid} />
-            <stop offset="100%" stopColor={palette.ground} />
-          </linearGradient>
-        </defs>
-        <rect width="1600" height="900" fill={`url(#${skyId})`} />
-        <ellipse cx="800" cy="300" rx="380" ry="140" fill={palette.haze} />
-        <Scene scene={scene} p={palette} />
-      </svg>
+      {imageUrl ? (
+        // Uploaded covers are remote Storage URLs; the static export does not optimize images.
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={imageUrl}
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+      ) : (
+        <svg
+          className="absolute inset-0 h-full w-full"
+          viewBox="0 0 1600 900"
+          preserveAspectRatio="xMidYMid slice"
+        >
+          <defs>
+            <linearGradient id={skyId} x1="0" y1="0" x2="0.3" y2="1">
+              <stop offset="0%" stopColor={palette.sky} />
+              <stop offset="52%" stopColor={palette.mid} />
+              <stop offset="100%" stopColor={palette.ground} />
+            </linearGradient>
+          </defs>
+          <rect width="1600" height="900" fill={`url(#${skyId})`} />
+          <ellipse cx="800" cy="300" rx="380" ry="140" fill={palette.haze} />
+          <Scene scene={scene} p={palette} />
+        </svg>
+      )}
       <div
         className="absolute inset-0"
         style={{

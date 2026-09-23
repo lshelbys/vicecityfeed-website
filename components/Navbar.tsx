@@ -10,6 +10,7 @@ import { SiteLogo } from "@/components/SiteLogo";
 import { SavedNav } from "@/components/SavedNav";
 import { SocialLauncher } from "@/components/SocialLauncher";
 import { outlinePillClass } from "@/components/pills";
+import { usePublishedArticles } from "@/lib/use-published-articles";
 import type { ArticleMeta } from "@/lib/types";
 
 type NavbarProps = {
@@ -28,6 +29,7 @@ function isTypingTarget(target: EventTarget | null) {
 }
 
 export function Navbar({ articles, logoSrc }: NavbarProps) {
+  const liveArticles = usePublishedArticles(articles);
   const [searchOpen, setSearchOpen] = useState(false);
   const [compact, setCompact] = useState(false);
 
@@ -102,7 +104,7 @@ export function Navbar({ articles, logoSrc }: NavbarProps) {
       <SearchModal
         open={searchOpen}
         onClose={() => setSearchOpen(false)}
-        articles={articles}
+        articles={liveArticles}
       />
     </header>
   );

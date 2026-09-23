@@ -38,6 +38,8 @@ const PROTECTED = new Set([
   "eslint.config.mjs",
   "postcss.config.mjs",
   "README.md",
+  "supabase",
+  ".env.example",
 ]);
 
 if (!existsSync(out)) {

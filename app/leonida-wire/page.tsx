@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/PageHeader";
-import { WireFeed } from "@/components/WireFeed";
+import { LiveWireFeed } from "@/components/LiveWireFeed";
 import { getFeedArticles } from "@/lib/articles";
 
 export const metadata: Metadata = {
@@ -17,7 +17,7 @@ export default function LeonidaWirePage() {
         title="Leonida Wire"
         description="Leaks, lore, and garage notes from the Leonida desk."
       />
-      <WireFeed articles={getFeedArticles()} syncWithUrl />
+      <LiveWireFeed articles={getFeedArticles()} syncWithUrl />
     </main>
   );
 }

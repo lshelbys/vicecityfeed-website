@@ -69,6 +69,7 @@ export type ArticleMeta = {
   heroRank?: 1 | 2 | 3;
   coverAccent: CoverAccent;
   coverScene: CoverScene;
+  coverImageUrl?: string;
   relatedSlugs: string[];
   breaking?: boolean;
 };
