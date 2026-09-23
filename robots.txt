@@ -3,5 +3,5 @@ Allow: /
 Disallow: /admin
 Disallow: /admin/
 
-Host: vicecityfeed.com
-Sitemap: https://vicecityfeed.com/sitemap.xml
+Host: www.vicecityfeed.com
+Sitemap: https://www.vicecityfeed.com/sitemap.xml

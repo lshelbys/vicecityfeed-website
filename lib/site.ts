@@ -3,8 +3,8 @@ import type { Category, CategorySlug, NavItem, SocialLink } from "./types";
 export const SITE = {
   name: "Vice City Feed",
   shortName: "VCF",
-  domain: "vicecityfeed.com",
-  url: "https://vicecityfeed.com",
+  domain: "www.vicecityfeed.com",
+  url: "https://www.vicecityfeed.com",
   tagline: "Leonida intel. Vice City nights. No filler.",
   description:
     "Vice City Feed is an independent editorial desk covering Grand Theft Auto VI — Leonida leaks, map lore, mission intel, vehicles, mods, and reviews.",

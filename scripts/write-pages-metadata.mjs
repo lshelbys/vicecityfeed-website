@@ -9,6 +9,34 @@ import {
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
+function absolutizeNextPath(href) {
+  const idx = href.indexOf("_next/");
+  if (idx >= 0) return `/${href.slice(idx)}`;
+  return href.startsWith("/") ? href : `/${href}`;
+}
+
+function rewriteExportStylesheets(html) {
+  return html.replace(/<link\b[^>]*>/gi, (tag) => {
+    const rel = /rel=["']([^"']+)["']/i.exec(tag)?.[1] ?? "";
+    const as = /as=["']([^"']+)["']/i.exec(tag)?.[1] ?? "";
+    const href = /href=["']([^"']+)["']/i.exec(tag)?.[1];
+    if (!href) return tag;
+    const isStyle =
+      /\bstylesheet\b/i.test(rel) ||
+      (/\bpreload\b/i.test(rel) && /style/i.test(as));
+    if (!isStyle) return tag;
+    return `<link rel="stylesheet" href="${absolutizeNextPath(href)}">`;
+  });
+}
+
+function walkHtml(dir, visit) {
+  for (const name of readdirSync(dir, { withFileTypes: true })) {
+    const next = join(dir, name.name);
+    if (name.isDirectory()) walkHtml(next, visit);
+    else if (name.name.endsWith(".html")) visit(next);
+  }
+}
+
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const out = join(root, "out");
 const manifestPath = join(root, ".pages-export.json");
@@ -62,6 +90,12 @@ const logo = join(root, "public/images/logo.png");
 if (existsSync(logo)) {
   cpSync(logo, join(out, "favicon.ico"));
 }
+
+walkHtml(out, (file) => {
+  const before = readFileSync(file, "utf8");
+  const after = rewriteExportStylesheets(before);
+  if (after !== before) writeFileSync(file, after);
+});
 
 if (existsSync(manifestPath)) {
   const previous = JSON.parse(readFileSync(manifestPath, "utf8"));
