@@ -54,7 +54,7 @@ export function describeAdminError(err: unknown): string {
     text.includes("storage") ||
     text.includes("payload too large")
   ) {
-    return "Cover upload failed. Check the covers bucket, or try a smaller image.";
+    return "Image upload failed. Check the covers bucket, or try a smaller image.";
   }
   if (text.includes("duplicate") || code === "23505") {
     return "A story with this slug already exists.";

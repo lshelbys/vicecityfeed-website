@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { EmptyStories } from "@/components/EmptyStories";
 import { ctaPillClass, outlinePillClass } from "@/components/pills";
 import { describeAdminError } from "@/lib/admin-errors";
 import { formatRelativeTime } from "@/lib/format";
@@ -14,145 +13,136 @@ import {
 } from "@/lib/remote-articles";
 import { getSupabase } from "@/lib/supabase";
 
-function StoryList({
-  heading,
-  rows,
-  pendingId,
-  confirmId,
-  onUnpublish,
-  onAskDelete,
-  onConfirmDelete,
-  onCancelDelete,
-}: {
-  heading: string;
-  rows: ArticleRow[];
-  pendingId: string | null;
-  confirmId: string | null;
-  onUnpublish?: (row: ArticleRow) => void;
-  onAskDelete: (row: ArticleRow) => void;
-  onConfirmDelete: (row: ArticleRow) => void;
-  onCancelDelete: () => void;
-}) {
+type StatusFilter = "all" | "draft" | "published";
+
+const LAYOUT_ROWS: ArticleRow[] = [
+  {
+    id: "preview-draft",
+    slug: "night-run-on-the-causeway",
+    title: "Night run on the causeway",
+    excerpt: "",
+    content: "",
+    category: "Leaks & News",
+    section: "wire",
+    author_name: "Desk",
+    author_role: "Desk",
+    author_handle: "",
+    tags: [],
+    cover_accent: "cyan",
+    cover_scene: "coast",
+    cover_image_url: null,
+    featured: false,
+    hero_rank: null,
+    breaking: false,
+    related_slugs: [],
+    published: false,
+    published_at: "2026-09-22T16:00:00.000Z",
+    updated_at: "2026-09-23T10:12:00.000Z",
+  },
+  {
+    id: "preview-live",
+    slug: "vice-tonight-hits-the-keys",
+    title: "Vice Tonight Hits the Keys",
+    excerpt: "",
+    content: "",
+    category: "Leaks & News",
+    section: "wire",
+    author_name: "Desk",
+    author_role: "Desk",
+    author_handle: "",
+    tags: [],
+    cover_accent: "magenta",
+    cover_scene: "coast",
+    cover_image_url: null,
+    featured: false,
+    hero_rank: null,
+    breaking: false,
+    related_slugs: [],
+    published: true,
+    published_at: "2026-09-21T18:00:00.000Z",
+    updated_at: "2026-09-21T18:00:00.000Z",
+  },
+];
+
+function matchesQuery(row: ArticleRow, query: string) {
+  if (!query) return true;
+  const hay = `${row.title} ${row.slug} ${row.category} ${row.excerpt}`.toLowerCase();
+  return hay.includes(query);
+}
+
+function StatusChip({ published }: { published: boolean }) {
   return (
-    <section className="space-y-4">
-      <div className="flex flex-wrap items-baseline gap-x-3">
-        <h2 className="font-display text-2xl font-extrabold tracking-tight text-white">
-          {heading}
-        </h2>
-        <p className="text-sm text-white">
-          {rows.length} {rows.length === 1 ? "story" : "stories"}
-        </p>
-      </div>
-      {rows.length === 0 ? (
-        <EmptyStories />
-      ) : (
-        <ul className="space-y-3">
-          {rows.map((row) => (
-            <li key={row.id} className="rounded-2xl bg-surface p-4">
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <div className="min-w-0">
-                  <p className="font-display text-lg font-extrabold tracking-tight text-white">
-                    {row.title || "Untitled"}
-                  </p>
-                  <p className="mt-1 text-xs font-medium text-white">
-                    {row.category} · {formatRelativeTime(row.updated_at)}
-                  </p>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  <Link
-                    href={`/admin/write/?slug=${encodeURIComponent(row.slug)}`}
-                    className={outlinePillClass("px-4")}
-                  >
-                    Edit
-                  </Link>
-                  {row.published ? (
-                    <>
-                      <Link
-                        href={`/posts/${row.slug}/`}
-                        className={outlinePillClass("px-4")}
-                      >
-                        View
-                      </Link>
-                      <button
-                        type="button"
-                        className={outlinePillClass("px-4")}
-                        disabled={pendingId === row.id}
-                        onClick={() => onUnpublish?.(row)}
-                      >
-                        {pendingId === row.id ? "Working…" : "Unpublish"}
-                      </button>
-                    </>
-                  ) : null}
-                  <button
-                    type="button"
-                    className={outlinePillClass("px-4")}
-                    onClick={() => onAskDelete(row)}
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
-              {confirmId === row.id ? (
-                <div className="mt-4 rounded-xl bg-raised px-4 py-3">
-                  <p className="text-sm font-semibold text-white">
-                    Delete “{row.title || row.slug}”? This cannot be undone.
-                  </p>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    <button
-                      type="button"
-                      className={ctaPillClass("white")}
-                      disabled={pendingId === row.id}
-                      onClick={() => onConfirmDelete(row)}
-                    >
-                      {pendingId === row.id ? "Deleting…" : "Delete"}
-                    </button>
-                    <button
-                      type="button"
-                      className={outlinePillClass("px-4")}
-                      onClick={onCancelDelete}
-                    >
-                      Keep
-                    </button>
-                  </div>
-                </div>
-              ) : null}
-            </li>
-          ))}
-        </ul>
-      )}
-    </section>
+    <span
+      data-admin-story-status={published ? "published" : "draft"}
+      className={`inline-flex min-h-8 items-center rounded-full px-3 text-[10px] font-semibold tracking-[0.16em] uppercase ${
+        published ? "bg-teal text-ink" : "bg-raised text-white"
+      }`}
+    >
+      {published ? "Published" : "Draft"}
+    </span>
   );
 }
 
-export function AdminDesk() {
+type AdminDeskProps = {
+  preview?: boolean;
+};
+
+export function AdminDesk({ preview = false }: AdminDeskProps) {
   const [rows, setRows] = useState<ArticleRow[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [confirmId, setConfirmId] = useState<string | null>(null);
+  const [query, setQuery] = useState("");
+  const [status, setStatus] = useState<StatusFilter>("all");
+  const [layoutOnly, setLayoutOnly] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
     fetchAdminArticles()
       .then((data) => {
         if (cancelled) return;
-        setRows(data);
+        if (data.length) {
+          setRows(data);
+          setLayoutOnly(false);
+        } else if (preview) {
+          setRows(LAYOUT_ROWS);
+          setLayoutOnly(true);
+        } else {
+          setRows([]);
+          setLayoutOnly(false);
+        }
         setLoading(false);
       })
       .catch((err: unknown) => {
         if (cancelled) return;
+        if (preview) {
+          setRows(LAYOUT_ROWS);
+          setLayoutOnly(true);
+          setLoading(false);
+          return;
+        }
         setError(describeAdminError(err));
         setLoading(false);
       });
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [preview]);
 
-  const drafts = useMemo(() => rows.filter((row) => !row.published), [rows]);
-  const published = useMemo(() => rows.filter((row) => row.published), [rows]);
+  const visible = useMemo(() => {
+    const needle = query.trim().toLowerCase();
+    return rows.filter((row) => {
+      if (status === "draft" && row.published) return false;
+      if (status === "published" && !row.published) return false;
+      return matchesQuery(row, needle);
+    });
+  }, [rows, query, status]);
+
+  const layoutLocked = layoutOnly;
 
   async function onUnpublish(row: ArticleRow) {
+    if (layoutLocked) return;
     setPendingId(row.id);
     setError(null);
     try {
@@ -170,6 +160,7 @@ export function AdminDesk() {
   }
 
   async function onConfirmDelete(row: ArticleRow) {
+    if (layoutLocked) return;
     setPendingId(row.id);
     setError(null);
     try {
@@ -188,7 +179,7 @@ export function AdminDesk() {
   }
 
   return (
-    <div data-admin-desk className="space-y-10">
+    <div data-admin-desk className="space-y-8">
       <div className="flex flex-wrap gap-3">
         <Link href="/admin/write/" className={ctaPillClass("white")}>
           New story
@@ -197,6 +188,44 @@ export function AdminDesk() {
           Sign out
         </button>
       </div>
+
+      <div className="space-y-4">
+        <label className="block">
+          <span className="mb-2 block text-[10px] font-semibold tracking-[0.16em] text-white uppercase">
+            Search
+          </span>
+          <input
+            data-admin-story-search
+            className="w-full rounded-xl bg-raised px-4 py-3 text-white placeholder:text-white/40"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Title, slug, or desk"
+            type="search"
+          />
+        </label>
+        <div className="flex flex-wrap gap-2" role="group" aria-label="Status">
+          {(
+            [
+              ["all", "All"],
+              ["draft", "Drafts"],
+              ["published", "Published"],
+            ] as const
+          ).map(([id, label]) => (
+            <button
+              key={id}
+              type="button"
+              data-admin-status-filter={id}
+              className={`inline-flex min-h-11 items-center rounded-full px-4 text-xs font-bold ${
+                status === id ? "bg-teal text-ink" : "bg-raised text-white hover:bg-teal hover:text-ink"
+              }`}
+              onClick={() => setStatus(id)}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {loading ? (
         <p className="text-sm text-white" data-admin-desk-loading>
           Loading desk…
@@ -207,28 +236,117 @@ export function AdminDesk() {
           {error}
         </p>
       ) : null}
-      {!loading ? (
-        <>
-          <StoryList
-            heading="Drafts"
-            rows={drafts}
-            pendingId={pendingId}
-            confirmId={confirmId}
-            onAskDelete={(row) => setConfirmId(row.id)}
-            onConfirmDelete={onConfirmDelete}
-            onCancelDelete={() => setConfirmId(null)}
-          />
-          <StoryList
-            heading="Published"
-            rows={published}
-            pendingId={pendingId}
-            confirmId={confirmId}
-            onUnpublish={onUnpublish}
-            onAskDelete={(row) => setConfirmId(row.id)}
-            onConfirmDelete={onConfirmDelete}
-            onCancelDelete={() => setConfirmId(null)}
-          />
-        </>
+
+      {!loading && rows.length === 0 ? (
+        <div data-admin-story-empty className="rounded-2xl bg-surface px-5 py-8">
+          <p className="font-display text-2xl font-extrabold tracking-tight text-white">
+            No stories yet
+          </p>
+          <p className="mt-2 text-sm text-white">Start one from the desk.</p>
+          <Link href="/admin/write/" className={`${ctaPillClass("white")} mt-5`}>
+            New story
+          </Link>
+        </div>
+      ) : null}
+
+      {!loading && rows.length > 0 ? (
+        <section data-admin-story-list data-admin-layout-only={layoutOnly ? "true" : "false"}>
+          <div className="mb-4 flex flex-wrap items-baseline gap-x-3">
+            <h2 className="font-display text-2xl font-extrabold tracking-tight text-white">
+              Stories
+            </h2>
+            <p className="text-sm text-white">
+              {visible.length} {visible.length === 1 ? "story" : "stories"}
+            </p>
+          </div>
+          {visible.length === 0 ? (
+            <p className="text-sm font-semibold text-white">No stories match.</p>
+          ) : (
+            <ul className="space-y-3">
+              {visible.map((row) => (
+                <li key={row.id} className="rounded-2xl bg-surface p-4">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="min-w-0 space-y-2">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <StatusChip published={row.published} />
+                        <p className="text-xs font-medium text-white/70">
+                          <time dateTime={row.updated_at}>
+                            {formatRelativeTime(row.updated_at)}
+                          </time>
+                        </p>
+                      </div>
+                      <p className="font-display text-lg font-extrabold tracking-tight text-white">
+                        {row.title || "Untitled"}
+                      </p>
+                      <p className="text-xs font-medium text-white">
+                        {row.category} · /posts/{row.slug}
+                      </p>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      <Link
+                        href={`/admin/write/?slug=${encodeURIComponent(row.slug)}`}
+                        className={outlinePillClass("px-4")}
+                      >
+                        Edit
+                      </Link>
+                      {row.published && !layoutLocked ? (
+                        <>
+                          <Link
+                            href={`/posts/${row.slug}/`}
+                            className={outlinePillClass("px-4")}
+                          >
+                            View
+                          </Link>
+                          <button
+                            type="button"
+                            className={outlinePillClass("px-4")}
+                            disabled={pendingId === row.id}
+                            onClick={() => void onUnpublish(row)}
+                          >
+                            {pendingId === row.id ? "Working…" : "Unpublish"}
+                          </button>
+                        </>
+                      ) : null}
+                      {!layoutLocked ? (
+                        <button
+                          type="button"
+                          className={outlinePillClass("px-4")}
+                          onClick={() => setConfirmId(row.id)}
+                        >
+                          Delete
+                        </button>
+                      ) : null}
+                    </div>
+                  </div>
+                  {confirmId === row.id ? (
+                    <div className="mt-4 rounded-xl bg-raised px-4 py-3">
+                      <p className="text-sm font-semibold text-white">
+                        Delete “{row.title || row.slug}”? This cannot be undone.
+                      </p>
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        <button
+                          type="button"
+                          className={ctaPillClass("white")}
+                          disabled={pendingId === row.id}
+                          onClick={() => void onConfirmDelete(row)}
+                        >
+                          {pendingId === row.id ? "Deleting…" : "Delete"}
+                        </button>
+                        <button
+                          type="button"
+                          className={outlinePillClass("px-4")}
+                          onClick={() => setConfirmId(null)}
+                        >
+                          Keep
+                        </button>
+                      </div>
+                    </div>
+                  ) : null}
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
       ) : null}
     </div>
   );

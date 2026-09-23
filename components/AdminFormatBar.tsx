@@ -1,6 +1,15 @@
 "use client";
 
-type FormatAction = "heading" | "bold" | "italic" | "link" | "quote" | "list";
+export type FormatAction =
+  | "heading"
+  | "bold"
+  | "italic"
+  | "link"
+  | "quote"
+  | "list"
+  | "image"
+  | "protip"
+  | "pullquote";
 
 const ACTIONS: Array<{ id: FormatAction; label: string }> = [
   { id: "heading", label: "Heading" },
@@ -8,7 +17,10 @@ const ACTIONS: Array<{ id: FormatAction; label: string }> = [
   { id: "italic", label: "Italic" },
   { id: "link", label: "Link" },
   { id: "quote", label: "Quote" },
+  { id: "pullquote", label: "Pull quote" },
+  { id: "protip", label: "Pro tip" },
   { id: "list", label: "List" },
+  { id: "image", label: "Image" },
 ];
 
 type AdminFormatBarProps = {

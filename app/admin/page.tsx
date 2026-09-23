@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { AdminDesk } from "@/components/AdminDesk";
-import { AdminShell } from "@/components/AdminShell";
+import { Suspense } from "react";
+import { AdminDeskInner } from "@/components/AdminDeskInner";
 
 export const metadata: Metadata = {
   title: "Desk",
@@ -10,11 +10,14 @@ export const metadata: Metadata = {
 
 export default function AdminPage() {
   return (
-    <AdminShell
-      title="Desk"
-      description="Drafts stay private. Published stories hit the Newswire."
+    <Suspense
+      fallback={
+        <p className="mx-auto max-w-6xl px-4 py-12 text-sm text-white">
+          Loading desk…
+        </p>
+      }
     >
-      <AdminDesk />
-    </AdminShell>
+      <AdminDeskInner />
+    </Suspense>
   );
 }

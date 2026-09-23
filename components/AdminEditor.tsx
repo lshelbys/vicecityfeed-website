@@ -3,13 +3,13 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { AdminFormatBar } from "@/components/AdminFormatBar";
+import { AdminFormatBar, type FormatAction } from "@/components/AdminFormatBar";
 import { ArticleBody } from "@/components/ArticleBody";
 import { CoverArt } from "@/components/CoverArt";
 import { ctaPillClass, outlinePillClass } from "@/components/pills";
 import { describeAdminError } from "@/lib/admin-errors";
 import { formatReadTime, readingTimeFromMarkdown, slugify } from "@/lib/format";
-import { prefixSelectedLines, wrapSelection } from "@/lib/markdown-insert";
+import { insertBlock, prefixSelectedLines, wrapFence, wrapSelection } from "@/lib/markdown-insert";
 import {
   categoryToAccent,
   categoryToSection,
@@ -17,6 +17,7 @@ import {
   fetchAdminArticle,
   rowToDraft,
   saveArticle,
+  uploadBodyImage,
   uploadCoverImage,
   type ArticleDraft,
 } from "@/lib/remote-articles";
@@ -59,9 +60,11 @@ function liveReadMinutes(markdown: string): number {
 export function AdminEditor({ slug }: AdminEditorProps) {
   const router = useRouter();
   const bodyRef = useRef<HTMLTextAreaElement>(null);
+  const bodyImageRef = useRef<HTMLInputElement>(null);
   const draftRef = useRef<ArticleDraft>(emptyDraft());
   const editGen = useRef(0);
   const dragDepth = useRef(0);
+  const bodyDragDepth = useRef(0);
   const persistLock = useRef(false);
   const [draft, setDraft] = useState<ArticleDraft>(emptyDraft);
   const [slugTouched, setSlugTouched] = useState(Boolean(slug));
@@ -70,7 +73,9 @@ export function AdminEditor({ slug }: AdminEditorProps) {
   const [saveState, setSaveState] = useState<SaveState>("idle");
   const [dirty, setDirty] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [bodyUploading, setBodyUploading] = useState(false);
   const [dropActive, setDropActive] = useState(false);
+  const [bodyDropActive, setBodyDropActive] = useState(false);
   const [coverPreview, setCoverPreview] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<Notice | null>(null);
@@ -141,9 +146,21 @@ export function AdminEditor({ slug }: AdminEditorProps) {
     markDirty();
   }
 
-  function applyFormat(
-    action: "heading" | "bold" | "italic" | "link" | "quote" | "list",
-  ) {
+  function applyBody(next: { value: string; caret: { start: number; end: number } }) {
+    patch({ content: next.value });
+    requestAnimationFrame(() => {
+      const el = bodyRef.current;
+      if (!el) return;
+      el.focus();
+      el.setSelectionRange(next.caret.start, next.caret.end);
+    });
+  }
+
+  function applyFormat(action: FormatAction) {
+    if (action === "image") {
+      bodyImageRef.current?.click();
+      return;
+    }
     const field = bodyRef.current;
     const caret = {
       start: field?.selectionStart ?? draft.content.length,
@@ -158,15 +175,44 @@ export function AdminEditor({ slug }: AdminEditorProps) {
       next = wrapSelection(draft.content, caret, "[", `](${href.trim()})`, "link");
     }
     if (action === "heading") next = prefixSelectedLines(draft.content, caret, "## ");
-    if (action === "quote") next = prefixSelectedLines(draft.content, caret, "> ");
+    if (action === "quote" || action === "pullquote") {
+      next = prefixSelectedLines(draft.content, caret, "> ");
+    }
     if (action === "list") next = prefixSelectedLines(draft.content, caret, "- ");
-    patch({ content: next.value });
-    requestAnimationFrame(() => {
-      const el = bodyRef.current;
-      if (!el) return;
-      el.focus();
-      el.setSelectionRange(next.caret.start, next.caret.end);
-    });
+    if (action === "protip") next = wrapFence(draft.content, caret, "protip", "Pro tip");
+    applyBody(next);
+  }
+
+  async function onBodyImage(file: File | undefined) {
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      setError("Image upload failed. Use a JPG, PNG, or WebP image.");
+      return;
+    }
+    setError(null);
+    const alt =
+      file.name.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " ").trim() || "Image";
+    const localUrl = URL.createObjectURL(file);
+    const field = bodyRef.current;
+    const caret = {
+      start: field?.selectionStart ?? draft.content.length,
+      end: field?.selectionEnd ?? draft.content.length,
+    };
+    const inserted = insertBlock(draft.content, caret, `![${alt}](${localUrl})`);
+    applyBody(inserted);
+    setBodyUploading(true);
+    try {
+      const url = await uploadBodyImage(draft.slug || draft.title || "story", file);
+      setDraft((current) => ({
+        ...current,
+        content: current.content.replaceAll(localUrl, url),
+      }));
+      markDirty();
+    } catch (err) {
+      setError(describeAdminError(err));
+    } finally {
+      setBodyUploading(false);
+    }
   }
 
   async function onUpload(file: File | undefined) {
@@ -313,7 +359,7 @@ export function AdminEditor({ slug }: AdminEditorProps) {
     };
   }, [dirty]);
 
-  const busy = Boolean(saving) || uploading;
+  const busy = Boolean(saving) || uploading || bodyUploading;
   const desk = CATEGORY_SECTION[draft.category];
   const readMinutes = liveReadMinutes(draft.content);
   const coverSrc = coverPreview || draft.coverImageUrl;
@@ -386,6 +432,14 @@ export function AdminEditor({ slug }: AdminEditorProps) {
                   ? "Unsaved"
                   : ""}
           </p>
+          <p
+            data-admin-status={draft.published ? "published" : "draft"}
+            className={`inline-flex min-h-8 items-center rounded-full px-3 text-[10px] font-semibold tracking-[0.16em] uppercase ${
+              draft.published ? "bg-teal text-ink" : "bg-raised text-white"
+            }`}
+          >
+            {draft.published ? "Published" : "Draft"}
+          </p>
         </div>
         <input
           id="admin-title"
@@ -419,7 +473,34 @@ export function AdminEditor({ slug }: AdminEditorProps) {
           <label className={labelClass} htmlFor="admin-body">
             Body
           </label>
-          <div className="overflow-hidden rounded-xl bg-raised">
+          <div
+            data-admin-body-drop
+            data-drop-active={bodyDropActive ? "true" : "false"}
+            className={`overflow-hidden rounded-xl bg-raised ${
+              bodyDropActive ? "ring-2 ring-teal" : ""
+            }`}
+            onDragOver={(event) => {
+              event.preventDefault();
+              event.dataTransfer.dropEffect = "copy";
+              setBodyDropActive(true);
+            }}
+            onDragEnter={(event) => {
+              event.preventDefault();
+              bodyDragDepth.current += 1;
+              setBodyDropActive(true);
+            }}
+            onDragLeave={() => {
+              bodyDragDepth.current = Math.max(0, bodyDragDepth.current - 1);
+              if (bodyDragDepth.current === 0) setBodyDropActive(false);
+            }}
+            onDrop={(event) => {
+              event.preventDefault();
+              bodyDragDepth.current = 0;
+              setBodyDropActive(false);
+              const file = event.dataTransfer.files?.[0];
+              if (file?.type.startsWith("image/")) void onBodyImage(file);
+            }}
+          >
             <div className="px-3 pt-3">
               <AdminFormatBar onFormat={applyFormat} />
             </div>
@@ -429,8 +510,22 @@ export function AdminEditor({ slug }: AdminEditorProps) {
               className="w-full min-h-80 bg-transparent px-4 pb-4 font-mono text-sm text-white placeholder:text-white/40 md:min-h-[28rem]"
               value={draft.content}
               onChange={(event) => patch({ content: event.target.value })}
-              placeholder="Write, or use the bar above. The preview updates as you type."
+              placeholder="Write, or drop an image. The preview updates as you type."
             />
+            <input
+              ref={bodyImageRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/gif"
+              className="sr-only"
+              disabled={busy}
+              onChange={(event) => {
+                void onBodyImage(event.target.files?.[0]);
+                event.target.value = "";
+              }}
+            />
+            {bodyUploading ? (
+              <p className="px-4 pb-3 text-xs font-medium text-white/70">Uploading image…</p>
+            ) : null}
           </div>
         </div>
         <div>

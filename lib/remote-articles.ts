@@ -376,6 +376,30 @@ export async function uploadCoverImage(
   return data.publicUrl;
 }
 
+export async function uploadBodyImage(
+  slug: string,
+  file: File,
+): Promise<string> {
+  const supabase = getSupabase();
+  if (!supabase) throw new Error("You are not signed in.");
+  if (!file.type.startsWith("image/")) {
+    throw new Error("Image upload failed. Use a JPG, PNG, or WebP image.");
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    throw new Error("Image upload failed. Use an image under 5 MB.");
+  }
+  const safeSlug = slugify(slug) || "story";
+  const ext = file.name.split(".").pop()?.toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
+  const path = `${safeSlug}/media/${Date.now()}.${ext}`;
+  const { error } = await supabase.storage.from(COVERS_BUCKET).upload(path, file, {
+    upsert: true,
+    contentType: file.type || undefined,
+  });
+  if (error) throw new Error(describeAdminError(error));
+  const { data } = supabase.storage.from(COVERS_BUCKET).getPublicUrl(path);
+  return data.publicUrl;
+}
+
 export function relatedFromList(
   article: ArticleMeta,
   list: ArticleMeta[],

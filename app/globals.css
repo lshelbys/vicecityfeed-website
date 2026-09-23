@@ -441,6 +441,13 @@ body {
   font-weight: 700;
 }
 
+.prose-vcf img {
+  display: block;
+  width: 100%;
+  margin: 1.75rem 0;
+  border-radius: 1rem;
+}
+
 .prose-vcf blockquote {
   margin: 2.2rem 0;
   padding: 0;

@@ -31,3 +31,36 @@ export function prefixSelectedLines(
     caret: { start: from, end: from + nextBlock.length },
   };
 }
+
+export function insertBlock(
+  value: string,
+  caret: Caret,
+  block: string,
+): { value: string; caret: Caret } {
+  const before = value.slice(0, caret.start);
+  const after = value.slice(caret.end);
+  const lead = !before
+    ? ""
+    : before.endsWith("\n\n")
+      ? ""
+      : before.endsWith("\n")
+        ? "\n"
+        : "\n\n";
+  const tail = !after ? "\n" : after.startsWith("\n") ? "" : "\n\n";
+  const inserted = `${lead}${block}${tail}`;
+  const start = before.length + lead.length;
+  return {
+    value: `${before}${inserted}${after}`,
+    caret: { start, end: start + block.length },
+  };
+}
+
+export function wrapFence(
+  value: string,
+  caret: Caret,
+  kind: string,
+  placeholder = "Pro tip",
+): { value: string; caret: Caret } {
+  const selected = value.slice(caret.start, caret.end).trim() || placeholder;
+  return insertBlock(value, caret, `:::${kind}\n${selected}\n:::`);
+}

@@ -39,6 +39,12 @@ const markdownComponents: Components = {
       {children}
     </a>
   ),
+  img: ({ src, alt }) =>
+    src ? (
+      // Uploaded story images are remote Storage URLs; the static export does not optimize them.
+      // eslint-disable-next-line @next/next/no-img-element
+      <img src={src} alt={alt ?? ""} data-story-image="" />
+    ) : null,
 };
 
 export function ArticleBody({ markdown, figure }: ArticleBodyProps) {
