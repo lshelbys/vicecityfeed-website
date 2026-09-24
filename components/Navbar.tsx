@@ -82,7 +82,7 @@ export function Navbar({ articles, logoSrc }: NavbarProps) {
           <button
             type="button"
             onClick={() => setSearchOpen(true)}
-            className={outlinePillClass("size-10 min-h-10 md:size-11 md:min-h-11")}
+            className={outlinePillClass("size-11 min-h-11")}
             aria-haspopup="dialog"
             aria-label="Search"
           >

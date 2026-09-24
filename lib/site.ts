@@ -34,7 +34,7 @@ export const SOCIAL_LINKS: SocialLink[] = [
 ];
 
 export const FOOTER_SITEMAP: NavItem[] = [
-  { href: "/", label: "Homepage" },
+  { href: "/album", label: "Homepage" },
   { href: "/the-map", label: "The Map" },
   { href: "/garage-mods", label: "Garage & Mods" },
   { href: "/reviews", label: "Reviews" },
@@ -95,6 +95,9 @@ export const SLUG_TO_CATEGORY: Record<
 export const HARDWARE_TAGS = ["hardware"] as const;
 
 export function isNavActive(pathname: string, href: string): boolean {
+  if (href === "/album") {
+    return pathname === "/" || pathname === "/album" || pathname.startsWith("/album/");
+  }
   if (href === "/") {
     return pathname === "/" || pathname.startsWith("/posts/");
   }

@@ -56,7 +56,7 @@ export function SocialLauncher() {
   }, [open]);
 
   const itemClass =
-    "flex w-full min-h-10 items-center gap-2.5 rounded-lg px-3 text-left text-sm text-white transition-colors duration-300 ease-out hover:bg-teal hover:text-ink";
+    "flex w-full min-h-11 items-center gap-2.5 rounded-lg px-3 text-left text-sm text-white transition-colors duration-300 ease-out hover:bg-teal hover:text-ink";
 
   return (
     <div className="relative" ref={rootRef} data-social-open={open ? "true" : "false"}>
@@ -65,8 +65,8 @@ export function SocialLauncher() {
         onClick={() => setOpen((value) => !value)}
         className={
           open
-            ? "social-close inline-flex size-10 min-h-10 items-center justify-center rounded-full bg-teal text-ink md:size-11 md:min-h-11"
-            : outlinePillClass("size-10 min-h-10 md:size-11 md:min-h-11")
+            ? "social-close inline-flex size-11 min-h-11 items-center justify-center rounded-full bg-teal text-ink"
+            : outlinePillClass("size-11 min-h-11")
         }
         aria-expanded={open}
         aria-haspopup="menu"

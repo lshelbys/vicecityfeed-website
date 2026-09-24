@@ -24,8 +24,8 @@ export function SavedNav() {
       data-saved-count={count}
       className={outlinePillClass(
         count > 0
-          ? "h-10 min-h-10 gap-1.5 px-3 md:h-11 md:min-h-11"
-          : "size-10 min-h-10 md:size-11 md:min-h-11",
+          ? "h-11 min-h-11 gap-1.5 px-3"
+          : "size-11 min-h-11",
       )}
     >
       <Bookmark

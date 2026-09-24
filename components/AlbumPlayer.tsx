@@ -172,16 +172,14 @@ export function AlbumPlayer() {
 
   return (
     <div className="album-desk">
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:items-start lg:gap-10">
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:items-start lg:gap-10">
         <NowPlaying
           track={track}
           playing={playing}
           ready={ready}
-          failed={failed}
           elapsed={elapsed}
           duration={duration}
           progress={progress}
-          hostRef={hostRef}
           onToggle={togglePlay}
           onPrev={() => selectTrack(index - 1)}
           onNext={() => selectTrack(index + 1)}
@@ -192,6 +190,7 @@ export function AlbumPlayer() {
           playing={playing}
           onPick={(i) => selectTrack(i, true)}
         />
+        <OfficialVideo hostRef={hostRef} failed={failed} track={track} />
       </div>
     </div>
   );
@@ -201,11 +200,9 @@ function NowPlaying({
   track,
   playing,
   ready,
-  failed,
   elapsed,
   duration,
   progress,
-  hostRef,
   onToggle,
   onPrev,
   onNext,
@@ -214,11 +211,9 @@ function NowPlaying({
   track: AlbumTrack;
   playing: boolean;
   ready: boolean;
-  failed: boolean;
   elapsed: number;
   duration: number;
   progress: number;
-  hostRef: React.RefObject<HTMLDivElement | null>;
   onToggle: () => void;
   onPrev: () => void;
   onNext: () => void;
@@ -262,7 +257,7 @@ function NowPlaying({
         <button
           type="button"
           onClick={onToggle}
-          disabled={!ready && !failed}
+          disabled={!ready}
           data-album-play
           className="inline-flex size-14 items-center justify-center rounded-full bg-teal text-ink hover:bg-white disabled:opacity-50"
           aria-label={playing ? "Pause" : "Play"}
@@ -296,18 +291,31 @@ function NowPlaying({
           style={{ ["--album-progress" as string]: `${Math.round(progress * 100)}%` }}
         />
       </label>
-      <div className="mt-2 flex justify-between text-xs tabular-nums text-white">
+      <div className="mt-1 flex justify-between text-xs tabular-nums text-white">
         <span>{formatClock(elapsed)}</span>
         <span>{formatClock(duration)}</span>
       </div>
+    </section>
+  );
+}
 
-      <p className="mt-5 text-[10px] font-semibold tracking-[0.16em] text-white uppercase">
+function OfficialVideo({
+  hostRef,
+  failed,
+  track,
+}: {
+  hostRef: React.RefObject<HTMLDivElement | null>;
+  failed: boolean;
+  track: AlbumTrack;
+}) {
+  return (
+    <section className="rounded-2xl bg-surface p-4 lg:col-start-1 md:p-5">
+      <p className="text-[10px] font-semibold tracking-[0.16em] text-white uppercase">
         Official video
       </p>
       <div className="relative mt-2 aspect-video overflow-hidden rounded-xl bg-raised">
         <div ref={hostRef} id="vcf-yt-player" className="absolute inset-0 size-full" />
       </div>
-
       {failed ? (
         <p className="mt-4 text-sm text-white">
           The official player could not start here. Use Atlantic’s upload:{" "}
@@ -342,7 +350,7 @@ function TrackList({
                 onClick={() => onPick(i)}
                 data-album-track={song.id}
                 aria-current={active ? "true" : undefined}
-                className={`flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left transition-colors duration-200 ${
+                className={`flex min-h-11 w-full items-center gap-3 rounded-xl px-3 py-3 text-left transition-colors duration-200 ${
                   active ? "bg-raised" : "hover:bg-raised/70"
                 }`}
               >

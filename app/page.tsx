@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import { HomeDesk } from "@/components/HomeDesk";
-import { getFeedArticles, getHeroArticles } from "@/lib/articles";
+import { AlbumListening } from "@/components/AlbumListening";
+import { ALBUM } from "@/lib/album";
 import { SITE } from "@/lib/site";
 
 export const metadata: Metadata = {
-  description: SITE.description,
+  description: `${ALBUM.singlesOut} official singles from ${ALBUM.title}, in-page via Atlantic Records’ YouTube. ${SITE.description}`,
   openGraph: {
     title: SITE.name,
     description: SITE.description,
@@ -27,28 +27,21 @@ export const metadata: Metadata = {
 };
 
 export default function HomePage() {
-  const [lead] = getHeroArticles();
-  const articles = getFeedArticles();
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: SITE.name,
     url: SITE.url,
     description: SITE.description,
-    potentialAction: {
-      "@type": "SearchAction",
-      target: `${SITE.url}/?q={search_term_string}`,
-      "query-input": "required name=search_term_string",
-    },
   };
 
   return (
-    <main id="main">
+    <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <HomeDesk lead={lead} articles={articles} />
-    </main>
+      <AlbumListening />
+    </>
   );
 }
