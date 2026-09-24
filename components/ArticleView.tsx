@@ -14,7 +14,7 @@ import {
   CATEGORY_SECTION,
   CATEGORY_SHORT,
   coverKind,
-  newswireFilterHref,
+  homeFilterHref,
   SITE,
 } from "@/lib/site";
 import type { Article, ArticleMeta, FeedArticle } from "@/lib/types";
@@ -34,7 +34,7 @@ export function ArticleView({
 }: ArticleViewProps) {
   const section = CATEGORY_SECTION[article.category];
   const categoryLabel = CATEGORY_SHORT[article.category];
-  const categoryHref = newswireFilterHref(article.category);
+  const categoryHref = homeFilterHref(article.category);
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
@@ -67,7 +67,7 @@ export function ArticleView({
           <ol className="flex flex-wrap items-center gap-x-2 text-[11px] font-bold tracking-[0.14em] text-white uppercase md:text-xs">
             <li>
               <Link href="/" className="link-draw">
-                Newswire
+                Home
               </Link>
             </li>
             <li aria-hidden>/</li>
@@ -152,14 +152,11 @@ export function ArticleView({
           aria-labelledby="related-heading"
           className="mx-auto mt-20 max-w-7xl"
         >
-          <p className="text-[10px] font-semibold tracking-[0.16em] text-white uppercase">
-            Newswire
-          </p>
           <h2
             id="related-heading"
-            className="font-display mt-2 mb-8 text-2xl font-extrabold tracking-tight text-white md:text-3xl"
+            className="font-display mb-8 text-2xl font-extrabold tracking-tight text-white md:text-3xl"
           >
-            More from the wire
+            More stories
           </h2>
           <div className="reveal-stagger grid gap-8 md:grid-cols-3">
             {related.map((item) => (

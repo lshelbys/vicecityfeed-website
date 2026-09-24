@@ -12,13 +12,13 @@ export function NotFoundScreen() {
         404
       </p>
       <h1 className="font-display mt-5 text-[2.2rem] leading-[1.05] font-extrabold tracking-tight text-balance text-white sm:text-5xl md:text-6xl">
-        This page is not on the wire
+        This page is not here
       </h1>
       <p className="mt-6 max-w-md text-lg leading-relaxed text-white">
-        No story lives at this URL. The Newswire is still live.
+        Nothing lives at this URL.
       </p>
       <Link href="/" className={`${ctaPillClass("white")} mt-8`}>
-        Back to Newswire
+        Back home
       </Link>
     </main>
   );

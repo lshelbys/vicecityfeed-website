@@ -7,16 +7,13 @@ export const SITE = {
   url: "https://www.vicecityfeed.com",
   tagline: "Leonida intel. Vice City nights. No filler.",
   description:
-    "Vice City Feed is an independent editorial desk covering Grand Theft Auto VI — Leonida leaks, map lore, mission intel, vehicles, mods, and reviews.",
+    "Vice City Feed is an independent editorial desk covering Grand Theft Auto VI — map lore, vehicles, mods, and reviews.",
   locale: "en_US",
   twitter: "@vicecityfeed",
 } as const;
 
 export const NAV_ITEMS: NavItem[] = [
-  { href: "/", label: "Newswire" },
   { href: "/the-map", label: "GTA VI" },
-  { href: "/leonida-wire", label: "Leonida Wire" },
-  { href: "/mission-intel", label: "Guides" },
   { href: "/garage-mods", label: "Vehicles" },
   { href: "/reviews", label: "Media" },
   { href: "/album", label: "Album" },
@@ -38,8 +35,6 @@ export const SOCIAL_LINKS: SocialLink[] = [
 
 export const FOOTER_SITEMAP: NavItem[] = [
   { href: "/", label: "Homepage" },
-  { href: "/leonida-wire", label: "Leonida Wire" },
-  { href: "/mission-intel", label: "Mission Intel" },
   { href: "/the-map", label: "The Map" },
   { href: "/garage-mods", label: "Garage & Mods" },
   { href: "/reviews", label: "Reviews" },
@@ -52,7 +47,6 @@ export const CATEGORY_FILTERS: Array<{ slug: CategorySlug; label: string }> = [
   { slug: "all", label: "All" },
   { slug: "leaks-news", label: "Leaks" },
   { slug: "map-lore", label: "Maps" },
-  { slug: "guides", label: "Guides" },
   { slug: "vehicles-guns", label: "Vehicles" },
   { slug: "hardware", label: "Hardware" },
 ];
@@ -61,7 +55,7 @@ export const CATEGORY_SHORT: Record<Category, string> = {
   "Leaks & News": "Leaks",
   "Map & Lore": "Maps",
   "Vehicles & Guns": "Vehicles",
-  Guides: "Guides",
+  Guides: "Story",
 };
 
 export function coverKind(category: Category): string {
@@ -70,10 +64,10 @@ export function coverKind(category: Category): string {
 
 export const CATEGORY_SECTION: Record<Category, { href: string; label: string }> =
   {
-    "Leaks & News": { href: "/leonida-wire", label: "Leonida Wire" },
-    "Map & Lore": { href: "/the-map", label: "The Map" },
-    "Vehicles & Guns": { href: "/garage-mods", label: "Garage & Mods" },
-    Guides: { href: "/mission-intel", label: "Mission Intel" },
+    "Leaks & News": { href: "/", label: "Home" },
+    "Map & Lore": { href: "/the-map", label: "GTA VI" },
+    "Vehicles & Guns": { href: "/garage-mods", label: "Vehicles" },
+    Guides: { href: "/", label: "Home" },
   };
 
 export const CATEGORY_TO_SLUG: Record<Category, Exclude<CategorySlug, "all" | "hardware">> =
@@ -84,8 +78,8 @@ export const CATEGORY_TO_SLUG: Record<Category, Exclude<CategorySlug, "all" | "h
     Guides: "guides",
   };
 
-export function newswireFilterHref(category: Category) {
-  return `/?cat=${CATEGORY_TO_SLUG[category]}#newswire`;
+export function homeFilterHref(category: Category) {
+  return `/?cat=${CATEGORY_TO_SLUG[category]}`;
 }
 
 export const SLUG_TO_CATEGORY: Record<

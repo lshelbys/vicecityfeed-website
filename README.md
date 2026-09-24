@@ -39,10 +39,8 @@ Markdown supports `:::protip`, `:::spoiler`, and `:::media caption="..." accent=
 
 | Path | Desk |
 | --- | --- |
-| `/` | Homepage: hero grid, breaking ticker, filterable wire, missions |
-| `/leonida-wire` | Full news feed |
-| `/mission-intel` | Walkthrough cards with difficulty + timers |
-| `/the-map` | Map & lore |
+| `/` | Homepage |
+| `/the-map` | GTA VI map & lore |
 | `/garage-mods` | Vehicles, guns, mods |
 | `/reviews` | Reviews |
 | `/posts/[slug]` | Article template |

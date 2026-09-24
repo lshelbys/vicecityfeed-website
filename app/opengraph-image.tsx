@@ -48,7 +48,7 @@ export default function OpenGraphImage() {
           </div>
         </div>
         <div style={{ fontSize: 22, color: "#3BB8B3", fontWeight: 700 }}>
-          Newswire
+          {SITE.shortName}
         </div>
       </div>
     ),

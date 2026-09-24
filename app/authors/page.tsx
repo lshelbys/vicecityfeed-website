@@ -16,7 +16,7 @@ export default function AuthorsPage() {
   return (
     <main id="main" className="mx-auto max-w-7xl px-4 py-12 md:px-6">
       <PageHeader
-        kicker="Newswire"
+        kicker="Desk"
         title="Writers"
         description="Bylines on the desk."
       />

@@ -16,12 +16,9 @@ export function MoreFromWriter({ name, articles }: MoreFromWriterProps) {
       data-more-from={name}
       className="mx-auto mt-20 max-w-7xl"
     >
-      <p className="text-[10px] font-semibold tracking-[0.16em] text-white uppercase">
-        Newswire
-      </p>
       <h2
         id="writer-heading"
-        className="font-display mt-2 mb-8 text-2xl font-extrabold tracking-tight text-white md:text-3xl"
+        className="font-display mb-8 text-2xl font-extrabold tracking-tight text-white md:text-3xl"
       >
         More from {name}
       </h2>

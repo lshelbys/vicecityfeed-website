@@ -101,7 +101,7 @@ export function SearchModal({ open, onClose, articles }: SearchModalProps) {
             ref={inputRef}
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search the wire…"
+            placeholder="Search stories…"
             className="h-12 w-full border-0 bg-transparent text-sm text-white outline-none placeholder:text-white focus-visible:outline-none"
           />
         </div>

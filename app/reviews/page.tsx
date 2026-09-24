@@ -15,7 +15,7 @@ export default function ReviewsPage() {
   return (
     <main id="main" className="mx-auto max-w-7xl px-4 py-12 md:px-6">
       <PageHeader
-        kicker="Newswire"
+        kicker="Media"
         title="Reviews"
         description="Character studies, radio, and the night economy — scored like a desk."
       />

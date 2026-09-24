@@ -18,23 +18,14 @@ export function EmptyStories({ className = "" }: EmptyStoriesProps) {
   );
 }
 
-export function EmptyWireDesk() {
+export function EmptyHomeDesk() {
   const locked = ALBUM.trackCountAnnounced - ALBUM.singlesOut;
 
   return (
     <div className="reveal mx-auto max-w-2xl rounded-2xl bg-surface px-5 py-10 md:px-10 md:py-14">
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-        <p className="text-[10px] font-semibold tracking-[0.16em] text-white uppercase">
-          Newswire
-        </p>
-        <span className="inline-flex items-center gap-2 text-[10px] font-semibold tracking-[0.14em] text-white uppercase">
-          <span className="wire-pulse" aria-hidden />
-          Waiting on the wire
-        </span>
-      </div>
       <h1
         id="hero-heading"
-        className="font-display mt-4 text-[2.1rem] leading-[1.05] font-extrabold tracking-tight text-white md:text-5xl"
+        className="font-display text-[2.1rem] leading-[1.05] font-extrabold tracking-tight text-white md:text-5xl"
       >
         Vice City Feed
       </h1>
@@ -49,8 +40,14 @@ export function EmptyWireDesk() {
         <Link href="/album" className={pillClass(true)}>
           The Album
         </Link>
-        <Link href="/leonida-wire" className={outlinePillClass()}>
-          Leonida Wire
+        <Link href="/the-map" className={outlinePillClass()}>
+          GTA VI
+        </Link>
+        <Link href="/garage-mods" className={outlinePillClass()}>
+          Vehicles
+        </Link>
+        <Link href="/reviews" className={outlinePillClass()}>
+          Media
         </Link>
       </div>
       <Link

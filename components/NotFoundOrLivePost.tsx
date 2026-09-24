@@ -85,7 +85,7 @@ export function NotFoundOrLivePost() {
       className="mx-auto flex min-h-[62vh] max-w-[720px] flex-col justify-center px-4 py-20 md:px-6"
     >
       <p className="text-[11px] font-bold tracking-[0.16em] text-white uppercase">
-        Newswire
+        Vice City Feed
       </p>
       <h1 className="font-display mt-5 text-[2.2rem] leading-[1.05] font-extrabold tracking-tight text-white">
         Loading story

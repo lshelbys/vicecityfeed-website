@@ -26,12 +26,12 @@ export default function EditorialGuidelinesPage() {
         <p>
           Trailer analysis is labeled as analysis. Unverified dumps are not
           republished. We do not pay for stolen assets or personal data. If a
-          claim cannot be sourced, it stays off the Wire or sits in the rumor
+          claim cannot be sourced, it stays off the site or sits in the rumor
           bin with that label.
         </p>
         <h2 id="spoilers">Spoilers</h2>
         <p>
-          Mission Intel and character studies may spoil story beats. In-article
+          Reviews and character studies may spoil story beats. In-article
           spoilers use a reveal control. Headlines should not blow a twist when
           a warning will do.
         </p>

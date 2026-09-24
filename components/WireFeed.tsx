@@ -137,7 +137,7 @@ function WireFeedInner({
 
 export function WireFeed(props: WireFeedProps) {
   return (
-    <Suspense fallback={<p className="text-sm text-white">Loading Newswire…</p>}>
+    <Suspense fallback={<p className="text-sm text-white">Loading stories…</p>}>
       <WireFeedInner {...props} />
     </Suspense>
   );

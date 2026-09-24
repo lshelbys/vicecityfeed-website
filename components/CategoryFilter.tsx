@@ -48,7 +48,7 @@ export function CategoryFilter({
     <div className="min-w-0">
       <FadeScroll
         role="tablist"
-        aria-label="Filter Newswire by category"
+        aria-label="Filter stories by category"
         className="-mx-4 md:mx-0"
       >
         <div ref={rowRef} className="relative flex w-max gap-2 px-4 md:px-0">
@@ -85,8 +85,8 @@ export function CategoryFilter({
 
             const href =
               filter.slug === "all"
-                ? basePath ?? "/leonida-wire"
-                : `${basePath ?? "/leonida-wire"}?cat=${filter.slug}`;
+                ? basePath ?? "/"
+                : `${basePath ?? "/"}?cat=${filter.slug}`;
 
             return (
               <Link

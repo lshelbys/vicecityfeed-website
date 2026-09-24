@@ -11,7 +11,7 @@ export function AdminDeskInner() {
   return (
     <AdminShell
       title="Desk"
-      description="Drafts stay private. Published stories hit the Newswire."
+      description="Drafts stay private. Published stories go live."
       wide
       unlocked={unlocked}
     >
