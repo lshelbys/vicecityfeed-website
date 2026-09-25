@@ -12,7 +12,7 @@ import {
   setPublished,
   type ArticleRow,
 } from "@/lib/remote-articles";
-import { publishPageLabel } from "@/lib/publish-pages";
+import { publishPagesLabel, resolvePublishPages } from "@/lib/publish-pages";
 import { getSupabase } from "@/lib/supabase";
 
 type StatusFilter = "all" | "draft" | "published";
@@ -33,6 +33,7 @@ const LAYOUT_ROWS: ArticleRow[] = [
     cover_accent: "cyan",
     cover_scene: "coast",
     cover_image_url: null,
+    publish_pages: ["feed"],
     featured: false,
     hero_rank: null,
     breaking: false,
@@ -56,6 +57,7 @@ const LAYOUT_ROWS: ArticleRow[] = [
     cover_accent: "magenta",
     cover_scene: "coast",
     cover_image_url: null,
+    publish_pages: ["feed"],
     featured: false,
     hero_rank: null,
     breaking: false,
@@ -68,7 +70,13 @@ const LAYOUT_ROWS: ArticleRow[] = [
 
 function matchesQuery(row: ArticleRow, query: string) {
   if (!query) return true;
-  const hay = `${row.title} ${row.slug} ${row.category} ${row.section} ${publishPageLabel(row.category, row.section)} ${row.excerpt}`.toLowerCase();
+  const pages = resolvePublishPages({
+    publishPages: row.publish_pages,
+    tags: row.tags,
+    category: row.category,
+    section: row.section,
+  });
+  const hay = `${row.title} ${row.slug} ${row.category} ${row.section} ${publishPagesLabel(pages)} ${row.excerpt}`.toLowerCase();
   return hay.includes(query);
 }
 
@@ -308,7 +316,15 @@ export function AdminDesk({ preview = false }: AdminDeskProps) {
                         {row.title || "Untitled"}
                       </p>
                       <p className="text-xs font-medium text-white">
-                        {publishPageLabel(row.category, row.section)} · /posts/{row.slug}
+                        {publishPagesLabel(
+                          resolvePublishPages({
+                            publishPages: row.publish_pages,
+                            tags: row.tags,
+                            category: row.category,
+                            section: row.section,
+                          }),
+                        )}{" "}
+                        · /posts/{row.slug}
                       </p>
                     </div>
                     <div className="flex flex-wrap gap-2">

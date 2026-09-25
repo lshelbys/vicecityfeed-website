@@ -69,6 +69,44 @@ export function isImageUrl(value: string): boolean {
   }
 }
 
+function normalizeImageSrc(value: string): string {
+  const trimmed = value.trim();
+  if (!trimmed) return "";
+  try {
+    const url = new URL(trimmed);
+    url.hash = "";
+    return url.toString().replace(/\/$/, "");
+  } catch {
+    return trimmed.replace(/\/$/, "");
+  }
+}
+
+export function sameImageSrc(a: string, b: string): boolean {
+  const left = normalizeImageSrc(a);
+  const right = normalizeImageSrc(b);
+  if (!left || !right) return false;
+  return left === right;
+}
+
+/** Drop body figures/images that duplicate the cover URL (legacy publishes). */
+export function stripCoverFromBody(content: string, coverUrl: string): string {
+  const cover = coverUrl.trim();
+  if (!content.trim() || !cover) return content;
+
+  let next = content;
+  const figures = listFigures(next).filter((figure) =>
+    sameImageSrc(figure.src, cover),
+  );
+  for (const figure of [...figures].reverse()) {
+    const before = next.slice(0, figure.start);
+    const after = next.slice(figure.end);
+    const lead = before.replace(/\n{0,2}$/, "");
+    const tail = after.replace(/^\n{0,2}/, "");
+    next = lead && tail ? `${lead}\n\n${tail}` : `${lead}${tail}`;
+  }
+  return next;
+}
+
 export function listFigures(content: string): StoryFigure[] {
   const found: StoryFigure[] = [];
 

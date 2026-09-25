@@ -13,7 +13,6 @@ import { formatDate } from "@/lib/format";
 import {
   CATEGORY_SECTION,
   CATEGORY_SHORT,
-  coverKind,
   homeFilterHref,
   SITE,
 } from "@/lib/site";
@@ -137,13 +136,7 @@ export function ArticleView({
         <div className="mt-12">
           <ArticleBody
             markdown={article.content}
-            figure={{
-              accent: article.coverAccent,
-              scene: article.coverScene,
-              title: article.title,
-              caption: article.excerpt,
-              kind: coverKind(article.category),
-            }}
+            coverImageUrl={article.coverImageUrl}
           />
         </div>
       </article>

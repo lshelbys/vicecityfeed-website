@@ -67,6 +67,8 @@ export type ArticleMeta = {
   category: Category;
   tags: string[];
   section: SectionSlug;
+  /** Live pages this story files to. Missing → derived from category/section. */
+  publishPages?: Array<"feed" | "gta-vi" | "vehicles" | "media">;
   featured: boolean;
   heroRank?: 1 | 2 | 3;
   coverAccent: CoverAccent;

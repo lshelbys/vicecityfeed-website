@@ -1,6 +1,15 @@
 import { describeAdminError } from "./admin-errors";
 import { getAuthorSlug } from "./authors";
 import { readingTimeFromMarkdown, slugify } from "./format";
+import {
+  mergePageTags,
+  normalizePublishPages,
+  primaryPublishPage,
+  resolvePublishPages,
+  visibleTags,
+  type PublishPageId,
+} from "./publish-pages";
+import { stripCoverFromBody } from "./story-figure";
 import { getSupabase } from "./supabase";
 import type {
   Article,
@@ -28,6 +37,7 @@ export type ArticleRow = {
   content: string;
   category: string;
   section: string;
+  publish_pages?: string[] | null;
   author_name: string;
   author_role: string;
   author_handle: string;
@@ -52,6 +62,7 @@ export type ArticleDraft = {
   content: string;
   category: Category;
   section: SectionSlug;
+  publishPages: PublishPageId[];
   authorName: string;
   authorRole: string;
   authorHandle: string;
@@ -125,6 +136,7 @@ export function emptyDraft(): ArticleDraft {
     content: "",
     category: "Leaks & News",
     section: "wire",
+    publishPages: ["feed"],
     authorName: "",
     authorRole: "Desk",
     authorHandle: "",
@@ -139,10 +151,18 @@ export function emptyDraft(): ArticleDraft {
 }
 
 export function rowToArticle(row: ArticleRow): Article {
-  const content = row.content ?? "";
+  const coverImageUrl = row.cover_image_url ?? undefined;
+  const content = stripCoverFromBody(row.content ?? "", coverImageUrl ?? "");
   const { wordCount, readingTimeMinutes } = readingTimeFromMarkdown(content);
   const authorName = row.author_name.trim() || "Desk";
   const handle = row.author_handle.trim() || slugify(authorName);
+  const rawTags = asStringArray(row.tags);
+  const publishPages = resolvePublishPages({
+    publishPages: row.publish_pages,
+    tags: rawTags,
+    category: row.category,
+    section: row.section,
+  });
   return {
     slug: row.slug,
     title: row.title,
@@ -155,8 +175,9 @@ export function rowToArticle(row: ArticleRow): Article {
     publishedAt: row.published_at,
     updatedAt: row.updated_at,
     category: asCategory(row.category),
-    tags: asStringArray(row.tags),
+    tags: visibleTags(rawTags),
     section: asSection(row.section),
+    publishPages,
     featured: Boolean(row.featured),
     heroRank:
       row.hero_rank === 1 || row.hero_rank === 2 || row.hero_rank === 3
@@ -164,7 +185,7 @@ export function rowToArticle(row: ArticleRow): Article {
         : undefined,
     coverAccent: asAccent(row.cover_accent),
     coverScene: asScene(row.cover_scene),
-    coverImageUrl: row.cover_image_url ?? undefined,
+    coverImageUrl,
     relatedSlugs: asStringArray(row.related_slugs),
     breaking: Boolean(row.breaking),
     content,
@@ -174,24 +195,33 @@ export function rowToArticle(row: ArticleRow): Article {
 }
 
 export function rowToDraft(row: ArticleRow): ArticleDraft {
+  const rawTags = asStringArray(row.tags);
+  const publishPages = resolvePublishPages({
+    publishPages: row.publish_pages,
+    tags: rawTags,
+    category: row.category,
+    section: row.section,
+  });
+  const primary = primaryPublishPage(publishPages);
   return {
     id: row.id,
     slug: row.slug,
     title: row.title,
     excerpt: row.excerpt ?? "",
-    content: row.content ?? "",
+    content: stripCoverFromBody(row.content ?? "", row.cover_image_url ?? ""),
     category: asCategory(row.category),
     section: asSection(row.section),
+    publishPages,
     authorName: row.author_name,
     authorRole: row.author_role,
     authorHandle: row.author_handle,
-    tags: asStringArray(row.tags).join(", "),
+    tags: visibleTags(rawTags).join(", "),
     coverAccent: asAccent(row.cover_accent),
     coverScene: asScene(row.cover_scene),
     coverImageUrl: row.cover_image_url ?? "",
     featured: Boolean(row.featured),
     published: Boolean(row.published),
-    sectionManual: asSection(row.section) !== categoryToSection(asCategory(row.category)),
+    sectionManual: asSection(row.section) !== primary.section,
   };
 }
 
@@ -210,22 +240,29 @@ export function draftToRow(
   const slug = (draft.slug.trim() || slugify(title) || "story").slice(0, 80);
   const authorName = draft.authorName.trim() || "Desk";
   const handle = draft.authorHandle.trim() || slugify(authorName);
+  const publishPages = normalizePublishPages(draft.publishPages, {
+    category: draft.category,
+    section: draft.section,
+  });
+  const primary = primaryPublishPage(publishPages);
+  const coverImageUrl = draft.coverImageUrl.trim();
+  const content = stripCoverFromBody(draft.content, coverImageUrl);
+  const tags = mergePageTags(parseTags(draft.tags), publishPages);
   return {
     slug,
     title,
     excerpt: draft.excerpt.trim(),
-    content: draft.content,
-    category: draft.category,
-    section: draft.sectionManual
-      ? draft.section
-      : categoryToSection(draft.category),
+    content,
+    category: draft.sectionManual ? draft.category : primary.category,
+    section: draft.sectionManual ? draft.section : primary.section,
+    publish_pages: publishPages,
     author_name: authorName,
     author_role: draft.authorRole.trim() || "Desk",
     author_handle: handle,
-    tags: parseTags(draft.tags),
+    tags,
     cover_accent: draft.coverAccent,
     cover_scene: draft.coverScene,
-    cover_image_url: draft.coverImageUrl.trim() || null,
+    cover_image_url: coverImageUrl || null,
     featured: draft.featured,
     hero_rank: draft.featured ? 1 : null,
     breaking: false,
@@ -292,9 +329,10 @@ export type SaveResult = { slug: string; id: string };
 export async function saveArticle(draft: ArticleDraft): Promise<SaveResult> {
   const supabase = getSupabase();
   if (!supabase) throw new Error("You are not signed in.");
+  const client = supabase;
   const {
     data: { session },
-  } = await supabase.auth.getSession();
+  } = await client.auth.getSession();
   if (!session) throw new Error("You are not signed in.");
   const title = draft.title.trim();
   if (!title) throw new Error("Add a title before saving.");
@@ -303,33 +341,49 @@ export async function saveArticle(draft: ArticleDraft): Promise<SaveResult> {
     draft.published ? new Date().toISOString() : undefined,
   );
 
-  if (draft.id) {
-    const next = { ...payload };
-    const { data: existing } = await supabase
-      .from(ARTICLES_TABLE)
-      .select("published, published_at")
-      .eq("id", draft.id)
-      .maybeSingle();
-    if (!draft.published) {
-      delete next.published_at;
-    } else if (existing?.published && existing.published_at) {
-      next.published_at = existing.published_at;
+  async function write(
+    next: Record<string, unknown>,
+  ): Promise<{ error: { message?: string } | null; id?: string; slug?: string }> {
+    if (draft.id) {
+      const row = { ...next };
+      const { data: existing } = await client
+        .from(ARTICLES_TABLE)
+        .select("published, published_at")
+        .eq("id", draft.id)
+        .maybeSingle();
+      if (!draft.published) {
+        delete row.published_at;
+      } else if (existing?.published && existing.published_at) {
+        row.published_at = existing.published_at;
+      }
+      const { error } = await client
+        .from(ARTICLES_TABLE)
+        .update(row)
+        .eq("id", draft.id);
+      return { error, id: draft.id, slug: String(next.slug) };
     }
-    const { error } = await supabase
+    const { data, error } = await client
       .from(ARTICLES_TABLE)
-      .update(next)
-      .eq("id", draft.id);
-    if (error) throw new Error(describeAdminError(error));
-    return { slug: String(payload.slug), id: draft.id };
+      .insert(next)
+      .select("id, slug")
+      .single();
+    if (error || !data) return { error: error ?? { message: "Save failed." } };
+    return { error: null, id: String(data.id), slug: String(data.slug) };
   }
 
-  const { data, error } = await supabase
-    .from(ARTICLES_TABLE)
-    .insert(payload)
-    .select("id, slug")
-    .single();
-  if (error || !data) throw new Error(describeAdminError(error ?? new Error("Save failed.")));
-  return { slug: String(data.slug), id: String(data.id) };
+  let result = await write(payload);
+  if (
+    result.error &&
+    /publish_pages/i.test(result.error.message ?? "")
+  ) {
+    const fallback = { ...payload };
+    delete fallback.publish_pages;
+    result = await write(fallback);
+  }
+  if (result.error || !result.id || !result.slug) {
+    throw new Error(describeAdminError(result.error ?? new Error("Save failed.")));
+  }
+  return { slug: result.slug, id: result.id };
 }
 
 export async function setPublished(

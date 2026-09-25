@@ -29,8 +29,7 @@ import {
   type ArticleDraft,
 } from "@/lib/remote-articles";
 import { getSupabase } from "@/lib/supabase";
-import { PUBLISH_PAGES, publishPageById, publishPageOf } from "@/lib/publish-pages";
-import { coverKind } from "@/lib/site";
+import { PUBLISH_PAGES, normalizePublishPages, publishPagesLabel, primaryPublishPage, type PublishPageId } from "@/lib/publish-pages";
 import {
   figureAtCaret,
   isImageUrl,
@@ -38,6 +37,7 @@ import {
   moveFigure,
   replaceFigure,
   serializeFigure,
+  stripCoverFromBody,
   type StoryFigure,
 } from "@/lib/story-figure";
 import {
@@ -244,15 +244,23 @@ export function AdminEditor({ slug, preview = false }: AdminEditorProps) {
     markDirty();
   }
 
-  function onPublishPage(id: string) {
-    const page = publishPageById(id);
-    setDraft((current) => ({
-      ...current,
-      category: page.category,
-      section: page.section,
-      sectionManual: true,
-      coverAccent: categoryToAccent(page.category),
-    }));
+  function onPublishPages(id: PublishPageId, checked: boolean) {
+    setDraft((current) => {
+      const selected = new Set(normalizePublishPages(current.publishPages, current));
+      if (checked) selected.add(id);
+      else selected.delete(id);
+      const pages = normalizePublishPages([...selected], current);
+      if (pages.length === 0) return current;
+      const primary = primaryPublishPage(pages);
+      return {
+        ...current,
+        publishPages: pages,
+        category: primary.category,
+        section: primary.section,
+        sectionManual: true,
+        coverAccent: categoryToAccent(primary.category),
+      };
+    });
     markDirty();
   }
 
@@ -645,9 +653,11 @@ export function AdminEditor({ slug, preview = false }: AdminEditorProps) {
   }, [dirty]);
 
   const busy = Boolean(saving) || uploading || bodyUploading || undoingAdd;
-  const publishPage = publishPageById(publishPageOf(draft.category, draft.section));
+  const publishPages = normalizePublishPages(draft.publishPages, draft);
+  const publishLabel = publishPagesLabel(publishPages);
   const readMinutes = liveReadMinutes(draft.content);
   const coverSrc = coverPreview || draft.coverImageUrl;
+  const previewBody = stripCoverFromBody(draft.content, coverSrc);
 
   if (loading) {
     return (
@@ -858,14 +868,8 @@ export function AdminEditor({ slug, preview = false }: AdminEditorProps) {
           >
             {draft.content.trim() ? (
               <ArticleBody
-                markdown={draft.content}
-                figure={{
-                  accent: draft.coverAccent,
-                  scene: draft.coverScene,
-                  title: draft.title || "Cover",
-                  caption: draft.excerpt,
-                  kind: coverKind(draft.category),
-                }}
+                markdown={previewBody}
+                coverImageUrl={coverSrc || undefined}
               />
             ) : (
               <p className="text-sm text-white">The story preview lands here.</p>
@@ -876,24 +880,41 @@ export function AdminEditor({ slug, preview = false }: AdminEditorProps) {
 
       <div className="grid gap-6 sm:grid-cols-2">
         <div>
-          <label className={labelClass} htmlFor="admin-page">
-            Page
-          </label>
-          <select
-            id="admin-page"
-            data-admin-publish-page
-            className={fieldClass}
-            value={publishPage.id}
-            onChange={(event) => onPublishPage(event.target.value)}
+          <p className={labelClass} id="admin-pages-label">
+            Pages
+          </p>
+          <div
+            role="group"
+            aria-labelledby="admin-pages-label"
+            data-admin-publish-pages
+            className="flex flex-wrap gap-2"
           >
-            {PUBLISH_PAGES.map((page) => (
-              <option key={page.id} value={page.id}>
-                {page.label}
-              </option>
-            ))}
-          </select>
+            {PUBLISH_PAGES.map((page) => {
+              const checked = publishPages.includes(page.id);
+              return (
+                <label
+                  key={page.id}
+                  data-admin-publish-page={page.id}
+                  data-checked={checked ? "true" : "false"}
+                  className={`inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full px-4 text-sm font-semibold ${
+                    checked ? "bg-teal text-ink" : "bg-raised text-white"
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    className="sr-only"
+                    checked={checked}
+                    onChange={(event) =>
+                      onPublishPages(page.id, event.target.checked)
+                    }
+                  />
+                  {page.label}
+                </label>
+              );
+            })}
+          </div>
           <p className="mt-2 text-xs font-medium text-white/70">
-            Files to {publishPage.label}.
+            Files to {publishLabel}.
           </p>
         </div>
         <div>
@@ -985,6 +1006,29 @@ export function AdminEditor({ slug, preview = false }: AdminEditorProps) {
             </button>
           ) : null}
         </div>
+        <div className="mt-4">
+          <label className={labelClass} htmlFor="admin-cover-url">
+            Cover URL
+          </label>
+          <input
+            id="admin-cover-url"
+            data-admin-cover-url
+            className={fieldClass}
+            value={draft.coverImageUrl}
+            onChange={(event) => {
+              const value = event.target.value;
+              if (coverPreview.startsWith("blob:")) {
+                URL.revokeObjectURL(coverPreview);
+                setCoverPreview("");
+              }
+              patch({ coverImageUrl: value });
+            }}
+            placeholder="https://…"
+          />
+          <p className="mt-2 text-xs font-medium text-white/70">
+            Cover stays on the card and story hero — not in the body.
+          </p>
+        </div>
         {error ? (
           <p className="mt-4 mb-20 text-sm font-semibold text-magenta" role="alert">
             {error}
@@ -1015,21 +1059,13 @@ export function AdminEditor({ slug, preview = false }: AdminEditorProps) {
           </div>
           <div className="grid gap-5 sm:grid-cols-2">
             <div>
-              <label className={labelClass} htmlFor="admin-section">
-                Page
-              </label>
-              <select
-                id="admin-section"
-                className={fieldClass}
-                value={publishPage.id}
-                onChange={(event) => onPublishPage(event.target.value)}
-              >
-                {PUBLISH_PAGES.map((page) => (
-                  <option key={page.id} value={page.id}>
-                    {page.label}
-                  </option>
-                ))}
-              </select>
+              <p className={labelClass}>Pages</p>
+              <p className="text-sm font-medium text-white" data-admin-pages-summary>
+                {publishLabel}
+              </p>
+              <p className="mt-2 text-xs font-medium text-white/70">
+                Use the Pages pills above to file on one page or several.
+              </p>
             </div>
             <div>
               <label className={labelClass} htmlFor="admin-role">

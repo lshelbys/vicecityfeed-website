@@ -1,30 +1,18 @@
 import ReactMarkdown from "react-markdown";
 import type { Components } from "react-markdown";
-import { ArticleFigure } from "@/components/ArticleFigure";
 import { MediaWrapper } from "@/components/MediaWrapper";
 import { ProTip } from "@/components/ProTip";
 import { Spoiler } from "@/components/Spoiler";
 import { StoryImage } from "@/components/StoryImage";
 import { extractHeadings, splitContent } from "@/lib/content";
 import { slugify } from "@/lib/format";
-import type { CoverAccent, CoverScene } from "@/lib/types";
+import { stripCoverFromBody } from "@/lib/story-figure";
 
 type ArticleBodyProps = {
   markdown: string;
-  figure?: {
-    accent: CoverAccent;
-    scene?: CoverScene;
-    title: string;
-    caption: string;
-    kind?: string;
-  };
+  /** When set, body figures that match this URL are hidden (cover stays on hero/card). */
+  coverImageUrl?: string;
 };
-
-function splitFirstParagraph(text: string): [string, string] {
-  const match = text.match(/^([\s\S]+?)(\n\n[\s\S]*)$/);
-  if (!match) return [text, ""];
-  return [match[1], match[2]];
-}
 
 function Markdown({ children }: { children: string }) {
   return (
@@ -52,11 +40,11 @@ const markdownComponents: Components = {
     src ? <StoryImage src={String(src)} alt={alt ?? ""} /> : null,
 };
 
-export function ArticleBody({ markdown, figure }: ArticleBodyProps) {
-  const blocks = splitContent(markdown);
-  const figureIndex = figure
-    ? blocks.findIndex((block) => block.type === "markdown")
-    : -1;
+export function ArticleBody({ markdown, coverImageUrl }: ArticleBodyProps) {
+  const cleaned = coverImageUrl
+    ? stripCoverFromBody(markdown, coverImageUrl)
+    : markdown;
+  const blocks = splitContent(cleaned);
 
   return (
     <div className="prose-vcf">
@@ -94,22 +82,6 @@ export function ArticleBody({ markdown, figure }: ArticleBodyProps) {
               align={block.align}
               size={block.size}
             />
-          );
-        }
-        if (figure && index === figureIndex) {
-          const [lead, rest] = splitFirstParagraph(block.text);
-          return (
-            <div key={index}>
-              <Markdown>{lead}</Markdown>
-              <ArticleFigure
-                accent={figure.accent}
-                scene={figure.scene}
-                title={figure.title}
-                caption={figure.caption}
-                kind={figure.kind}
-              />
-              {rest ? <Markdown>{rest}</Markdown> : null}
-            </div>
           );
         }
 

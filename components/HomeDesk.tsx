@@ -4,6 +4,7 @@ import { ContinueReading } from "@/components/ContinueReading";
 import { EmptyFeed } from "@/components/EmptyStories";
 import { Hero } from "@/components/Hero";
 import { WireFeed } from "@/components/WireFeed";
+import { articleOnPage } from "@/lib/publish-pages";
 import { usePublishedArticles } from "@/lib/use-published-articles";
 import type { ArticleMeta, FeedArticle } from "@/lib/types";
 
@@ -13,12 +14,14 @@ type HomeDeskProps = {
 };
 
 export function HomeDesk({ lead, articles }: HomeDeskProps) {
-  const live = usePublishedArticles(articles);
+  const live = usePublishedArticles(articles).filter((article) =>
+    articleOnPage(article, "feed"),
+  );
   const liveLead =
     live.find((article) => article.heroRank === 1) ??
     live.find((article) => article.featured) ??
     live[0] ??
-    lead;
+    (lead && articleOnPage(lead, "feed") ? lead : undefined);
 
   if (!liveLead) {
     return (

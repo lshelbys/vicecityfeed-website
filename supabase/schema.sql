@@ -173,3 +173,15 @@ create policy "Authenticated can delete covers"
 -- Additive no-ops if the create-table block above already ran.
 alter table public.articles add column if not exists cover_image_url text;
 alter table public.articles add column if not exists published boolean not null default false;
+alter table public.articles add column if not exists publish_pages text[] not null default '{}';
+
+-- Allow Media desk stories (page picker → Media /reviews).
+do $$
+begin
+  alter table public.articles drop constraint if exists articles_category_check;
+  alter table public.articles
+    add constraint articles_category_check
+    check (category in ('Leaks & News', 'Map & Lore', 'Vehicles & Guns', 'Guides', 'Media'));
+exception
+  when others then null;
+end $$;
