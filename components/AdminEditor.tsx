@@ -263,6 +263,7 @@ export function AdminEditor({ slug, preview = false }: AdminEditorProps) {
   }
 
   function applyBody(next: { value: string; caret: { start: number; end: number } }) {
+    draftRef.current = { ...draftRef.current, content: next.value };
     patch({ content: next.value });
     requestAnimationFrame(() => {
       const el = bodyRef.current;
@@ -377,10 +378,17 @@ export function AdminEditor({ slug, preview = false }: AdminEditorProps) {
     );
   }
 
+  function currentFigure(): StoryFigure | null {
+    const content = draftRef.current.content;
+    const caret =
+      bodyRef.current?.selectionStart ?? selectedFigure?.start ?? 0;
+    return figureAtCaret(content, caret);
+  }
+
   function updateSelectedFigure(
     partial: Partial<Pick<StoryFigure, "align" | "size" | "alt" | "caption">>,
   ) {
-    const current = selectedFigure ?? figureAtCaret(draft.content, bodyRef.current?.selectionStart ?? 0);
+    const current = currentFigure();
     if (!current) return;
     const next = {
       src: current.src,
@@ -390,7 +398,7 @@ export function AdminEditor({ slug, preview = false }: AdminEditorProps) {
       size: current.size,
       ...partial,
     };
-    const value = replaceFigure(draft.content, current, next);
+    const value = replaceFigure(draftRef.current.content, current, next);
     const figures = listFigures(value);
     const match =
       figures.find((figure) => figure.src === next.src && figure.alt === next.alt) ??
@@ -404,9 +412,9 @@ export function AdminEditor({ slug, preview = false }: AdminEditorProps) {
   }
 
   function moveSelectedFigure(direction: -1 | 1) {
-    const current = selectedFigure ?? figureAtCaret(draft.content, bodyRef.current?.selectionStart ?? 0);
+    const current = currentFigure();
     if (!current) return;
-    const value = moveFigure(draft.content, current, direction);
+    const value = moveFigure(draftRef.current.content, current, direction);
     if (value === draft.content) return;
     const figures = listFigures(value);
     const match =
