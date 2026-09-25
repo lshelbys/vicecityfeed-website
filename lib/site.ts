@@ -13,6 +13,7 @@ export const SITE = {
 } as const;
 
 export const NAV_ITEMS: NavItem[] = [
+  { href: "/", label: "Feed" },
   { href: "/the-map", label: "GTA VI" },
   { href: "/garage-mods", label: "Vehicles" },
   { href: "/reviews", label: "Media" },
@@ -34,7 +35,7 @@ export const SOCIAL_LINKS: SocialLink[] = [
 ];
 
 export const FOOTER_SITEMAP: NavItem[] = [
-  { href: "/album", label: "Homepage" },
+  { href: "/", label: "Feed" },
   { href: "/the-map", label: "The Map" },
   { href: "/garage-mods", label: "Garage & Mods" },
   { href: "/reviews", label: "Reviews" },
@@ -64,10 +65,10 @@ export function coverKind(category: Category): string {
 
 export const CATEGORY_SECTION: Record<Category, { href: string; label: string }> =
   {
-    "Leaks & News": { href: "/", label: "Home" },
+    "Leaks & News": { href: "/", label: "Feed" },
     "Map & Lore": { href: "/the-map", label: "GTA VI" },
     "Vehicles & Guns": { href: "/garage-mods", label: "Vehicles" },
-    Guides: { href: "/", label: "Home" },
+    Guides: { href: "/", label: "Feed" },
   };
 
 export const CATEGORY_TO_SLUG: Record<Category, Exclude<CategorySlug, "all" | "hardware">> =
@@ -95,11 +96,8 @@ export const SLUG_TO_CATEGORY: Record<
 export const HARDWARE_TAGS = ["hardware"] as const;
 
 export function isNavActive(pathname: string, href: string): boolean {
-  if (href === "/album") {
-    return pathname === "/" || pathname === "/album" || pathname.startsWith("/album/");
-  }
   if (href === "/") {
-    return pathname === "/" || pathname.startsWith("/posts/");
+    return pathname === "/" || pathname === "/feed" || pathname.startsWith("/posts/");
   }
   return pathname === href || pathname.startsWith(`${href}/`);
 }

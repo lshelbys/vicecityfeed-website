@@ -1,0 +1,12 @@
+import type { Metadata } from "next";
+import { FeedHome } from "@/components/FeedHome";
+import { SITE } from "@/lib/site";
+
+export const metadata: Metadata = {
+  title: "Feed",
+  description: SITE.description,
+};
+
+export default function FeedPage() {
+  return <FeedHome />;
+}

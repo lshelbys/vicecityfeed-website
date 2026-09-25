@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
-import { AlbumListening } from "@/components/AlbumListening";
-import { ALBUM } from "@/lib/album";
+import { FeedHome } from "@/components/FeedHome";
 import { SITE } from "@/lib/site";
 
 export const metadata: Metadata = {
-  description: `${ALBUM.singlesOut} official singles from ${ALBUM.title}, in-page via Atlantic Records’ YouTube. ${SITE.description}`,
+  description: SITE.description,
   openGraph: {
     title: SITE.name,
     description: SITE.description,
@@ -41,7 +40,7 @@ export default function HomePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <AlbumListening />
+      <FeedHome />
     </>
   );
 }

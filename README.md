@@ -39,7 +39,9 @@ Markdown supports `:::protip`, `:::spoiler`, and `:::media caption="..." accent=
 
 | Path | Desk |
 | --- | --- |
-| `/` | Album (same as `/album`) |
+| `/` | Feed (editorial home) |
+| `/feed` | Feed (same desk) |
+| `/album` | The Album |
 | `/the-map` | GTA VI map & lore |
 | `/garage-mods` | Vehicles, guns, mods |
 | `/reviews` | Reviews |

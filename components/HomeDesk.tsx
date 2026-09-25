@@ -1,7 +1,7 @@
 "use client";
 
 import { ContinueReading } from "@/components/ContinueReading";
-import { EmptyStories } from "@/components/EmptyStories";
+import { EmptyFeed } from "@/components/EmptyStories";
 import { Hero } from "@/components/Hero";
 import { WireFeed } from "@/components/WireFeed";
 import { usePublishedArticles } from "@/lib/use-published-articles";
@@ -27,7 +27,7 @@ export function HomeDesk({ lead, articles }: HomeDeskProps) {
         aria-labelledby="hero-heading"
         className="mx-auto max-w-7xl px-4 py-10 md:px-6 md:py-16"
       >
-        <EmptyStories />
+        <EmptyFeed />
       </section>
     );
   }

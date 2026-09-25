@@ -10,7 +10,7 @@ type SiteLogoProps = {
 export function SiteLogo({ src = LOGO_PNG }: SiteLogoProps) {
   return (
     <Link
-      href="/album"
+      href="/"
       aria-label={SITE.name}
       className="site-logo-link inline-flex shrink-0 items-center"
     >
