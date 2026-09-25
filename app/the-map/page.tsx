@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { MapIndex } from "@/components/MapIndex";
+import { LiveSectionFeed } from "@/components/LiveSectionFeed";
 import { PageHeader } from "@/components/PageHeader";
+import { getFeedArticles } from "@/lib/articles";
 
 export const metadata: Metadata = {
   title: "The Map",
@@ -9,14 +10,16 @@ export const metadata: Metadata = {
 };
 
 export default function TheMapPage() {
+  const articles = getFeedArticles();
+
   return (
     <main id="main" className="mx-auto max-w-7xl px-4 py-12 md:px-6">
       <PageHeader
-        kicker="Location index"
+        kicker="GTA VI"
         title="The Map"
         description="Named places, the region they sit in, and the story that opens the door."
       />
-      <MapIndex />
+      <LiveSectionFeed articles={articles} page="gta-vi" />
     </main>
   );
 }

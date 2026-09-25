@@ -12,6 +12,7 @@ import {
   setPublished,
   type ArticleRow,
 } from "@/lib/remote-articles";
+import { publishPageLabel } from "@/lib/publish-pages";
 import { getSupabase } from "@/lib/supabase";
 
 type StatusFilter = "all" | "draft" | "published";
@@ -67,7 +68,7 @@ const LAYOUT_ROWS: ArticleRow[] = [
 
 function matchesQuery(row: ArticleRow, query: string) {
   if (!query) return true;
-  const hay = `${row.title} ${row.slug} ${row.category} ${row.excerpt}`.toLowerCase();
+  const hay = `${row.title} ${row.slug} ${row.category} ${row.section} ${publishPageLabel(row.category, row.section)} ${row.excerpt}`.toLowerCase();
   return hay.includes(query);
 }
 
@@ -307,7 +308,7 @@ export function AdminDesk({ preview = false }: AdminDeskProps) {
                         {row.title || "Untitled"}
                       </p>
                       <p className="text-xs font-medium text-white">
-                        {row.category} · /posts/{row.slug}
+                        {publishPageLabel(row.category, row.section)} · /posts/{row.slug}
                       </p>
                     </div>
                     <div className="flex flex-wrap gap-2">

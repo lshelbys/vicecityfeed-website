@@ -8,6 +8,7 @@ export type FormatAction =
   | "quote"
   | "list"
   | "image"
+  | "imageUrl"
   | "protip"
   | "pullquote";
 
@@ -21,6 +22,7 @@ const ACTIONS: Array<{ id: FormatAction; label: string }> = [
   { id: "protip", label: "Pro tip" },
   { id: "list", label: "List" },
   { id: "image", label: "Image" },
+  { id: "imageUrl", label: "Image URL" },
 ];
 
 const chipClass =

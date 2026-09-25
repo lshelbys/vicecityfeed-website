@@ -3,6 +3,7 @@ export const CATEGORIES = [
   "Map & Lore",
   "Vehicles & Guns",
   "Guides",
+  "Media",
 ] as const;
 
 export type Category = (typeof CATEGORIES)[number];
@@ -13,6 +14,7 @@ export const CATEGORY_SLUGS = [
   "map-lore",
   "vehicles-guns",
   "guides",
+  "media",
   "hardware",
 ] as const;
 

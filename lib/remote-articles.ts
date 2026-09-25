@@ -96,7 +96,9 @@ export function categoryToSection(category: Category): SectionSlug {
     case "Vehicles & Guns":
       return "garage";
     case "Guides":
-      return "intel";
+      return "wire";
+    case "Media":
+      return "reviews";
     default:
       return "wire";
   }
@@ -107,6 +109,8 @@ export function categoryToAccent(category: Category): CoverAccent {
     case "Leaks & News":
       return "magenta";
     case "Vehicles & Guns":
+      return "sunset";
+    case "Media":
       return "sunset";
     default:
       return "cyan";

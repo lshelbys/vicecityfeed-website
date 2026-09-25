@@ -1,11 +1,20 @@
 import { slugify } from "./format";
+import { parseFigureMeta, type FigureAlign, type FigureSize } from "./story-figure";
 import type { CoverAccent } from "./types";
 
 export type ContentBlock =
   | { type: "markdown"; text: string }
   | { type: "protip"; text: string }
   | { type: "spoiler"; text: string }
-  | { type: "media"; caption: string; accent: CoverAccent };
+  | { type: "media"; caption: string; accent: CoverAccent }
+  | {
+      type: "figure";
+      src: string;
+      alt: string;
+      caption: string;
+      align: FigureAlign;
+      size: FigureSize;
+    };
 
 export type Heading = {
   id: string;
@@ -52,6 +61,11 @@ export function splitContent(markdown: string): ContentBlock[] {
         caption: parseCaption(meta),
         accent: parseAccent(meta),
       });
+    } else if (kind === "figure") {
+      const src = body.split(/\s+/)[0] ?? "";
+      if (src) {
+        blocks.push({ type: "figure", src, ...parseFigureMeta(meta) });
+      }
     } else {
       blocks.push({ type: "markdown", text: match[0] });
     }

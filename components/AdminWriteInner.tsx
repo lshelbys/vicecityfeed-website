@@ -12,7 +12,7 @@ export function AdminWriteInner() {
   return (
     <AdminShell
       title="Write"
-      description="Headline, excerpt, body, desk, and cover. Publish when it is ready."
+      description="Headline, excerpt, body, page, and cover. Publish when it is ready."
       wide
       unlocked={unlocked}
     >

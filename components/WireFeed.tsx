@@ -15,6 +15,7 @@ const VALID: CategorySlug[] = [
   "map-lore",
   "vehicles-guns",
   "guides",
+  "media",
   "hardware",
 ];
 

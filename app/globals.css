@@ -635,6 +635,76 @@ body {
   border-radius: 1rem;
 }
 
+.story-figure {
+  margin: 1.75rem 0;
+}
+
+.story-figure img {
+  margin: 0;
+  width: 100%;
+  height: auto;
+  border-radius: 1rem;
+}
+
+.story-figure figcaption {
+  margin-top: 0.55rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.story-figure-left {
+  float: left;
+  margin: 0.35rem 1.25rem 1rem 0;
+}
+
+.story-figure-right {
+  float: right;
+  margin: 0.35rem 0 1rem 1.25rem;
+}
+
+.story-figure-center {
+  margin-inline: auto;
+  float: none;
+}
+
+.story-figure-full {
+  width: 100%;
+  max-width: 100%;
+  float: none;
+  clear: both;
+}
+
+.story-figure-size-s {
+  width: min(12rem, 100%);
+}
+
+.story-figure-size-m {
+  width: min(20rem, 100%);
+}
+
+.story-figure-size-l {
+  width: min(32rem, 100%);
+}
+
+.story-figure-size-full,
+.story-figure-full {
+  width: 100%;
+  max-width: 100%;
+}
+
+.story-figure-center.story-figure-size-s,
+.story-figure-center.story-figure-size-m,
+.story-figure-center.story-figure-size-l {
+  margin-inline: auto;
+}
+
+.prose-vcf::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
 .prose-vcf blockquote {
   margin: 2.2rem 0;
   padding: 0;

@@ -1,18 +1,22 @@
 "use client";
 
 import { SectionFeed } from "@/components/SectionFeed";
+import { publishPageOf, type PublishPageId } from "@/lib/publish-pages";
 import { usePublishedArticles } from "@/lib/use-published-articles";
 import type { FeedArticle, SectionSlug } from "@/lib/types";
 
 type LiveSectionFeedProps = {
   articles: FeedArticle[];
   section?: SectionSlug;
+  page?: PublishPageId;
 };
 
-export function LiveSectionFeed({ articles, section }: LiveSectionFeedProps) {
+export function LiveSectionFeed({ articles, section, page }: LiveSectionFeedProps) {
   const live = usePublishedArticles(articles);
-  const filtered = section
-    ? live.filter((article) => article.section === section)
-    : live;
+  const filtered = page
+    ? live.filter((article) => publishPageOf(article.category, article.section) === page)
+    : section
+      ? live.filter((article) => article.section === section)
+      : live;
   return <SectionFeed articles={filtered} />;
 }

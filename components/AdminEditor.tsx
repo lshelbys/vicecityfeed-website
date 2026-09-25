@@ -4,6 +4,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AdminFormatBar, type FormatAction } from "@/components/AdminFormatBar";
+import { AdminImageTools } from "@/components/AdminImageTools";
 import { ArticleBody } from "@/components/ArticleBody";
 import { CoverArt } from "@/components/CoverArt";
 import { ctaPillClass, outlinePillClass } from "@/components/pills";
@@ -28,15 +29,21 @@ import {
   type ArticleDraft,
 } from "@/lib/remote-articles";
 import { getSupabase } from "@/lib/supabase";
-import { CATEGORY_SECTION, coverKind } from "@/lib/site";
+import { PUBLISH_PAGES, publishPageById, publishPageOf } from "@/lib/publish-pages";
+import { coverKind } from "@/lib/site";
 import {
-  CATEGORIES,
+  figureAtCaret,
+  isImageUrl,
+  listFigures,
+  moveFigure,
+  replaceFigure,
+  serializeFigure,
+  type StoryFigure,
+} from "@/lib/story-figure";
+import {
   COVER_SCENES,
-  SECTION_SLUGS,
-  type Category,
   type CoverAccent,
   type CoverScene,
-  type SectionSlug,
 } from "@/lib/types";
 
 const ACCENTS: CoverAccent[] = ["cyan", "magenta", "sunset"];
@@ -107,6 +114,7 @@ export function AdminEditor({ slug, preview = false }: AdminEditorProps) {
   const [undoingAdd, setUndoingAdd] = useState(false);
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
+  const [selectedFigure, setSelectedFigure] = useState<StoryFigure | null>(null);
 
   useLayoutEffect(() => {
     draftRef.current = draft;
@@ -236,16 +244,22 @@ export function AdminEditor({ slug, preview = false }: AdminEditorProps) {
     markDirty();
   }
 
-  function onCategory(category: Category) {
+  function onPublishPage(id: string) {
+    const page = publishPageById(id);
     setDraft((current) => ({
       ...current,
-      category,
-      section: current.sectionManual
-        ? current.section
-        : categoryToSection(category),
-      coverAccent: categoryToAccent(category),
+      category: page.category,
+      section: page.section,
+      sectionManual: true,
+      coverAccent: categoryToAccent(page.category),
     }));
     markDirty();
+  }
+
+  function syncSelectedFigure(content: string, caret?: number) {
+    const field = bodyRef.current;
+    const pos = caret ?? field?.selectionStart ?? content.length;
+    setSelectedFigure(figureAtCaret(content, pos));
   }
 
   function applyBody(next: { value: string; caret: { start: number; end: number } }) {
@@ -255,12 +269,17 @@ export function AdminEditor({ slug, preview = false }: AdminEditorProps) {
       if (!el) return;
       el.focus();
       el.setSelectionRange(next.caret.start, next.caret.end);
+      syncSelectedFigure(next.value, next.caret.start);
     });
   }
 
   function applyFormat(action: FormatAction) {
     if (action === "image") {
       bodyImageRef.current?.click();
+      return;
+    }
+    if (action === "imageUrl") {
+      document.getElementById("admin-image-url")?.focus();
       return;
     }
     const field = bodyRef.current;
@@ -300,7 +319,17 @@ export function AdminEditor({ slug, preview = false }: AdminEditorProps) {
       start: field?.selectionStart ?? draft.content.length,
       end: field?.selectionEnd ?? draft.content.length,
     };
-    const inserted = insertBlock(draft.content, caret, `![${alt}](${localUrl})`);
+    const inserted = insertBlock(
+      draft.content,
+      caret,
+      serializeFigure({
+        src: localUrl,
+        alt,
+        caption: "",
+        align: "center",
+        size: "l",
+      }),
+    );
     applyBody(inserted);
     setBodyUploading(true);
     try {
@@ -315,6 +344,80 @@ export function AdminEditor({ slug, preview = false }: AdminEditorProps) {
     } finally {
       setBodyUploading(false);
     }
+  }
+
+  function insertImageUrl(url: string) {
+    const trimmed = url.trim();
+    if (!trimmed) {
+      setError("Paste an image URL.");
+      return;
+    }
+    if (!isImageUrl(trimmed)) {
+      setError("Use an http(s) image URL.");
+      return;
+    }
+    setError(null);
+    const field = bodyRef.current;
+    const caret = {
+      start: field?.selectionStart ?? draft.content.length,
+      end: field?.selectionEnd ?? draft.content.length,
+    };
+    applyBody(
+      insertBlock(
+        draft.content,
+        caret,
+        serializeFigure({
+          src: trimmed,
+          alt: "Image",
+          caption: "",
+          align: "center",
+          size: "l",
+        }),
+      ),
+    );
+  }
+
+  function updateSelectedFigure(
+    partial: Partial<Pick<StoryFigure, "align" | "size" | "alt" | "caption">>,
+  ) {
+    const current = selectedFigure ?? figureAtCaret(draft.content, bodyRef.current?.selectionStart ?? 0);
+    if (!current) return;
+    const next = {
+      src: current.src,
+      alt: current.alt,
+      caption: current.caption,
+      align: current.align,
+      size: current.size,
+      ...partial,
+    };
+    const value = replaceFigure(draft.content, current, next);
+    const figures = listFigures(value);
+    const match =
+      figures.find((figure) => figure.src === next.src && figure.alt === next.alt) ??
+      figures[0];
+    applyBody({
+      value,
+      caret: match
+        ? { start: match.start, end: match.end }
+        : { start: current.start, end: current.start },
+    });
+  }
+
+  function moveSelectedFigure(direction: -1 | 1) {
+    const current = selectedFigure ?? figureAtCaret(draft.content, bodyRef.current?.selectionStart ?? 0);
+    if (!current) return;
+    const value = moveFigure(draft.content, current, direction);
+    if (value === draft.content) return;
+    const figures = listFigures(value);
+    const match =
+      figures.find((figure) => figure.src === current.src) ??
+      figureAtCaret(value, current.start);
+    applyBody({
+      value,
+      caret: match
+        ? { start: match.start, end: match.end }
+        : { start: 0, end: 0 },
+    });
   }
 
   async function onUpload(file: File | undefined) {
@@ -534,7 +637,7 @@ export function AdminEditor({ slug, preview = false }: AdminEditorProps) {
   }, [dirty]);
 
   const busy = Boolean(saving) || uploading || bodyUploading || undoingAdd;
-  const desk = CATEGORY_SECTION[draft.category];
+  const publishPage = publishPageById(publishPageOf(draft.category, draft.section));
   const readMinutes = liveReadMinutes(draft.content);
   const coverSrc = coverPreview || draft.coverImageUrl;
 
@@ -694,13 +797,33 @@ export function AdminEditor({ slug, preview = false }: AdminEditorProps) {
                 onUndo={undoEdit}
                 onRedo={redoEdit}
               />
+              <AdminImageTools
+                figure={selectedFigure}
+                uploading={bodyUploading}
+                onUpload={() => bodyImageRef.current?.click()}
+                onInsertUrl={insertImageUrl}
+                onChange={updateSelectedFigure}
+                onMove={moveSelectedFigure}
+              />
             </div>
             <textarea
               id="admin-body"
               ref={bodyRef}
               className="w-full min-h-80 bg-transparent px-4 pb-4 font-mono text-sm text-white placeholder:text-white/40 md:min-h-[28rem]"
               value={draft.content}
-              onChange={(event) => patch({ content: event.target.value })}
+              onChange={(event) => {
+                patch({ content: event.target.value });
+                syncSelectedFigure(event.target.value, event.target.selectionStart);
+              }}
+              onSelect={(event) =>
+                syncSelectedFigure(draft.content, event.currentTarget.selectionStart)
+              }
+              onClick={(event) =>
+                syncSelectedFigure(draft.content, event.currentTarget.selectionStart)
+              }
+              onKeyUp={(event) =>
+                syncSelectedFigure(draft.content, event.currentTarget.selectionStart)
+              }
               placeholder="Write, or drop an image. The preview updates as you type."
             />
             <input
@@ -745,23 +868,24 @@ export function AdminEditor({ slug, preview = false }: AdminEditorProps) {
 
       <div className="grid gap-6 sm:grid-cols-2">
         <div>
-          <label className={labelClass} htmlFor="admin-category">
-            Desk
+          <label className={labelClass} htmlFor="admin-page">
+            Page
           </label>
           <select
-            id="admin-category"
+            id="admin-page"
+            data-admin-publish-page
             className={fieldClass}
-            value={draft.category}
-            onChange={(event) => onCategory(event.target.value as Category)}
+            value={publishPage.id}
+            onChange={(event) => onPublishPage(event.target.value)}
           >
-            {CATEGORIES.map((category) => (
-              <option key={category} value={category}>
-                {category} — {CATEGORY_SECTION[category].label}
+            {PUBLISH_PAGES.map((page) => (
+              <option key={page.id} value={page.id}>
+                {page.label}
               </option>
             ))}
           </select>
           <p className="mt-2 text-xs font-medium text-white/70">
-            Files to {desk.label}.
+            Files to {publishPage.label}.
           </p>
         </div>
         <div>
@@ -884,22 +1008,17 @@ export function AdminEditor({ slug, preview = false }: AdminEditorProps) {
           <div className="grid gap-5 sm:grid-cols-2">
             <div>
               <label className={labelClass} htmlFor="admin-section">
-                Section
+                Page
               </label>
               <select
                 id="admin-section"
                 className={fieldClass}
-                value={draft.section}
-                onChange={(event) =>
-                  patch({
-                    section: event.target.value as SectionSlug,
-                    sectionManual: true,
-                  })
-                }
+                value={publishPage.id}
+                onChange={(event) => onPublishPage(event.target.value)}
               >
-                {SECTION_SLUGS.map((section) => (
-                  <option key={section} value={section}>
-                    {section}
+                {PUBLISH_PAGES.map((page) => (
+                  <option key={page.id} value={page.id}>
+                    {page.label}
                   </option>
                 ))}
               </select>

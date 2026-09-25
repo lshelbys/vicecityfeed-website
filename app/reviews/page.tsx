@@ -19,7 +19,7 @@ export default function ReviewsPage() {
         title="Reviews"
         description="Character studies, radio, and the night economy — scored like a desk."
       />
-      <LiveSectionFeed articles={articles} section="reviews" />
+      <LiveSectionFeed articles={articles} page="media" />
     </main>
   );
 }

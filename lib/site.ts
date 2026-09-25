@@ -57,6 +57,7 @@ export const CATEGORY_SHORT: Record<Category, string> = {
   "Map & Lore": "Maps",
   "Vehicles & Guns": "Vehicles",
   Guides: "Story",
+  Media: "Media",
 };
 
 export function coverKind(category: Category): string {
@@ -69,6 +70,7 @@ export const CATEGORY_SECTION: Record<Category, { href: string; label: string }>
     "Map & Lore": { href: "/the-map", label: "GTA VI" },
     "Vehicles & Guns": { href: "/garage-mods", label: "Vehicles" },
     Guides: { href: "/", label: "Feed" },
+    Media: { href: "/reviews", label: "Media" },
   };
 
 export const CATEGORY_TO_SLUG: Record<Category, Exclude<CategorySlug, "all" | "hardware">> =
@@ -77,6 +79,7 @@ export const CATEGORY_TO_SLUG: Record<Category, Exclude<CategorySlug, "all" | "h
     "Map & Lore": "map-lore",
     "Vehicles & Guns": "vehicles-guns",
     Guides: "guides",
+    Media: "media",
   };
 
 export function homeFilterHref(category: Category) {
@@ -91,6 +94,7 @@ export const SLUG_TO_CATEGORY: Record<
   "map-lore": "Map & Lore",
   "vehicles-guns": "Vehicles & Guns",
   guides: "Guides",
+  media: "Media",
 };
 
 export const HARDWARE_TAGS = ["hardware"] as const;

@@ -4,6 +4,7 @@ import { ArticleFigure } from "@/components/ArticleFigure";
 import { MediaWrapper } from "@/components/MediaWrapper";
 import { ProTip } from "@/components/ProTip";
 import { Spoiler } from "@/components/Spoiler";
+import { StoryImage } from "@/components/StoryImage";
 import { extractHeadings, splitContent } from "@/lib/content";
 import { slugify } from "@/lib/format";
 import type { CoverAccent, CoverScene } from "@/lib/types";
@@ -48,11 +49,7 @@ const markdownComponents: Components = {
     </a>
   ),
   img: ({ src, alt }) =>
-    src ? (
-      // Uploaded story images are remote Storage URLs; the static export does not optimize them.
-      // eslint-disable-next-line @next/next/no-img-element
-      <img src={src} alt={alt ?? ""} data-story-image="" />
-    ) : null,
+    src ? <StoryImage src={String(src)} alt={alt ?? ""} /> : null,
 };
 
 export function ArticleBody({ markdown, figure }: ArticleBodyProps) {
@@ -84,6 +81,18 @@ export function ArticleBody({ markdown, figure }: ArticleBodyProps) {
               key={index}
               caption={block.caption}
               accent={block.accent}
+            />
+          );
+        }
+        if (block.type === "figure") {
+          return (
+            <StoryImage
+              key={index}
+              src={block.src}
+              alt={block.alt}
+              caption={block.caption}
+              align={block.align}
+              size={block.size}
             />
           );
         }
