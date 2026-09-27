@@ -230,7 +230,8 @@ body {
     visibility 0s linear 220ms;
 }
 
-.social-menu[data-open="true"] {
+.social-menu[data-open="true"],
+header.header-bar .social-menu[data-open="true"] {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
@@ -409,10 +410,10 @@ body {
 @keyframes desk-breathe {
   0%,
   100% {
-    opacity: 0.22;
+    opacity: 0.55;
   }
   50% {
-    opacity: 0.42;
+    opacity: 0.9;
   }
 }
 
@@ -425,7 +426,7 @@ body {
   display: block;
   height: 3.25rem;
   border-radius: 1rem;
-  background: #161616;
+  background: #1f1f1f;
   animation: desk-breathe 3.2s ease-in-out infinite;
 }
 

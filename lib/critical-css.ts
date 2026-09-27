@@ -14,7 +14,7 @@ header.header-bar .header-primary>:last-child{display:flex;align-items:center;ju
 [data-countdown]>div{display:block}
 header.header-bar>[aria-hidden="true"],
 .search-panel-closed{display:none!important}
-header.header-bar [role="menu"]{opacity:0;pointer-events:none;visibility:hidden}
+header.header-bar [role="menu"]:not([data-open="true"]){opacity:0;pointer-events:none;visibility:hidden}
 header.header-bar svg,footer svg{width:16px;height:16px;max-width:16px;max-height:16px}
 header.header-bar nav.header-nav-wrap{display:block;width:100%;text-align:center;overflow:visible;max-height:3.5rem}
 header.header-bar .header-nav{display:inline-flex;flex-wrap:nowrap;justify-content:center;width:max-content;max-width:100%;margin-inline:auto;vertical-align:top;overflow-x:auto;text-align:left}
