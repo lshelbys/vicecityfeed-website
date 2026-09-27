@@ -249,7 +249,7 @@ function NowPlaying({
         <button
           type="button"
           onClick={onPrev}
-          className="inline-flex size-11 items-center justify-center rounded-full text-white hover:bg-raised"
+          className="album-transport tap-press inline-flex size-11 items-center justify-center rounded-full text-white transition-[background-color,transform] duration-200 ease-out hover:bg-raised"
           aria-label="Previous single"
         >
           <SkipBack className="size-5" aria-hidden />
@@ -259,7 +259,7 @@ function NowPlaying({
           onClick={onToggle}
           disabled={!ready}
           data-album-play
-          className="inline-flex size-14 items-center justify-center rounded-full bg-teal text-ink hover:bg-white disabled:opacity-50"
+          className="album-play tap-press inline-flex size-14 items-center justify-center rounded-full bg-teal text-ink transition-[background-color,transform] duration-200 ease-out hover:bg-white disabled:opacity-50"
           aria-label={playing ? "Pause" : "Play"}
         >
           {playing ? (
@@ -271,7 +271,7 @@ function NowPlaying({
         <button
           type="button"
           onClick={onNext}
-          className="inline-flex size-11 items-center justify-center rounded-full text-white hover:bg-raised"
+          className="album-transport tap-press inline-flex size-11 items-center justify-center rounded-full text-white transition-[background-color,transform] duration-200 ease-out hover:bg-raised"
           aria-label="Next single"
         >
           <SkipForward className="size-5" aria-hidden />
@@ -319,7 +319,7 @@ function OfficialVideo({
       {failed ? (
         <p className="mt-4 text-sm text-white">
           The official player could not start here. Use Atlantic’s upload:{" "}
-          <a href={track.officialUrl} className="text-teal underline">
+          <a href={track.officialUrl} className="link-draw text-teal">
             {track.title}
           </a>
           .
@@ -350,7 +350,7 @@ function TrackList({
                 onClick={() => onPick(i)}
                 data-album-track={song.id}
                 aria-current={active ? "true" : undefined}
-                className={`flex min-h-11 w-full items-center gap-3 rounded-xl px-3 py-3 text-left transition-colors duration-200 ${
+                className={`album-track tap-press flex min-h-11 w-full items-center gap-3 rounded-xl px-3 py-3 text-left transition-[background-color,transform,color] duration-200 ease-out ${
                   active ? "bg-raised" : "hover:bg-raised/70"
                 }`}
               >
@@ -370,7 +370,9 @@ function TrackList({
                   alt=""
                   width={40}
                   height={40}
-                  className="size-10 shrink-0 rounded-md object-cover"
+                  className={`size-10 shrink-0 rounded-md object-cover transition-transform duration-300 ease-out ${
+                    active ? "scale-105" : ""
+                  }`}
                 />
                 <span className="min-w-0 flex-1">
                   <span
@@ -400,7 +402,7 @@ function TrackList({
           </span>
           {" until "}
           {ALBUM.fullAlbumOn}. Only the six official singles are listed.{" "}
-          <a href={ALBUM.officialPage} className="text-teal underline">
+          <a href={ALBUM.officialPage} className="link-draw text-teal">
             Rockstar’s music page
           </a>
           .

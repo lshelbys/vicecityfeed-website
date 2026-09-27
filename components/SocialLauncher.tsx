@@ -33,20 +33,21 @@ export function SocialLauncher() {
   }, [open]);
 
   useLayoutEffect(() => {
-    if (!open) return;
     function place() {
       const root = rootRef.current;
       if (!root) return;
       const header = root.closest("header");
       const button = root.querySelector("button");
       const headerBottom = header?.getBoundingClientRect().bottom ?? 0;
-      const buttonRight = button?.getBoundingClientRect().right ?? window.innerWidth - 12;
+      const buttonRight =
+        button?.getBoundingClientRect().right ?? window.innerWidth - 12;
       setBox({
         top: Math.round(headerBottom + 8),
         right: Math.round(Math.max(12, window.innerWidth - buttonRight)),
       });
     }
     place();
+    if (!open) return;
     window.addEventListener("resize", place);
     window.addEventListener("scroll", place, true);
     return () => {
@@ -56,16 +57,20 @@ export function SocialLauncher() {
   }, [open]);
 
   const itemClass =
-    "flex w-full min-h-11 items-center gap-2.5 rounded-lg px-3 text-left text-sm text-white transition-colors duration-300 ease-out hover:bg-teal hover:text-ink";
+    "tap-press flex w-full min-h-11 items-center gap-2.5 rounded-lg px-3 text-left text-sm text-white transition-[background-color,color,transform] duration-300 ease-out hover:bg-teal hover:text-ink";
 
   return (
-    <div className="relative" ref={rootRef} data-social-open={open ? "true" : "false"}>
+    <div
+      className="relative"
+      ref={rootRef}
+      data-social-open={open ? "true" : "false"}
+    >
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
         className={
           open
-            ? "social-close inline-flex size-11 min-h-11 items-center justify-center rounded-full bg-teal text-ink"
+            ? "social-close tap-press inline-flex size-11 min-h-11 items-center justify-center rounded-full bg-teal text-ink transition-transform duration-300 ease-out"
             : outlinePillClass("size-11 min-h-11")
         }
         aria-expanded={open}
@@ -92,12 +97,9 @@ export function SocialLauncher() {
         id={menuId}
         role="menu"
         data-social-menu="true"
-        style={open ? { top: box.top, right: box.right } : undefined}
-        className={`z-[60] w-44 rounded-xl bg-surface p-1.5 shadow-[0_12px_40px_rgb(0_0_0/0.45)] ${
-          open
-            ? "pointer-events-auto fixed opacity-100"
-            : "pointer-events-none absolute right-0 mt-2 -translate-y-1.5 opacity-0"
-        }`}
+        data-open={open ? "true" : "false"}
+        style={{ top: box.top, right: box.right }}
+        className="social-menu fixed z-[60] w-44 rounded-xl bg-surface p-1.5 shadow-[0_12px_40px_rgb(0_0_0/0.45)]"
       >
         {SOCIAL_LINKS.map((link) => {
           const isRss = link.href.endsWith("/rss.xml") || link.label === "RSS";

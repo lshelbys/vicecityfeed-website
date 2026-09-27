@@ -60,6 +60,7 @@ body {
 :focus-visible {
   outline: 2px solid #ffffff;
   outline-offset: 3px;
+  transition: outline-offset 160ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .search-field:focus-within,
@@ -217,21 +218,72 @@ body {
   box-shadow: none;
 }
 
+.social-menu {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(-8px) scale(0.98);
+  transform-origin: top right;
+  transition:
+    opacity 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0s linear 220ms;
+}
+
+.social-menu[data-open="true"] {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+  transition:
+    opacity 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0s linear 0s;
+}
+
+.tap-press {
+  transform: translateZ(0);
+}
+
+.tap-press:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+.album-play:active:not(:disabled) {
+  transform: scale(0.92);
+}
+
 .album-seek {
   appearance: none;
   height: 4px;
   border-radius: 999px;
+  cursor: pointer;
   background: linear-gradient(
     to right,
     #3bb8b3 var(--album-progress, 0%),
     #1f1f1f var(--album-progress, 0%)
   );
+  transition: height 160ms ease-out;
 }
+
+.album-seek:hover,
+.album-seek:focus-visible,
+.album-seek:active {
+  height: 6px;
+}
+
 .album-seek::-webkit-slider-runnable-track {
   height: 4px;
   border-radius: 999px;
   background: transparent;
 }
+
+.album-seek:hover::-webkit-slider-runnable-track,
+.album-seek:focus-visible::-webkit-slider-runnable-track,
+.album-seek:active::-webkit-slider-runnable-track {
+  height: 6px;
+}
+
 .album-seek::-webkit-slider-thumb {
   appearance: none;
   width: 14px;
@@ -239,23 +291,43 @@ body {
   margin-top: -5px;
   border-radius: 999px;
   background: #3bb8b3;
+  transition: transform 160ms cubic-bezier(0.22, 1, 0.36, 1);
 }
+
+.album-seek:hover::-webkit-slider-thumb,
+.album-seek:focus-visible::-webkit-slider-thumb {
+  transform: scale(1.15);
+}
+
+.album-seek:active::-webkit-slider-thumb {
+  transform: scale(1.28);
+}
+
 .album-seek::-moz-range-track {
   height: 4px;
   border-radius: 999px;
   background: #1f1f1f;
 }
+
 .album-seek::-moz-range-progress {
   height: 4px;
   border-radius: 999px;
   background: #3bb8b3;
 }
+
 .album-seek::-moz-range-thumb {
   width: 14px;
   height: 14px;
   border: 0;
   border-radius: 999px;
   background: #3bb8b3;
+  transition: transform 160ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.album-seek:hover::-moz-range-thumb,
+.album-seek:focus-visible::-moz-range-thumb,
+.album-seek:active::-moz-range-thumb {
+  transform: scale(1.2);
 }
 
 @keyframes wire-pulse {
@@ -322,14 +394,57 @@ body {
 @keyframes album-art-in {
   from {
     opacity: 0;
+    transform: scale(1.04);
   }
   to {
     opacity: 1;
+    transform: scale(1);
   }
 }
 
 .album-art-swap {
-  animation: album-art-in 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: album-art-in 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes desk-breathe {
+  0%,
+  100% {
+    opacity: 0.22;
+  }
+  50% {
+    opacity: 0.42;
+  }
+}
+
+.empty-desk-slots {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.empty-desk-slots > span {
+  display: block;
+  height: 3.25rem;
+  border-radius: 1rem;
+  background: #161616;
+  animation: desk-breathe 3.2s ease-in-out infinite;
+}
+
+.empty-desk-slots > span:nth-child(2) {
+  animation-delay: 0.45s;
+  width: 88%;
+}
+
+.empty-desk-slots > span:nth-child(3) {
+  animation-delay: 0.9s;
+  width: 72%;
+}
+
+.countdown-chip {
+  transition: opacity 240ms ease-out;
+}
+
+.countdown-chip:hover {
+  opacity: 0.85;
 }
 
 .site-logo-mark {
@@ -525,7 +640,8 @@ body {
   .page-enter,
   .wire-pulse,
   .album-eq i,
-  .album-art-swap {
+  .album-art-swap,
+  .empty-desk-slots > span {
     animation: none;
   }
 
@@ -545,8 +661,28 @@ body {
   .prose-vcf a,
   .search-panel,
   .feed-fade,
-  .figure-lightbox {
+  .figure-lightbox,
+  .social-menu,
+  .album-seek,
+  .album-seek::-webkit-slider-thumb,
+  .album-seek::-moz-range-thumb,
+  .tap-press {
     transition: none;
+  }
+
+  .tap-press:active:not(:disabled),
+  .album-play:active:not(:disabled) {
+    transform: none;
+  }
+
+  .social-menu {
+    transform: none;
+    transition: none;
+  }
+
+  .social-menu[data-open="false"] {
+    opacity: 0;
+    visibility: hidden;
   }
 
   .search-panel-closed {
@@ -558,6 +694,10 @@ body {
   .header-bar[data-compact="true"] .site-logo-mark,
   .header-bar[data-compact="true"] .site-logo-link:hover .site-logo-mark {
     transform: none;
+  }
+
+  .empty-desk-slots > span {
+    opacity: 0.28;
   }
 }
 

@@ -26,7 +26,7 @@ export function ArticleCard({
   return (
     <article
       data-card-surface
-      className="group rounded-2xl bg-surface p-4 transition-transform duration-300 ease-out hover:-translate-y-1 md:p-5"
+      className="story-card group rounded-2xl bg-surface p-4 transition-[transform,background-color] duration-300 ease-out hover:-translate-y-1 active:translate-y-0 md:p-5"
     >
       <div className="relative">
         <Link href={href} className="block">
@@ -46,7 +46,7 @@ export function ArticleCard({
       </div>
       <Link href={href} className="mt-4 block">
         <h3
-          className={`font-display text-balance break-words font-extrabold tracking-tight text-white ${
+          className={`font-display link-draw text-balance break-words font-extrabold tracking-tight text-white ${
             featured ? "text-xl leading-snug md:text-2xl" : "text-base leading-snug md:text-lg"
           }`}
         >
@@ -67,7 +67,7 @@ export function ArticleCard({
         <Link
           href={authorHref(article.author)}
           data-author-slug={article.author.handle}
-          className="text-white"
+          className="link-draw text-white"
         >
           {article.author.name}
         </Link>

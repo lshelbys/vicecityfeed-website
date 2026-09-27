@@ -12,9 +12,9 @@ header.header-bar .header-primary>:last-child{display:flex;align-items:center;ju
 .site-logo-mark,header.header-bar img{max-height:64px;height:64px;width:auto;object-fit:contain}
 [data-countdown]{display:block;line-height:1.15}
 [data-countdown]>div{display:block}
-header.header-bar [role="menu"].pointer-events-none,
 header.header-bar>[aria-hidden="true"],
 .search-panel-closed{display:none!important}
+header.header-bar [role="menu"]{opacity:0;pointer-events:none;visibility:hidden}
 header.header-bar svg,footer svg{width:16px;height:16px;max-width:16px;max-height:16px}
 header.header-bar nav.header-nav-wrap{display:block;width:100%;text-align:center;overflow:visible;max-height:3.5rem}
 header.header-bar .header-nav{display:inline-flex;flex-wrap:nowrap;justify-content:center;width:max-content;max-width:100%;margin-inline:auto;vertical-align:top;overflow-x:auto;text-align:left}

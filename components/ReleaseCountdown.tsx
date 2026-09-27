@@ -36,7 +36,7 @@ export function ReleaseCountdown() {
 
   return (
     <div
-      className="min-w-0 leading-none text-white"
+      className="countdown-chip min-w-0 leading-none text-white"
       aria-live="polite"
       aria-label={label}
       data-countdown={

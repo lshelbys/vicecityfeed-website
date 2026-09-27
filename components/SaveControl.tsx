@@ -42,7 +42,7 @@ export function SaveControl({ slug, variant = "card" }: SaveControlProps) {
       aria-label={saved ? "Remove from saved" : "Save story"}
       data-save-slug={slug}
       data-saved={saved ? "true" : "false"}
-      className="absolute top-3 right-3 z-10 inline-flex size-9 items-center justify-center rounded-full bg-black/70 text-white transition-colors duration-300 ease-out hover:bg-teal hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-white"
+      className="tap-press absolute top-3 right-3 z-10 inline-flex size-9 items-center justify-center rounded-full bg-black/70 text-white transition-[background-color,color,transform] duration-300 ease-out hover:bg-teal hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-white"
     >
       <Bookmark
         className="size-4"

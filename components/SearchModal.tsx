@@ -123,7 +123,7 @@ export function SearchModal({ open, onClose, articles }: SearchModalProps) {
                   <Link
                     href={`/posts/${article.slug}`}
                     onClick={close}
-                    className="block rounded-xl px-3 py-3 transition-colors duration-200 ease-out hover:bg-raised"
+                    className="tap-press block rounded-xl px-3 py-3 transition-[background-color,transform] duration-200 ease-out hover:bg-raised"
                   >
                     <p className="text-[11px] font-semibold tracking-wide text-white uppercase">
                       {CATEGORY_SHORT[article.category]}
